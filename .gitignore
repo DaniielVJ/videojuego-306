@@ -1,0 +1,15 @@
+__pycache__/
+*.py[cod]
+*$py.class
+db.sqlite3
+*.sqlite3-journal
+.env
+/media/
+/staticfiles/
+/static_root/
+.vscode/
+.idea/
+*.swp
+.DS_Store
+Thumbs.db
+.history
