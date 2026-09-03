@@ -1,19 +1,21 @@
+{% extends 'base.html' %}
 {% load static %}
-<!DOCTYPE html>
-<html lang="es">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Login</title>
+
+{% block title %}
+  Login
+{% endblock title %}
+
+{% block styles %}
   <meta name="description" content="Página de inicio de sesión con estética pixel art retro."/>
+  <link rel="stylesheet" href="{% static 'css/login.css' %}"/> 
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
   <link href="https://fonts.googleapis.com/css2?family=Bangers&family=MedievalSharp&display=swap" rel="stylesheet"/>
-  <link rel="stylesheet" href="{% static 'css/login.css' %}"/> 
-</head>
-<body>
+{% endblock styles %}
+  
 
-  <div class="scene">
+{% block main %}
+    <div class="scene">
 
     <!-- Pixel art canvas background -->
     <canvas id="bgCanvas" class="bg-canvas"></canvas>
@@ -40,22 +42,25 @@
 
           <button type="submit" id="submitBtn" class="btn-login">INICIAR SESION</button>
           <a href="#" id="registerLink" class="register-link">REGISTRARSE</a>
-                            {% if messages %}
-                        
-                        {% for message in messages %}    
-                            <div id="login-error" class="login-error">
-                                <span>{{message}}</span>
-                            </div>
-                        {% endfor %}
-                            
-                    {% endif %}
+        {% if messages %}
+            
+            {% for message in messages %}    
+                <div id="login-error" class="login-error">
+                    <span>{{message}}</span>
+                </div>
+            {% endfor %}
+                
+        {% endif %}
         </form>
       </div>
 
-    </div><!-- /content -->
-  </div><!-- /scene -->
+    </div>
+  </div>
+{% endblock main %}
+  
 
-  <script src="{%static 'js/login.js'%}"></script>
-</body>
-</html>
-
+  
+  {% block scripts %}
+      <script src="{%static 'js/login.js'%}"></script>
+  {% endblock scripts %}
+    

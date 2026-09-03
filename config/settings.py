@@ -92,10 +92,18 @@ USE_I18N = True
 USE_TZ = True
 
 
+
+
 STATIC_URL = 'static/'
 STATICFILES_DIRS = [BASE_DIR / "static"]
 
+
+# Configuración de login y autenticación
 AUTH_USER_MODEL = os.getenv('AUTH_USER_MODEL')
+LOGIN_REDIRECT_URL = 'inicio'
+LOGOUT_REDIRECT_URL = 'login'
+LOGIN_URL = 'login'
+
 
 MAILERS = {
     'default': {
