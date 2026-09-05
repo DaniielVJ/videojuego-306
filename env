@@ -1,0 +1,4 @@
+SECRET_KEY=django-insecure-2_h*=hm__#1muflecy@o*+ead(n%m=-igo^7zssyar2_=rb4a+
+DEBUG=True
+ALLOWED_HOSTS=*,
+AUTH_USER_MODEL=usuarios.Usuario
