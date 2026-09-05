@@ -1,24 +1,39 @@
 {% extends "base.html" %}
+{% load static %}
 
 {% block title %}
-    Registro        
+Registro
 {% endblock title %}
 
 {% block styles %}
-
+  <meta name="description" content="Página de registro con estética retro/medieval."/>
+  <link rel="stylesheet" href="{% static 'css/registro.css' %}"/> 
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Bangers&family=MedievalSharp&display=swap" rel="stylesheet"/>
 {% endblock styles %}
 
 {% block main %}
+<div class="scene">
+    <canvas id="bgCanvas" class="bg-canvas"></canvas>
 
-<form method="POST">
-    {% csrf_token %}
-    {{form.as_div}}
-    <button type="submit">Registrar</button>
-</form>
+    <div class="content">
+        <h1 class="main-title">&lt;NUEVO HÉROE&gt;</h1>
 
+        <div class="register-panel">
+            <h2 class="register-heading">CREAR CUENTA</h2>
+
+            <form method="POST" id="registerForm" class="register-form" novalidate>
+                {% csrf_token %}
+                {{form.as_div}}
+                <button type="submit" id="submitBtn" class="btn-register">FORJAR DESTINO</button>
+                <a href="{% url 'usuarios:login' %}" class="login-link">VOLVER A LA TABERNA</a>
+            </form>
+        </div>
+    </div>
+</div>
 {% endblock main %}
 
-
 {% block scripts %}
-    
+    <script src="{% static 'js/registro.js' %}"></script>
 {% endblock scripts %}

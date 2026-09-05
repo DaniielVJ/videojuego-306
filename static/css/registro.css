@@ -11,7 +11,7 @@ html, body {
 }
 
 /* =============================================
-   ESCENA Y CANVAS (Mantenemos el fondo)
+   ESCENA Y CANVAS (Mantenemos el fondo interactivo)
    ============================================= */
 .scene {
   position: relative;
@@ -47,43 +47,44 @@ html, body {
   font-family: 'Bangers', cursive;
   font-size: clamp(2.5rem, 5vw, 5rem);
   letter-spacing: 0.08em;
-  color: #ffcc00; 
+  color: #ffcc00; /* Oro WoW */
   text-align: center;
   margin-bottom: 0.2em;
-  text-shadow: 3px 3px 0 #000, 0 0 15px rgba(255, 204, 0, 0.5); 
-  -webkit-text-stroke: 1px #804000; 
+  text-shadow: 3px 3px 0 #000, 0 0 15px rgba(255, 204, 0, 0.5); /* Sombra pesada */
+  -webkit-text-stroke: 1px #804000; /* Borde oscuro */
 }
 
 /* =============================================
-   PANEL LOGIN (Estilo Pergamino / Piedra)
+   PANEL REGISTRO (Estilo Pergamino / Piedra)
    ============================================= */
-.login-panel {
+.register-panel {
   display: flex; flex-direction: column; align-items: center;
   width: 100%;
   max-width: 480px;
-  background: rgba(18, 18, 18, 0.85); 
+  background: rgba(18, 18, 18, 0.85); /* Fondo oscuro semitransparente */
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
-  border: 2px solid #8c7335; 
+  border: 2px solid #8c7335; /* Borde bronce/oro oscuro */
   border-radius: 4px;
   padding: 2rem;
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.9), inset 0 0 20px rgba(0,0,0,0.8);
   position: relative;
 }
 
-.login-panel::before, .login-panel::after {
+/* Esquinas decorativas del panel (ilusión de UI de WoW) */
+.register-panel::before, .register-panel::after {
   content: '';
   position: absolute;
   width: 12px; height: 12px;
   background: #ffcc00;
   border: 1px solid #333;
 }
-.login-panel::before { top: -2px; left: -2px; }
-.login-panel::after { bottom: -2px; right: -2px; }
+.register-panel::before { top: -2px; left: -2px; }
+.register-panel::after { bottom: -2px; right: -2px; }
 
-.login-heading {
+.register-heading {
   font-size: clamp(1.5rem, 3vw, 2rem);
-  color: #f8e4a1; 
+  color: #f8e4a1; /* Pergamino claro */
   letter-spacing: 0.1em;
   text-align: center;
   margin-bottom: 1.5rem;
@@ -96,37 +97,40 @@ html, body {
 /* =============================================
    FORMULARIO Y CAMPOS
    ============================================= */
-.login-form {
+.register-form {
   display: flex; flex-direction: column;
-  gap: 1.5rem; 
+  gap: 1.5rem; /* Más espacio entre campos */
   width: 100%;
 }
 
-.login-form > div {
+/* El div generado por Django */
+.register-form > div {
   display: flex;
-  flex-direction: column; 
+  flex-direction: column; /* Columna: label arriba, input abajo */
   width: 100%;
   position: relative;
 }
 
-.login-form > div > label {
+/* Label generado por Django */
+.register-form > div > label {
   font-family: 'MedievalSharp', cursive;
   font-size: 0.95rem;
-  color: #ffcc00; 
+  color: #ffcc00; /* Dorado WoW */
   letter-spacing: 0.05em;
   margin-bottom: 0.3rem;
   text-transform: uppercase;
   text-shadow: 1px 1px 2px #000;
 }
 
-.login-form > div > input {
+/* Inputs de Django */
+.register-form > div > input {
   height: 2.8rem;
-  border: 1px solid #5a4b2a; 
-  background: rgba(0, 0, 0, 0.6); 
+  border: 1px solid #5a4b2a; /* Borde oscuro */
+  background: rgba(0, 0, 0, 0.6); /* Fondo negro translúcido */
   font-family: 'MedievalSharp', cursive;
   font-size: 1.1rem;
   letter-spacing: 0.04em;
-  color: #e6d3a8; 
+  color: #e6d3a8; /* Texto amarillento */
   outline: none;
   padding: 0 1rem;
   border-radius: 3px;
@@ -134,52 +138,59 @@ html, body {
   transition: all 0.3s ease;
 }
 
-.login-form > div:focus-within > input {
+/* Efecto focus en Inputs (Resplandor mágico) */
+.register-form > div:focus-within > input {
   border-color: #ffcc00;
   box-shadow: inset 0 2px 5px rgba(0,0,0,0.8), 0 0 8px rgba(255, 204, 0, 0.4);
   background: rgba(20, 20, 20, 0.8);
 }
 
-.login-form .helptext {
+/* Estados de error/éxito (Controlados por JS) */
+.register-form > div.error-border > input {
+  border-color: #ff3333;
+  box-shadow: inset 0 2px 5px rgba(0,0,0,0.8), 0 0 8px rgba(255, 51, 51, 0.5);
+}
+
+.register-form > div.success-border > input {
+  border-color: #33cc33;
+  box-shadow: inset 0 2px 5px rgba(0,0,0,0.8), 0 0 8px rgba(51, 204, 51, 0.4);
+}
+
+/* =============================================
+   TEXTOS DE AYUDA (¡MUCHO MENOS INVASIVOS!)
+   ============================================= */
+.register-form .helptext {
   font-size: 0.75rem;
-  color: #9d8c6b; 
+  color: #9d8c6b; /* Color apagado */
   margin-top: 0.3rem;
   font-style: italic;
   line-height: 1.2;
 }
 
-.login-form ul.errorlist {
+/* Lista de errores */
+.register-form ul.errorlist {
   font-size: 0.8rem;
-  color: #ff4d4d; 
+  color: #ff4d4d; /* Rojo vivo pero oscuro */
   margin-top: 0.3rem;
   list-style: none;
   padding: 0;
   text-shadow: 1px 1px 1px #000;
 }
 
-/* Mensajes de error globales (ej. contraseña incorrecta) */
-.login-error {
-  background: rgba(140, 26, 26, 0.3);
-  border: 1px solid #ff4d4d;
-  color: #ff9999;
-  padding: 0.8rem;
-  border-radius: 4px;
-  text-align: center;
-  font-size: 0.9rem;
-  text-shadow: 1px 1px 1px #000;
-  margin-bottom: 0.5rem;
+.register-form ul.errorlist li {
+  margin-bottom: 0.2rem;
 }
 
 /* =============================================
-   BOTÓN ENTRAR (Estilo Botón WoW)
+   BOTÓN FORJAR DESTINO (Estilo Botón WoW)
    ============================================= */
-.btn-login {
+.btn-register {
   margin-top: 1rem;
   width: 100%;
   height: 3.5rem;
   border-radius: 4px;
   border: 1px solid #ffcc00;
-  background: linear-gradient(to bottom, #1a4d8c 0%, #05264a 100%); /* Azul Alianza / Magia */
+  background: linear-gradient(to bottom, #8c1a1a 0%, #4a0505 100%); /* Rojo Horda */
   font-family: 'MedievalSharp', cursive;
   font-size: 1.2rem;
   letter-spacing: 0.1em;
@@ -191,22 +202,22 @@ html, body {
   text-transform: uppercase;
 }
 
-.btn-login:hover {
-  background: linear-gradient(to bottom, #225ea3 0%, #0a335c 100%);
+.btn-register:hover {
+  background: linear-gradient(to bottom, #a32222 0%, #5c0a0a 100%);
   border-color: #ffe680;
   color: #ffe680;
-  box-shadow: 0 0 15px rgba(50, 100, 255, 0.4);
+  box-shadow: 0 0 15px rgba(255, 30, 30, 0.4);
 }
 
-.btn-login:active {
+.btn-register:active {
   transform: translateY(2px);
   box-shadow: 0 1px 2px rgba(0,0,0,0.8), inset 0 2px 4px rgba(0,0,0,0.6);
 }
 
 /* =============================================
-   LINK REGISTRO
+   LINK VOLVER
    ============================================= */
-.register-link {
+.login-link {
   font-family: 'MedievalSharp', cursive;
   font-size: 0.9rem;
   letter-spacing: 0.05em;
@@ -217,7 +228,7 @@ html, body {
   margin-top: 0.5rem;
   align-self: center;
 }
-.register-link:hover {
+.login-link:hover {
   color: #ffcc00;
   text-decoration: underline;
 }
@@ -226,7 +237,7 @@ html, body {
    RESPONSIVE
    ============================================= */
 @media (max-width: 480px) {
-  .login-panel {
+  .register-panel {
     padding: 1.5rem;
     border-radius: 0;
     border-left: none;

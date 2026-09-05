@@ -6,7 +6,7 @@
 {% endblock title %}
 
 {% block styles %}
-  <meta name="description" content="Página de inicio de sesión con estética pixel art retro."/>
+  <meta name="description" content="Página de inicio de sesión con estética warcraft."/>
   <link rel="stylesheet" href="{% static 'css/login.css' %}"/> 
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
@@ -15,52 +15,40 @@
   
 
 {% block main %}
-    <div class="scene">
-
+<div class="scene">
     <!-- Pixel art canvas background -->
     <canvas id="bgCanvas" class="bg-canvas"></canvas>
 
     <!-- Contenido principal -->
     <div class="content">
-
       <h1 class="main-title">&lt;TITULO INGENIOSO&gt;</h1>
 
       <div class="login-panel">
-        <h2 class="login-heading">INICIAR SESION</h2>
+        <h2 class="login-heading">ENTRAR AL REINO</h2>
 
         <form id="loginForm" class="login-form" novalidate action="" method="POST">
-        {% csrf_token %}
-          <div class="field-wrap">
-            <span class="field-label">NOMBRE:</span>
-            {{form.username}}
-          </div>
+          {% csrf_token %}
 
-          <div class="field-wrap">
-            <span class="field-label">CONTRASEÑA:</span>
-            {{form.password}}
-          </div>
+          {% if messages %}
+              {% for message in messages %}    
+                  <div id="login-error" class="login-error">
+                      <span>{{message}}</span>
+                  </div>
+              {% endfor %}
+          {% endif %}
 
-          <button type="submit" id="submitBtn" class="btn-login">INICIAR SESION</button>
-          <a href="#" id="registerLink" class="register-link">REGISTRARSE</a>
-        {% if messages %}
-            
-            {% for message in messages %}    
-                <div id="login-error" class="login-error">
-                    <span>{{message}}</span>
-                </div>
-            {% endfor %}
-                
-        {% endif %}
+          {{form.as_div}}
+
+          <button type="submit" id="submitBtn" class="btn-login">INICIAR SESIÓN</button>
+          <a href="{% url 'usuarios:registro' %}" id="registerLink" class="register-link">CREAR NUEVO HÉROE</a>
         </form>
       </div>
 
     </div>
-  </div>
+</div>
 {% endblock main %}
   
 
-  
-  {% block scripts %}
-      <script src="{%static 'js/login.js'%}"></script>
-  {% endblock scripts %}
-    
+{% block scripts %}
+    <script src="{%static 'js/login.js'%}"></script>
+{% endblock scripts %}

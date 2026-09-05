@@ -1,5 +1,5 @@
 /* =============================================
-   EPIC WARCRAFT LOGIN PAGE — login.js
+   EPIC WARCRAFT REGISTER PAGE — registro.js
    Canvas: partículas de cenizas/fuego (embers)
    ============================================= */
 
@@ -101,19 +101,44 @@
 
 
   /* ─────────────────────────────────────────
-     FORMULARIO LOGIN Y VALIDACIÓN
+     FORMULARIO REGISTRO Y VALIDACIÓN
      ───────────────────────────────────────── */
-  const form = document.getElementById('loginForm');
+  const form = document.getElementById('registerForm');
 
   if (form) {
+    const pass1 = form.querySelector('[name="password1"]');
+    const pass2 = form.querySelector('[name="password2"]');
+
+    const validarPasswords = () => {
+      if (!pass1 || !pass2) return;
+      const wrapper2 = pass2.parentElement;
+
+      if (pass2.value.length > 0 && pass1.value !== pass2.value) {
+          wrapper2.classList.add('error-border');
+          wrapper2.classList.remove('success-border');
+      } else if (pass2.value.length > 0 && pass1.value === pass2.value) {
+          wrapper2.classList.remove('error-border');
+          wrapper2.classList.add('success-border');
+      } else {
+          wrapper2.classList.remove('error-border', 'success-border');
+      }
+    };
+
+    if (pass1 && pass2) {
+        pass1.addEventListener('input', validarPasswords);
+        pass2.addEventListener('input', validarPasswords);
+    }
+
     form.addEventListener('submit', function (e) {
       const usernameInput = form.querySelector('[name="username"]');
-      const passwordInput = form.querySelector('[name="password"]');
-
+      const emailInput = form.querySelector('[name="email"]');
+      
       const user = usernameInput ? usernameInput.value.trim() : '';
-      const pass = passwordInput ? passwordInput.value.trim() : '';
+      const email = emailInput ? emailInput.value.trim() : '';
+      const p1 = pass1 ? pass1.value : '';
+      const p2 = pass2 ? pass2.value : '';
     
-      if (!user || !pass) { 
+      if (!user || !email || !p1 || !p2 || (p1 !== p2)) { 
         e.preventDefault();
         shake(form); 
         return; 
