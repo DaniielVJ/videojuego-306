@@ -1,5 +1,5 @@
 from django.db import models
-from . import Personaje
+from .personaje import Personaje
 
 class Objeto(models.Model):
 	nombre = models.CharField(max_length = 100, null = False)

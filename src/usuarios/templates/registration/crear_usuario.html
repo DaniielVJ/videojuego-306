@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block title %}
+    Registro        
+{% endblock title %}
+
+{% block styles %}
+
+{% endblock styles %}
+
+{% block main %}
+
+<form method="POST">
+    {% csrf_token %}
+    {{form.as_div}}
+    <button type="submit">Registrar</button>
+</form>
+
+{% endblock main %}
+
+
+{% block scripts %}
+    
+{% endblock scripts %}

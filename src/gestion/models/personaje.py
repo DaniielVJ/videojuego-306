@@ -1,4 +1,5 @@
 from django.db import models
+from django.conf import settings
 
 class Personaje(models.Model):
     class Estado(models.TextChoices):
@@ -11,6 +12,7 @@ class Personaje(models.Model):
         verbose_name = "Personaje"
         verbose_name_plural = "Personajes"
 
+    usuario = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='personajes')
     nombre = models.CharField(max_length=50, null=False)
     raza = models.ForeignKey('Raza', on_delete=models.PROTECT, related_name='personajes')
     estado = models.CharField(max_length = 50, choices=Estado.choices, default=Estado.VIVO, null = False)
