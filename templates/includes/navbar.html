@@ -1,0 +1,12 @@
+<nav class="warcraft-navbar">
+    <div class="nav-brand">EL REINO</div>
+    <ul class="nav-links">
+        <li><a href="#lore">Lore</a></li>
+        <li><a href="#reglas">Reglas</a></li>
+        <li><a href="#info">Información</a></li>
+    </ul>
+    <div class="nav-auth">
+        <a href="{% url 'usuarios:login' %}" class="btn-nav btn-login">ENTRAR</a>
+        <a href="{% url 'usuarios:registro' %}" class="btn-nav btn-register">REGISTRARSE</a>
+    </div>
+</nav>

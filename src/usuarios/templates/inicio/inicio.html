@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Inicio{% endblock %}
+
+{% block styles %}
+<meta name="description" content="Página de inicio y reglas del juego." />
+<link rel="stylesheet" href="{% static 'css/inicio.css' %}" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Bangers&family=MedievalSharp&display=swap" rel="stylesheet" />
+{% endblock %}
+
+{% block main %}
+<div class="scene">
+    <!-- Fondo inmersivo con cenizas (Canvas) -->
+    <canvas id="bgCanvas" class="bg-canvas"></canvas>
+
+    <!-- Barra de navegación (Componente Reutilizable) -->
+    {% include 'includes/navbar.html' %}
+
+    <!-- Contenido Principal Scrollable -->
+    <div class="content-wrapper">
+
+        <header class="hero-section">
+            <h1 class="main-title">LA GUERRA HA COMENZADO</h1>
+            <p class="hero-subtitle">Elige tu facción, forja tu destino y aplasta a tus enemigos.</p>
+            <a href="{% url 'usuarios:registro' %}" class="btn-hero">JUGAR AHORA GRATIS</a>
+        </header>
+
+        <section id="lore" class="info-panel">
+            <h2 class="panel-heading">La Historia del Reino (Lore)</h2>
+            <div class="panel-body">
+                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam nec feugiat orci. Nulla rhoncus
+                    metus sed purus vulputate, vitae suscipit arcu rhoncus. Suspendisse dapibus urna sit amet elementum
+                    accumsan.</p>
+                <p>Fusce fermentum, nunc ut porta vehicula, libero quam elementum libero, ut tincidunt lorem felis vel
+                    quam. Praesent at lacus quis leo sollicitudin tristique vel id velit. Quisque ac tortor a libero
+                    efficitur luctus.</p>
+            </div>
+        </section>
+
+        <section id="reglas" class="info-panel">
+            <h2 class="panel-heading">Reglas de Combate</h2>
+            <div class="panel-body">
+                <p>Para mantener el honor en el campo de batalla, todo jugador debe acatar las siguientes reglas:</p>
+                <ul>
+                    <li><strong>Honor ante todo:</strong> Lorem ipsum dolor sit amet, consectetur adipiscing elit.</li>
+                    <li><strong>Sin cuartel:</strong> Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+                    </li>
+                    <li><strong>El botín:</strong> Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris.
+                    </li>
+                    <li><strong>Traición:</strong> Duis aute irure dolor in reprehenderit in voluptate velit esse.</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="info" class="info-panel">
+            <h2 class="panel-heading">Características del Servidor</h2>
+            <div class="panel-body">
+                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque vel accumsan dui. Nam sagittis
+                    ex sed leo malesuada euismod. Nulla rutrum dolor turpis, imperdiet bibendum metus tempus eget.</p>
+                <p>Curabitur finibus urna id elit vulputate scelerisque. Ut dictum erat ut lorem pharetra, ut malesuada
+                    nisl dapibus. Proin dignissim vel lectus iaculis aliquet.</p>
+            </div>
+        </section>
+
+        <footer class="site-footer">
+            <p>&copy; 2026 El Reino. Forjado en las profundidades del inframundo. Todos los derechos reservados.</p>
+        </footer>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static 'js/inicio.js' %}"></script>
+{% endblock %}

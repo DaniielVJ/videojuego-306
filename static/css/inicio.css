@@ -1,0 +1,228 @@
+/* =============================================
+   RESET & BASE (WARCRAFT THEME)
+   ============================================= */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  width: 100%; height: 100%; overflow: hidden;
+  font-family: 'MedievalSharp', cursive;
+  background: url('../img/war_bg.jpg') no-repeat center center fixed; 
+  background-size: cover;
+}
+
+/* =============================================
+   ESCENA Y CANVAS
+   ============================================= */
+.scene {
+  position: relative;
+  width: 100vw; height: 100vh;
+  overflow: hidden; /* El contenido interno será el que haga scroll */
+  display: flex; flex-direction: column;
+  background: rgba(0, 0, 0, 0.45);
+}
+
+.bg-canvas {
+  position: fixed; 
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  z-index: 0;
+  pointer-events: none;
+}
+
+/* =============================================
+   NAVBAR (Estilo Piedra / Metal)
+   ============================================= */
+.warcraft-navbar {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 0 2rem;
+  height: 80px;
+  background: rgba(18, 18, 18, 0.95);
+  border-bottom: 2px solid #8c7335;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.8);
+}
+
+.nav-brand {
+  font-family: 'Bangers', cursive;
+  font-size: 2rem;
+  color: #ffcc00;
+  text-shadow: 2px 2px 0 #000;
+  letter-spacing: 0.1em;
+}
+
+.nav-links {
+  display: flex; gap: 2rem;
+  list-style: none;
+}
+
+.nav-links a {
+  text-decoration: none;
+  font-size: 1.1rem;
+  color: #e6d3a8;
+  letter-spacing: 0.05em;
+  transition: color 0.2s, text-shadow 0.2s;
+  text-transform: uppercase;
+}
+
+.nav-links a:hover {
+  color: #ffcc00;
+  text-shadow: 0 0 8px rgba(255, 204, 0, 0.6);
+}
+
+.nav-auth {
+  display: flex; gap: 1rem;
+}
+
+/* Botones del nav */
+.btn-nav {
+  padding: 0.6rem 1.2rem;
+  text-decoration: none;
+  border-radius: 3px;
+  font-size: 1rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border: 1px solid #8c7335;
+  transition: all 0.2s;
+  box-shadow: inset 0 1px 1px rgba(255,255,255,0.1), 0 2px 4px rgba(0,0,0,0.5);
+  text-shadow: 1px 1px 1px #000;
+}
+
+.btn-login {
+  background: linear-gradient(to bottom, #1a4d8c 0%, #05264a 100%);
+  color: #ffcc00;
+}
+.btn-login:hover {
+  background: linear-gradient(to bottom, #225ea3 0%, #0a335c 100%);
+  border-color: #ffcc00;
+}
+
+.btn-register {
+  background: linear-gradient(to bottom, #8c1a1a 0%, #4a0505 100%);
+  color: #ffcc00;
+}
+.btn-register:hover {
+  background: linear-gradient(to bottom, #a32222 0%, #5c0a0a 100%);
+  border-color: #ffcc00;
+}
+
+/* =============================================
+   CONTENIDO SCROLLABLE
+   ============================================= */
+.content-wrapper {
+  position: relative;
+  z-index: 10;
+  flex: 1;
+  overflow-y: auto;
+  padding: 2rem;
+  display: flex; flex-direction: column; align-items: center; gap: 3rem;
+  scroll-behavior: smooth;
+}
+
+/* Hero Section */
+.hero-section {
+  text-align: center;
+  margin-top: 2rem;
+  margin-bottom: 2rem;
+}
+
+.main-title {
+  font-family: 'Bangers', cursive;
+  font-size: clamp(3rem, 8vw, 6rem);
+  letter-spacing: 0.08em;
+  color: #ffcc00;
+  text-shadow: 3px 3px 0 #000, 0 0 20px rgba(255, 204, 0, 0.5);
+  -webkit-text-stroke: 1.5px #4a2500;
+  margin-bottom: 0.5rem;
+}
+
+.hero-subtitle {
+  font-size: 1.5rem;
+  color: #e6d3a8;
+  text-shadow: 2px 2px 4px #000;
+  margin-bottom: 2rem;
+}
+
+.btn-hero {
+  display: inline-block;
+  padding: 1rem 2.5rem;
+  font-size: 1.5rem;
+  background: linear-gradient(to bottom, #8c1a1a 0%, #4a0505 100%);
+  color: #ffcc00;
+  text-decoration: none;
+  border: 2px solid #ffcc00;
+  border-radius: 4px;
+  text-transform: uppercase;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.8), inset 0 2px 3px rgba(255,255,255,0.2);
+  transition: all 0.2s;
+  text-shadow: 2px 2px 2px #000;
+}
+.btn-hero:hover {
+  transform: translateY(-3px) scale(1.02);
+  box-shadow: 0 8px 20px rgba(255,0,0,0.3);
+}
+
+/* Paneles de Información (Pergamino/Piedra) */
+.info-panel {
+  width: 100%;
+  max-width: 800px;
+  background: rgba(18, 18, 18, 0.85);
+  backdrop-filter: blur(8px);
+  border: 2px solid #8c7335;
+  border-radius: 4px;
+  padding: 2.5rem;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.9), inset 0 0 15px rgba(0,0,0,0.7);
+  position: relative;
+}
+
+.info-panel::before, .info-panel::after {
+  content: '';
+  position: absolute;
+  width: 12px; height: 12px;
+  background: #ffcc00;
+  border: 1px solid #333;
+}
+.info-panel::before { top: -2px; left: -2px; }
+.info-panel::after { bottom: -2px; right: -2px; }
+
+.panel-heading {
+  font-family: 'Bangers', cursive;
+  font-size: 2.5rem;
+  color: #f8e4a1;
+  letter-spacing: 0.08em;
+  text-align: center;
+  margin-bottom: 1.5rem;
+  text-shadow: 2px 2px 4px #000;
+  border-bottom: 1px solid rgba(140, 115, 53, 0.5);
+  padding-bottom: 0.5rem;
+}
+
+.panel-body {
+  color: #d1b97f;
+  font-size: 1.15rem;
+  line-height: 1.6;
+  text-shadow: 1px 1px 2px #000;
+}
+
+.panel-body p { margin-bottom: 1rem; }
+.panel-body ul { margin-left: 2rem; margin-bottom: 1rem; }
+.panel-body li { margin-bottom: 0.5rem; }
+.panel-body strong { color: #e6d3a8; }
+
+/* Footer */
+.site-footer {
+  width: 100%;
+  text-align: center;
+  padding: 2rem 0;
+  color: #9d8c6b;
+  font-size: 0.9rem;
+  border-top: 1px solid rgba(140, 115, 53, 0.3);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .warcraft-navbar { flex-direction: column; height: auto; padding: 1rem; gap: 1rem; }
+  .nav-links { gap: 1rem; flex-wrap: wrap; justify-content: center; }
+  .info-panel { padding: 1.5rem; }
+}
