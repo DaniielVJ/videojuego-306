@@ -11,19 +11,25 @@ Usuario = get_user_model()
 
 # Regresamos el inicio del juego que explica todo
 class InicioJuegoView(TemplateView):
+
     template_name = 'inicio/inicio.html'
 
 
 # Aqui programo la logica de si es gm redirija a el inicio GM si no al player.
 class RedireccionInicioView(LoginRequiredMixin, View):
+
     def get(self, request, *args, **kwargs):
+
         if request.user.is_gm:
+
             return redirect()
+
         return redirect()
 
 
 # Encargada de registrar un usuario
 class RegistroUsuariosView(CreateView):
+    
     model = Usuario
     template_name = 'registration/crear_usuario.html'
     form_class = CreacionUsuarioForm
