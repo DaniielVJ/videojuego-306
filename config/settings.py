@@ -100,7 +100,7 @@ STATICFILES_DIRS = [BASE_DIR / "static"]
 
 # Configuración de login y autenticación
 AUTH_USER_MODEL = os.getenv('AUTH_USER_MODEL')
-LOGIN_REDIRECT_URL = 'inicio'
+LOGIN_REDIRECT_URL = 'usuarios:inicio_usuario'
 LOGOUT_REDIRECT_URL = 'usuarios:login'
 LOGIN_URL = 'usuarios:login'
 

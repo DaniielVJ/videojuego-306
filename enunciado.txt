@@ -1,0 +1,51 @@
+PROYECTO 2: Aplicación Web de Juego de
+Rol
+Contexto: Los jugadores de un juego de rol necesitan una herramienta digital para
+crear y gestionar sus personajes, mientras que un Game Master (GM) requiere la
+capacidad de ajustar y complementar esos personajes según las reglas del juego.
+Objetivo: Desarrollar una aplicación web que permita a los jugadores crear
+personajes con atributos como habilidades, poderes y equipamiento, y que el GM
+pueda visualizar, modificar y añadir datos a estos personajes.
+Proyectos 2
+Propuesta Tecnológica Sugerida:
+FrontEnd (Interfaz de Usuario): HTML5, CSS3 y JavaScript para la creación
+de la interfaz del usuario para la gestión de personajes y la visualización de
+datos. React puede ser utilizado para construir una experiencia de usuario
+dinámica. Git para control de versiones.
+Backend (Lógica de Negocio): Python o Django. Aquí se gestionará la lógica
+de creación y modificación de personajes, así como la interacción con la base
+de datos, a través de una API RESTful asegurada con JWT.
+Base de Datos (Almacenamiento de Datos): MySQL o Oracle Database XE o
+MongoDB Community Server. Se utilizará para almacenar los datos de los
+personajes, habilidades, poderes y equipamiento.
+· Despliegue (Disponibilidad en Línea): AWS, Azure o Oracle
+Cloud Infrastructure (OCI).
+Requisitos Funcionales (Guía Paso a Paso):
+1. Módulo de Inicio de Sesión y Roles:
+Paso 1.1: Diseñe e implemente la pantalla de inicio de sesión para ambos tipos
+de usuarios: Jugadores y Game Masters (GM).
+Paso 1.2: Implemente la lógica para diferenciar y autenticar los roles de
+"Jugador" y "GM".
+2. Módulo de Gestión de Personajes (Para el Jugador):
+Paso 2.1: Cree un formulario para que el jugador pueda crear un nuevo
+personaje. Los campos obligatorios deben ser: nombre, raza, estado inicial
+(vivo/muerto/congelado) y nivel.
+Paso 2.2: Asegúrese de que el jugador pueda asignar exactamente 2
+habilidades, 1 poder y 1 equipamiento al personaje.
+Paso 2.3: Desarrolle una sección donde el jugador pueda ver una lista de
+todos sus personajes creados.
+Paso 2.4: Implemente una restricción: los jugadores no deben poder modificar
+un personaje si su estado es "muerto".
+Paso 5: Toda la información del personaje debe guardarse de forma segura en
+la base de datos en la nube y ser accesible desde cualquier navegador.
+3. Módulo de Gestión de Personajes (Para el Game Master):
+Paso 3.1: Cree una interfaz para el GM donde pueda ver una lista completa de
+todos los personajes creados por todos los jugadores.
+Paso 3.2: Implemente la funcionalidad para que el GM pueda subir el nivel de
+cualquier personaje existente.
+Paso 3.3: Permita que el GM cambie el estado de un personaje
+(vivo/muerto/congelado), pero sin la posibilidad de borrar personajes.
+Proyectos 3
+Paso 3.4: Desarrolle un formulario o sección donde el GM pueda añadir
+nuevas razas, poderes o habilidades generales que luego los jugadores
+podrán seleccionar al crear sus personajes.

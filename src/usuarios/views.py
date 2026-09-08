@@ -19,7 +19,7 @@ class RedireccionInicioView(LoginRequiredMixin, View):
     def get(self, request, *args, **kwargs):
         if request.user.is_gm:
             return redirect()
-        return redirect()
+        return redirect('index')
 
 
 # Encargada de registrar un usuario

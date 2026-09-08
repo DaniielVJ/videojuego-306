@@ -13,7 +13,7 @@ class Personaje(models.Model):
         verbose_name_plural = "Personajes"
 
     usuario = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='personajes')
-    nombre = models.CharField(max_length=50, null=False)
+    nombre = models.CharField(max_length=50, null=False, unique=True)
     raza = models.ForeignKey('Raza', on_delete=models.PROTECT, related_name='personajes')
     estado = models.CharField(max_length = 50, choices=Estado.choices, default=Estado.VIVO, null = False)
     nivel = models.PositiveIntegerField(default = 1)
@@ -45,6 +45,8 @@ class Raza(models.Model):
 	r_bonificadores = models.JSONField(null = False)
 	r_handicap = models.JSONField(null = False)
 	activo = models.BooleanField(default = True)
+
+
 
 
 class Habilidad(models.Model):
