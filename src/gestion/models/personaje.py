@@ -3,81 +3,79 @@ from django.conf import settings
 
 class Personaje(models.Model):
 
-    class Estado(models.TextChoices):
+	class Estado(models.TextChoices):
 
-        VIVO = "vivo", "Vivo",
-        MUERTO = 'muerto', 'Muerto'
-        CONGELADO = 'congelado', 'Congelado'
+		VIVO = "vivo", "Vivo"
+		MUERTO = 'muerto', 'Muerto'
+		CONGELADO = 'congelado', 'Congelado'
 
 
-    class Meta:
+	class Meta:
 
-        verbose_name = "Personaje"
-        verbose_name_plural = "Personajes"
+		verbose_name = "Personaje"
+		verbose_name_plural = "Personajes"
 
-    usuario = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='personajes')
-    raza = models.ForeignKey('Raza', on_delete=models.PROTECT, related_name='personajes')
-    habilidades = models.ManyToManyField('Habilidad', related_name='personajes')
+	usuario = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='personajes')
+	raza = models.ForeignKey('Raza', on_delete=models.PROTECT, related_name='personajes')
+	habilidades = models.ManyToManyField('Habilidad', related_name='personajes')
 
-    nombre = models.CharField(max_length=50, null=False)
-    
-    estado = models.CharField(max_length = 50, choices=Estado.choices, default=Estado.VIVO, null = False)
-    nivel = models.PositiveIntegerField(default = 1)
-    experiencia = models.PositiveIntegerField(default = 0)
-    exp_siguiente_nivel = models.PositiveIntegerField(default = 100)
-    ptos_atributos = models.PositiveIntegerField(default = 7)
-    max_peso = models.DecimalField(default = 10.0)
-    
-    activo = models.BooleanField(default = True)
-    
+	nombre = models.CharField(max_length = 50, null = False)
+	
+	estado = models.CharField(max_length = 50, choices = Estado.choices, default = Estado.VIVO, null = False)
+	nivel = models.PositiveIntegerField(default = 1)
+	experiencia = models.PositiveIntegerField(default = 0)
+	exp_siguiente_nivel = models.PositiveIntegerField(default = 100)
+	ptos_atributos = models.PositiveIntegerField(default = 7)
+	max_peso = models.DecimalField(default = 10.0)
+	
+	activo = models.BooleanField(default = True)
+	
 
 
 class Atributo(models.Model):
 
-    class Meta:
-        verbose_name = "Atributo"
-        verbose_name_plural = "Atributos"
+	class Meta:
+		verbose_name = "Atributo"
+		verbose_name_plural = "Atributos"
 
-    personaje = models.OneToOneField(Personaje, on_delete=models.PROTECT, related_name="atributos")
-    
-    fuerza = models.PositiveIntegerField(null = False)
-    destreza = models.PositiveIntegerField(null = False)
-    vigor = models.PositiveIntegerField(null = False)
-    inteligencia = models.PositiveIntegerField(null = False)
-    percepcion = models.PositiveIntegerField(null = False)
-    carisma = models.PositiveIntegerField(null = False)
-    suerte = models.IntegerField(null = False)
+	personaje = models.OneToOneField(Personaje, on_delete=models.PROTECT, related_name="atributos")
+	
+	fuerza = models.PositiveIntegerField(null = False)
+	destreza = models.PositiveIntegerField(null = False)
+	vigor = models.PositiveIntegerField(null = False)
+	inteligencia = models.PositiveIntegerField(null = False)
+	percepcion = models.PositiveIntegerField(null = False)
+	carisma = models.PositiveIntegerField(null = False)
+	suerte = models.IntegerField(null = False)
 
 
 class Raza(models.Model):
 
 	nombre = models.CharField(max_length = 100, null = False)
 	descripcion = models.TextField(max_length = 500, null = False)
-	r_bonificadores = models.JSONField(null = False)
-	r_handicap = models.JSONField(null = False)
+	propiedades = models.JSONField(null = False)
 
 	activo = models.BooleanField(default = True)
 
-    def __str__(self):
-
-        return self.nombre
+	def __str__(self):
+		
+		return self.nombre
 
 class Habilidad(models.Model):
 
-    class Tipo:
+	class Tipo:
 
-        PASIVA = "Pasiva", "pasiva",
-        ACTIVA = "Activa", "activa"
+		PASIVA = "Pasiva", "pasiva",
+		ACTIVA = "Activa", "activa"
 
 	nombre = models.CharField(max_length = 100, null = False)
 	descripcion = models.TextField(max_length = 500, null = False)
 	efectos = models.JSONField(null = False)
-	costo = models.JSONField(null = False)
-    
-    tipo = models.CharField(max_length = 100, choices = Tipo.choices, null = False)
+	
+	tipo = models.CharField(max_length = 100, choices = Tipo.choices, null = False)
 
 	activo = models.BooleanField(default = True)
 
-    def __str__(self):
+	def __str__(self):
 
-        return self.nombre
+		return self.nombre

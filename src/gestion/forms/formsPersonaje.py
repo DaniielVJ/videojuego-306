@@ -1,7 +1,7 @@
 from django import forms
 from django.db.models import Q
 from src.gestion.models.personaje import Personaje, Habilidad, Atributo
-from src.gestion.models.invetario import Objeto
+from src.gestion.models.inventario import Objeto
 
 class PersonajeEditCreateFrom(forms.ModelForm):
 
@@ -130,8 +130,8 @@ class AtributosEditCreateForm(forms.ModelForm):
 					self.add_error(d, f"No se puede reducir el campo {d}")
 				
 				if n_v is not None and n_v > a_v:
-            		
-            		s_stat = s_stat + (n_v - a_v)
+					
+					s_stat = s_stat + (n_v - a_v)
 			
 			if(s_stat > self.instance.personaje.ptos_atributos):
 

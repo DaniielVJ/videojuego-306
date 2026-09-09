@@ -1,10 +1,10 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import UpdateView
-from django.views.generic.edit import CreateView
+from django.views.generic.edit import CreateView, DeleteView
 from django.views.generic.list import ListView
 from django.db.models import Q
 from django.urls import reverse_lazy
-from django.db import transaction
+from django.db import transactions
 from src.gestion.models.personaje import Personaje, Raza
 from src.gestion.models.inventario import InventarioObjetos
 from src.gestion.forms.formsPersonaje import PersonajeEditCreateFrom, AtributosEditCreateForm
@@ -19,7 +19,7 @@ class CrearPersonaje(LoginRequiredMixin, CreateView):
 
 	def form_valid(self, form):
 
-		with transaction.atomic():
+		with transactions.atomic():
 
 			form.instance.usuario = self.request.user
 
@@ -83,8 +83,22 @@ class ActualizarPersonaje(LoginRequiredMixin, UpdateView):
 
 	def post(self, request, *args, **kwargs):
 		
-		
+		self.object = self.get_object()
 
+		form_personaje = self.get_form()
+
+		form_atributos = AtributosEditCreateForm(self.request.POST, instance = self.object.atributos)
+
+		if form_personaje.is_valid() and form_atributos.is_valid():
+
+			with transactions.atomic():
+
+				form_personaje.save()
+				form_atributos.save()
+
+				return reverse_lazy()
+
+		return 
 
 class ListarPersonajes(LoginRequiredMixin, ListView):
 
@@ -97,8 +111,14 @@ class ListarPersonajes(LoginRequiredMixin, ListView):
 
 	def get_queryset(self):
 
-		queryset = Personaje.objects.select_related("raza").filter(activo = True, usuario = self.request.user)
+		if not self.request.user.is_gm
 
+			queryset = Personaje.objects.select_related("raza").filter(activo = True)
+
+		else:
+
+			queryset = Personaje.objects.select_related("raza").filter(activo = True, usuario = self.request.user)
+		
 		query = self.request.GET.get("q", "").strip()
 		raza_id = self.request.GET.get("raza", "").strip()
 		estado = self.request.GET.get("estado", "").strip()
@@ -130,7 +150,6 @@ class ListarPersonajes(LoginRequiredMixin, ListView):
 
 	def get_context_data(self, **kwargs):
 		
-
 		context = super().get_context_data(**kwargs)
 
 		context["razas"] = Raza.objects.filter(activo = True)
@@ -148,9 +167,36 @@ class ListarPersonajes(LoginRequiredMixin, ListView):
 
 		return context
 
+class EliminarPersonaje(LoginRequiredMixin, DeleteView):
 
-		
-		
+	model = Personaje
+	success_url = ""
+	context_object_name = "Personaje"
+
+	def get_object(self):
+
+		personaje = super().get_object()
+
+		if personaje.usuario != self.request.user or personaje.estado == Personaje.Estado.MUERTO:
+
+			pass
+
+		return personaje
+
+	def post(self, *args, **kwargs):
+
+		self.object = self.get_object()
+
+		if self.object:
+
+			self.object.activo = False
+
+			self.object.save()
+
+			return
+
+		return
+
 
 
 
