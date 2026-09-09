@@ -15,9 +15,14 @@
 <div class="scene">
     <!-- Fondo inmersivo con cenizas (Canvas) -->
     <canvas id="bgCanvas" class="bg-canvas"></canvas>
-    <!-- Barra de navegación (Componente Reutilizable) -->
-    {% include 'includes/navbar1.html' %}
+   
 
+    {% if request.user.is_authenticated %}
+        {% include 'includes/navbar2.html' %}
+    {% else %}
+        {% include 'includes/navbar1.html' %}
+    {% endif %}
+    
     <!-- Contenido Principal Scrollable -->
     <div class="content-wrapper">
 
