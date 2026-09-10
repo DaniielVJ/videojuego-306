@@ -1,10 +1,12 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.http import HttpResponseRedirect
+from django.core.exceptions import PermissionDenied
 from django.views.generic import UpdateView
 from django.views.generic.edit import CreateView, DeleteView
 from django.views.generic.list import ListView
 from django.db.models import Q
 from django.urls import reverse_lazy
-from django.db import transactions
+from django.db import transaction
 from src.gestion.models.personaje import Personaje, Raza
 from src.gestion.models.inventario import InventarioObjetos
 from src.gestion.forms.formsPersonaje import PersonajeEditCreateFrom, AtributosEditCreateForm
@@ -13,13 +15,13 @@ class CrearPersonaje(LoginRequiredMixin, CreateView):
 
 	model = Personaje
 	form_class = PersonajeEditCreateFrom
-	template_name = ""
+	template_name = "gestion/CreateEdit.html"
 
-	success_url = reverse_lazy("")
+	success_url = reverse_lazy("listar_personaje")
 
 	def form_valid(self, form):
 
-		with transactions.atomic():
+		with transaction.atomic():
 
 			form.instance.usuario = self.request.user
 
@@ -48,10 +50,10 @@ class ActualizarPersonaje(LoginRequiredMixin, UpdateView):
 
 	model = Personaje
 	form_class = PersonajeEditCreateFrom
-	template_name = ""
+	template_name = "gestion/CreateEdit.html"
 	context_object_name = "Personaje"
 
-	success_url = reverse_lazy()
+	success_url = reverse_lazy("listar_personaje")
 
 	def get_object(self):
 
@@ -59,7 +61,7 @@ class ActualizarPersonaje(LoginRequiredMixin, UpdateView):
 		
 		if personaje.usuario != self.request.user or personaje.estado not in [Personaje.Estado.MUERTO]:
 
-			pass
+			raise PermissionDenied("Acceso denegado")
 
 		return personaje
 
@@ -91,27 +93,25 @@ class ActualizarPersonaje(LoginRequiredMixin, UpdateView):
 
 		if form_personaje.is_valid() and form_atributos.is_valid():
 
-			with transactions.atomic():
+			with transaction.atomic():
 
 				form_personaje.save()
 				form_atributos.save()
 
-				return reverse_lazy()
+				return HttpResponseRedirect(self.success_url)
 
-		return 
+		return self.render_to_response(self.get_context_data(form=form_personaje, form_atributos=form_atributos))
 
 class ListarPersonajes(LoginRequiredMixin, ListView):
 
 	model = Personaje
-	template_name = ""
+	template_name = "gestion/PersonajeList.html"
 	context_object_name = "Personajes"
 	paginate_by = 10
 
-	succes_url = reverse_lazy()
-
 	def get_queryset(self):
 
-		if not self.request.user.is_gm
+		if not self.request.user.is_gm:
 
 			queryset = Personaje.objects.select_related("raza").filter(activo = True)
 
@@ -170,8 +170,10 @@ class ListarPersonajes(LoginRequiredMixin, ListView):
 class EliminarPersonaje(LoginRequiredMixin, DeleteView):
 
 	model = Personaje
-	success_url = ""
+	template_name = "gestion/Delete.html"
 	context_object_name = "Personaje"
+
+	success_url = reverse_lazy("listar_personaje")
 
 	def get_object(self):
 
@@ -179,7 +181,7 @@ class EliminarPersonaje(LoginRequiredMixin, DeleteView):
 
 		if personaje.usuario != self.request.user or personaje.estado == Personaje.Estado.MUERTO:
 
-			pass
+			raise PermissionDenied("Acceso denegado")
 
 		return personaje
 
@@ -187,15 +189,11 @@ class EliminarPersonaje(LoginRequiredMixin, DeleteView):
 
 		self.object = self.get_object()
 
-		if self.object:
+		self.object.activo = False
 
-			self.object.activo = False
+		self.object.save()
 
-			self.object.save()
-
-			return
-
-		return
+		return HttpResponseRedirect(self.success_url)
 
 
 

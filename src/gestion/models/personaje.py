@@ -26,7 +26,7 @@ class Personaje(models.Model):
 	experiencia = models.PositiveIntegerField(default = 0)
 	exp_siguiente_nivel = models.PositiveIntegerField(default = 100)
 	ptos_atributos = models.PositiveIntegerField(default = 7)
-	max_peso = models.DecimalField(default = 10.0)
+	max_peso = models.DecimalField(max_digits = 5, decimal_places = 2, default = 10.0)
 	
 	activo = models.BooleanField(default = True)
 	
@@ -63,9 +63,9 @@ class Raza(models.Model):
 
 class Habilidad(models.Model):
 
-	class Tipo:
+	class Tipo(models.TextChoices):
 
-		PASIVA = "Pasiva", "pasiva",
+		PASIVA = "Pasiva", "pasiva"
 		ACTIVA = "Activa", "activa"
 
 	nombre = models.CharField(max_length = 100, null = False)

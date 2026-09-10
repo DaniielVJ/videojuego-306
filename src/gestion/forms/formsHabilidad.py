@@ -19,6 +19,8 @@ class HabilidadUpdateCreateForm(forms.ModelForm):
 
 	def __init__(self, *args, **kwargs):
 
+		super().__init__(*args, **kwargs)
+
 		if self.instance and self.instance.pk and self.instance.efectos:
 
 			efectos = self.instance.efectos

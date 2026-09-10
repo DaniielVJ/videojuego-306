@@ -107,7 +107,7 @@ class AtributosEditCreateForm(forms.ModelForm):
 			for d in c_stat:
 
 				v_a = getattr(self.instance, d)
-				self.fields[d].widgets.attrs["min"] = v_a
+				self.fields[d].widget.attrs["min"] = v_a
 
 
 	def clean(self):

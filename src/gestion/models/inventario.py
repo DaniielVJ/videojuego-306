@@ -5,7 +5,7 @@ class Objeto(models.Model):
 
 	nombre = models.CharField(max_length = 100, null = False)
 	descripcion = models.TextField(max_length = 500, null = False)
-	peso = models.DecimalField(null = False)
+	peso = models.DecimalField(max_digits = 5, decimal_places = 2, default = 0.01)
 	efectos = models.JSONField(null = False)
 	
 	activo = models.BooleanField(default = True)

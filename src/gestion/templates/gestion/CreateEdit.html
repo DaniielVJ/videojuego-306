@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <!-- Cambia el título si detecta que es una edición (object existe) o creación -->
+  <h2>{% if object %}Editar Registro{% else %}Crear Nuevo Registro{% endif %}</h2>
+
+  <form method="POST">
+    {% csrf_token %}
+    
+    <!-- Formulario principal (Personaje, Raza, Objeto, etc.) -->
+    {{ form.as_p }}
+
+    <!-- Si la vista inyectó el formulario secundario de atributos, lo renderiza -->
+    {% if form_atributos %}
+      <hr>
+      <h3>Repartir Atributos</h3>
+      {{ form_atributos.as_p }}
+    {% endif %}
+
+    <button type="submit">Guardar</button>
+    <a href="javascript:history.back()">Cancelar</a>
+  </form>
+{% endblock %}

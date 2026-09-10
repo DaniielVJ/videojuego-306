@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <h2>Confirmar Eliminación</h2>
+  
+  <!-- {{ object }} imprimirá el nombre gracias al def __str__(self) de tus modelos -->
+  <p>¿Estás seguro de que deseas eliminar: <strong>{{ object }}</strong>?</p>
+  <p><em>Esta acción desactivará el registro en el sistema.</em></p>
+
+  <form method="POST">
+    {% csrf_token %}
+    <button type="submit">Sí, confirmar borrado</button>
+    <a href="javascript:history.back()">Cancelar y volver</a>
+  </form>
+{% endblock %}
