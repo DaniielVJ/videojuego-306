@@ -1,0 +1,39 @@
+{% load static %}
+<link rel="stylesheet" href="{% static 'css/navbar.css' %}" />
+
+<nav class="warcraft-navbar">
+    <div class="nav-brand"><a href="{% url 'index' %}">EL REINO</a></div>
+    <ul class="nav-links">
+        <li><a href="{% url 'index' %}#lore">Lore</a></li>
+        <li><a href="{% url 'index' %}#reglas">Reglas</a></li>
+        <li><a href="{% url 'index' %}#info">Información</a></li>
+    </ul>
+
+    <div class="nav-auth user-menu">
+        <span class="user-greeting">
+            {{request.user}}
+            {% if request.user.is_gm %}
+            Hola GM {{request.user.username}}
+            {% else %}
+            Hola Jugador {{request.user.username}}
+            {% endif %}
+        </span>
+
+        <div class="profile-dropdown">
+            <img src="https://ui-avatars.com/api/?name={{ user.username|default:'Jugador' }}&background=111&color=ffcc00&border=8c7335"
+                alt="Avatar" class="profile-pic">
+            <span class="dropdown-arrow">▼</span>
+
+            <ul class="dropdown-content">
+                <li><a href="#">Ver Perfil</a></li>
+                <li><a href="{% url 'usuarios:modificar-password' %}">Cambiar Contraseña</a></li>
+                <li>
+                    <form action="{% url 'usuarios:logout' %}" method="post" style="margin: 0; padding: 0;">
+                        {% csrf_token %}
+                        <button type="submit" class="dropdown-btn">Cerrar Sesión</button>
+                    </form>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
