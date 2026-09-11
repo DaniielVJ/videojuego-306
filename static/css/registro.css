@@ -123,7 +123,7 @@ html, body {
 }
 
 /* Inputs de Django */
-.register-form > div > input {
+.register-form > div input {
   height: 2.8rem;
   border: 1px solid #5a4b2a; /* Borde oscuro */
   background: rgba(0, 0, 0, 0.6); /* Fondo negro translúcido */
@@ -139,19 +139,19 @@ html, body {
 }
 
 /* Efecto focus en Inputs (Resplandor mágico) */
-.register-form > div:focus-within > input {
+.register-form > div:focus-within input {
   border-color: #ffcc00;
   box-shadow: inset 0 2px 5px rgba(0,0,0,0.8), 0 0 8px rgba(255, 204, 0, 0.4);
   background: rgba(20, 20, 20, 0.8);
 }
 
 /* Estados de error/éxito (Controlados por JS) */
-.register-form > div.error-border > input {
+.register-form > div.error-border input {
   border-color: #ff3333;
   box-shadow: inset 0 2px 5px rgba(0,0,0,0.8), 0 0 8px rgba(255, 51, 51, 0.5);
 }
 
-.register-form > div.success-border > input {
+.register-form > div.success-border input {
   border-color: #33cc33;
   box-shadow: inset 0 2px 5px rgba(0,0,0,0.8), 0 0 8px rgba(51, 204, 51, 0.4);
 }
@@ -243,4 +243,29 @@ html, body {
     border-left: none;
     border-right: none;
   }
+}
+
+/* =============================================
+   TOGGLE PASSWORD VISIBILITY ICON
+   ============================================= */
+.toggle-password-btn {
+  position: absolute;
+  right: 10px;
+  top: 50%; 
+  transform: translateY(-50%);
+  background: transparent;
+  border: none;
+  color: #9d8c6b;
+  font-size: 1.2rem;
+  cursor: pointer;
+  outline: none;
+  transition: transform 0.2s, color 0.2s;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.toggle-password-btn:hover {
+  transform: translateY(-50%) scale(1.1);
+  color: #ffcc00;
 }

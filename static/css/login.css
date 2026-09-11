@@ -38,6 +38,7 @@ html, body {
   align-items: center; justify-content: center;
   width: 100%; 
   padding: 2rem 1rem;
+  margin-bottom: 10vh; /* Subimos el formulario visualmente */
 }
 
 /* =============================================
@@ -119,7 +120,7 @@ html, body {
   text-shadow: 1px 1px 2px #000;
 }
 
-.login-form > div > input {
+.login-form > div input {
   height: 2.8rem;
   border: 1px solid #5a4b2a; 
   background: rgba(0, 0, 0, 0.6); 
@@ -134,7 +135,7 @@ html, body {
   transition: all 0.3s ease;
 }
 
-.login-form > div:focus-within > input {
+.login-form > div:focus-within input {
   border-color: #ffcc00;
   box-shadow: inset 0 2px 5px rgba(0,0,0,0.8), 0 0 8px rgba(255, 204, 0, 0.4);
   background: rgba(20, 20, 20, 0.8);
@@ -173,7 +174,7 @@ html, body {
 /* =============================================
    BOTÓN ENTRAR (Estilo Botón WoW)
    ============================================= */
-.btn-login {
+.btn-form-login {
   margin-top: 1rem;
   width: 100%;
   height: 3.5rem;
@@ -191,14 +192,14 @@ html, body {
   text-transform: uppercase;
 }
 
-.btn-login:hover {
+.btn-form-login:hover {
   background: linear-gradient(to bottom, #225ea3 0%, #0a335c 100%);
   border-color: #ffe680;
   color: #ffe680;
   box-shadow: 0 0 15px rgba(50, 100, 255, 0.4);
 }
 
-.btn-login:active {
+.btn-form-login:active {
   transform: translateY(2px);
   box-shadow: 0 1px 2px rgba(0,0,0,0.8), inset 0 2px 4px rgba(0,0,0,0.6);
 }
@@ -232,4 +233,29 @@ html, body {
     border-left: none;
     border-right: none;
   }
+}
+
+/* =============================================
+   TOGGLE PASSWORD VISIBILITY ICON
+   ============================================= */
+.toggle-password-btn {
+  position: absolute;
+  right: 10px;
+  top: 50%; 
+  transform: translateY(-50%);
+  background: transparent;
+  border: none;
+  color: #9d8c6b;
+  font-size: 1.2rem;
+  cursor: pointer;
+  outline: none;
+  transition: transform 0.2s, color 0.2s;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.toggle-password-btn:hover {
+  transform: translateY(-50%) scale(1.1);
+  color: #ffcc00;
 }

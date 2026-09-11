@@ -1,6 +1,9 @@
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import get_user_model
 from django import forms
+from django.urls import reverse_lazy
+from django.contrib.auth.views import PasswordChangeView
+from django.contrib import messages
 
 Usuario = get_user_model()
 class CreacionUsuarioForm(UserCreationForm):
@@ -27,3 +30,12 @@ class CreacionUsuarioForm(UserCreationForm):
         if Usuario.objects.filter(email=email).exists():
             raise forms.ValidationError("Este correo ya está asociado a otro jugador.")
         return email
+
+
+class CambiarPasswordView(PasswordChangeView):
+    template_name = 'usuarios/cambiar_password.html'
+    success_url = reverse_lazy('usuarios:inicio_usuario')
+
+    def form_valid(self, form):
+        messages.success(self.request, "Tu contraseña ha sido actualizada correctamente.")
+        return super().form_valid(form)

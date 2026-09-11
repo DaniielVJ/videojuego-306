@@ -8,4 +8,8 @@ class Usuario(AbstractUser):
     def __str__(self):
         return self.username
 
-    
+class CodigoVerificacionEmail(models.Model):
+    user = models.OneToOneField(Usuario, on_delete=models.CASCADE, related_name="codigos_email")
+    code = models.PositiveBigIntegerField()
+    create_at = models.DateTimeField(auto_now_add=True)
+    expired_at = models.DateTimeField()

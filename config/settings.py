@@ -33,6 +33,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'src.usuarios.middlewares.VerificarLoginMiddleware',
 ]
 
 ROOT_URLCONF = 'config.urls'
@@ -100,9 +101,15 @@ STATICFILES_DIRS = [BASE_DIR / "static"]
 
 # Configuración de login y autenticación
 AUTH_USER_MODEL = os.getenv('AUTH_USER_MODEL')
-LOGIN_REDIRECT_URL = 'inicio'
-LOGOUT_REDIRECT_URL = 'usuarios:login'
+LOGIN_REDIRECT_URL = 'usuarios:inicio_usuario'
+LOGOUT_REDIRECT_URL = 'index'
 LOGIN_URL = 'usuarios:login'
+
+PUBLIC_URLS_NAMES = [
+    'usuarios:login',
+    'usuarios:registro'
+]
+
 
 
 MAILERS = {
