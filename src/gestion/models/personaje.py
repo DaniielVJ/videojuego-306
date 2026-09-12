@@ -40,11 +40,12 @@ class Atributo(models.Model):
 
 
 class Raza(models.Model):
-	nombre = models.CharField(max_length = 100, null = False)
-	descripcion = models.TextField(max_length = 500, null = False)
-	r_bonificadores = models.JSONField(null = False)
-	r_handicap = models.JSONField(null = False)
-	activo = models.BooleanField(default = True)
+    nombre = models.CharField(max_length = 100, null = False)
+    descripcion = models.TextField(max_length = 500, null = False)
+    r_bonificadores = models.JSONField(null = False)
+    r_handicap = models.JSONField(null = False)
+    activo = models.BooleanField(default = True)
+    img = models.ImageField(upload_to='razas/', null=False, blank=False)
 
 
 
