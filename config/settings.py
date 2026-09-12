@@ -111,6 +111,9 @@ PUBLIC_URLS_NAMES = [
 ]
 
 
+# Archivos Multimedia
+MEDIA_ROOT = BASE_DIR / 'media'
+MEDIA_URL = '/media/'
 
 MAILERS = {
     'default': {
