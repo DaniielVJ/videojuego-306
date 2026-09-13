@@ -23,6 +23,9 @@ class Personaje(models.Model):
     habilidades = models.ManyToManyField('Habilidad', related_name='personajes')
 
 
+    def __str__(self):
+        return self.nombre
+
 class Atributo(models.Model):
 
     class Meta:
@@ -38,21 +41,31 @@ class Atributo(models.Model):
     carisma = models.PositiveIntegerField(null = False)
     suerte = models.IntegerField(null = False)
 
+    def __str__(self):
+        return self.personaje.nombre
+
 
 class Raza(models.Model):
     nombre = models.CharField(max_length = 100, null = False)
     descripcion = models.TextField(max_length = 500, null = False)
-    r_bonificadores = models.JSONField(null = False)
-    r_handicap = models.JSONField(null = False)
+    r_bonificadores = models.JSONField(blank=True, null=True)
+    r_handicap = models.JSONField(blank=True, null=True)
     activo = models.BooleanField(default = True)
-    img = models.ImageField(upload_to='razas/', null=False, blank=False)
-
-
+    img_body = models.ImageField(upload_to='razas/body/', null=False, blank=False)
+    img_head = models.ImageField(upload_to='razas/head/', null=False, blank=False)
+    
+    def __str__(self):
+        return self.nombre
 
 
 class Habilidad(models.Model):
-	nombre = models.CharField(max_length = 100, null = False)
-	descripcion = models.TextField(max_length = 500, null = False)
-	efectos = models.JSONField(null = False)
-	costo = models.JSONField(null = False)
-	activo = models.BooleanField(default = True)
+    nombre = models.CharField(max_length = 100, null = False)
+    descripcion = models.TextField(max_length = 500, null = False)
+    efectos = models.JSONField(blank=True, null=True)
+    costo = models.JSONField(blank=True, null=True)
+    activo = models.BooleanField(default = True)
+
+
+    def __str__(self):
+        return self.nombre
+        
