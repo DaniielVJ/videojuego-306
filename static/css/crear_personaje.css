@@ -1,0 +1,1281 @@
+/* ===================================================
+   CREAR_PERSONAJE.CSS - ESTUDIO ÉPICO DE CREACIÓN (100vh)
+   Inspirado en Metin2 & MMORPGs Clásicos
+   =================================================== */
+
+/* 1. RESET Y BLOQUEO DE VIEWPORT (100% VISIBLE SIN SCROLL GLOBAL) */
+html, body {
+  height: 100vh;
+  max-height: 100vh;
+  margin: 0;
+  padding: 0;
+  overflow: hidden !important;
+  background-color: #080604;
+  font-family: 'MedievalSharp', cursive, system-ui, sans-serif;
+  color: #e6d3a8;
+  user-select: none;
+}
+
+/* 2. ESCENA PRINCIPAL */
+.creation-scene {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  max-height: 100vh;
+  overflow: hidden;
+  background: url('../img/war_bg.jpg') no-repeat center center fixed;
+  background-size: cover;
+  display: flex;
+  flex-direction: column;
+}
+
+.creation-scene::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(ellipse at 50% 45%, rgba(15, 11, 7, 0.55) 0%, rgba(6, 4, 3, 0.9) 75%, #000000 100%);
+  z-index: 1;
+  pointer-events: none;
+}
+
+#bgCanvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 2;
+  pointer-events: none;
+}
+
+/* 3. FORMULARIO CONTENEDOR TOTAL */
+.creation-studio-form {
+  position: relative;
+  z-index: 10;
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* ===================================================
+   4. BARRA SUPERIOR COMPACTA (HEADER)
+   =================================================== */
+.creation-top-bar {
+  height: 56px;
+  min-height: 56px;
+  background: linear-gradient(180deg, rgba(32, 22, 12, 0.95) 0%, rgba(14, 10, 7, 0.9) 100%);
+  border-bottom: 2px solid #8c7335;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.85);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 1.5rem;
+  z-index: 20;
+}
+
+.top-bar-left, .top-bar-right {
+  display: flex;
+  align-items: center;
+}
+
+/* Botón Cancelar / Volver */
+.btn-top-back {
+  background: linear-gradient(180deg, #3d2d1f 0%, #201710 100%);
+  border: 1.5px solid #8c7335;
+  color: #d6c29a;
+  padding: 0.45rem 1.1rem;
+  border-radius: 4px;
+  font-family: 'MedievalSharp', cursive;
+  font-size: 0.9rem;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.6);
+}
+
+.btn-top-back:hover {
+  background: linear-gradient(180deg, #5a422d 0%, #2d2016 100%);
+  border-color: #ffcc00;
+  color: #ffffff;
+  transform: translateX(-2px);
+  box-shadow: 0 0 12px rgba(255, 204, 0, 0.3);
+}
+
+/* Botón Forjar Personaje */
+.btn-top-forge {
+  background: linear-gradient(180deg, #9e1d1d 0%, #681111 60%, #400a0a 100%);
+  border: 1.5px solid #ffcc00;
+  color: #fffae8;
+  padding: 0.5rem 1.4rem;
+  border-radius: 4px;
+  font-family: 'Bangers', cursive;
+  font-size: 1.25rem;
+  letter-spacing: 0.06em;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  transition: all 0.25s cubic-bezier(0.25, 1, 0.5, 1);
+  box-shadow: 0 0 15px rgba(255, 68, 68, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  text-shadow: 1px 1px 2px #000;
+}
+
+.btn-top-forge:hover {
+  background: linear-gradient(180deg, #c42626 0%, #851616 60%, #520d0d 100%);
+  border-color: #ffe066;
+  transform: translateY(-1px) scale(1.02);
+  box-shadow: 0 0 24px rgba(255, 204, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+
+.btn-top-forge:active {
+  transform: translateY(1px) scale(0.99);
+}
+
+.btn-top-forge svg, .btn-top-back svg {
+  width: 18px;
+  height: 18px;
+}
+
+/* Centro del Header */
+.top-bar-center {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.top-bar-badge {
+  font-family: 'MedievalSharp', cursive;
+  font-size: 0.7rem;
+  letter-spacing: 0.12em;
+  color: #34d399;
+  background: rgba(16, 185, 129, 0.15);
+  border: 1px solid rgba(16, 185, 129, 0.5);
+  padding: 0.1rem 0.5rem;
+  border-radius: 3px;
+  text-transform: uppercase;
+  line-height: 1.1;
+}
+
+.top-bar-title {
+  font-family: 'Bangers', cursive;
+  font-size: 1.7rem;
+  letter-spacing: 0.08em;
+  color: #ffcc00;
+  text-shadow: 2px 2px 0 #000, 0 0 14px rgba(255, 204, 0, 0.5);
+  margin: 0;
+  line-height: 1;
+}
+
+/* Banner de Error Superior */
+.creation-error-banner {
+  background: rgba(220, 38, 38, 0.9);
+  color: #fff;
+  padding: 0.4rem 1.5rem;
+  font-size: 0.85rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  border-bottom: 1.5px solid #ffcc00;
+  z-index: 25;
+}
+.creation-error-banner svg {
+  width: 18px;
+  height: 18px;
+}
+
+/* ===================================================
+   5. GRID DEL ESTUDIO (3 PANELES PRINCIPALES)
+   =================================================== */
+.creation-studio-grid {
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: 350px 1fr 370px;
+  gap: 1.25rem;
+  padding: 0.75rem 1.25rem 0.75rem 1.25rem;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+/* Estilo Base de los Paneles Flotantes */
+.studio-panel {
+  background: rgba(14, 10, 7, 0.92);
+  backdrop-filter: blur(10px);
+  border: 1.5px solid #8c7335;
+  border-radius: 6px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.9), inset 0 0 15px rgba(0, 0, 0, 0.8);
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Adornos dorados en las esquinas */
+.studio-panel::before,
+.studio-panel::after {
+  content: '';
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  border: 1.5px solid #ffcc00;
+  pointer-events: none;
+  z-index: 5;
+}
+.studio-panel::before { top: 2px; left: 2px; border-right: none; border-bottom: none; }
+.studio-panel::after { bottom: 2px; right: 2px; border-left: none; border-top: none; }
+
+/* ===================================================
+   6. PANEL IZQUIERDO: IDENTIDAD Y ATRIBUTOS
+   =================================================== */
+.panel-identity-attributes {
+  height: 100%;
+}
+
+.panel-inner-scroll {
+  flex: 1;
+  overflow-y: auto;
+  padding: 0.85rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+/* Cajas seccionales */
+.box-section {
+  background: rgba(6, 4, 3, 0.75);
+  border: 1px solid rgba(140, 115, 53, 0.35);
+  border-radius: 4px;
+  padding: 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.box-section-title {
+  font-family: 'MedievalSharp', cursive;
+  font-size: 0.95rem;
+  color: #ffeed1;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.box-section-title svg, .rpg-icon {
+  width: 16px;
+  height: 16px;
+  color: #ffcc00;
+  flex-shrink: 0;
+}
+
+/* Input del Nombre */
+.input-hero-group {
+  position: relative;
+}
+
+.input-hero-name {
+  width: 100%;
+  box-sizing: border-box;
+  background: rgba(3, 2, 1, 0.95);
+  border: 1.5px solid #5a4520;
+  border-radius: 4px;
+  padding: 0.6rem 0.75rem;
+  color: #ffffff;
+  font-family: 'MedievalSharp', cursive;
+  font-size: 1.05rem;
+  letter-spacing: 0.03em;
+  transition: all 0.2s ease;
+  box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.85);
+}
+
+.input-hero-name:focus {
+  outline: none;
+  border-color: #ffcc00;
+  box-shadow: 0 0 12px rgba(255, 204, 0, 0.35), inset 0 2px 5px rgba(0, 0, 0, 0.9);
+  color: #fffae8;
+}
+
+.input-hero-name::placeholder {
+  color: #6e583c;
+  font-style: italic;
+  font-size: 0.88rem;
+}
+
+/* Selector de Usuario GM */
+.select-user-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.mini-label {
+  font-size: 0.75rem;
+  color: #a89472;
+}
+
+.select-user-group select {
+  width: 100%;
+  box-sizing: border-box;
+  background: rgba(3, 2, 1, 0.95);
+  border: 1px solid #5a4520;
+  border-radius: 4px;
+  padding: 0.4rem 0.6rem;
+  color: #e6d3a8;
+  font-family: 'MedievalSharp', cursive;
+  font-size: 0.85rem;
+}
+.select-user-group select:focus {
+  outline: none;
+  border-color: #ffcc00;
+}
+
+/* Medidores Vitales Metin2 (HP / SP) */
+.vitals-summary-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.5rem;
+}
+
+.vital-card {
+  background: rgba(4, 3, 2, 0.85);
+  border: 1px solid #3d2d1d;
+  border-radius: 4px;
+  padding: 0.45rem 0.6rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.vital-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.vital-label {
+  font-size: 0.72rem;
+  font-weight: bold;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+}
+
+.vital-hp .vital-label { color: #f87171; }
+.vital-sp .vital-label { color: #60a5fa; }
+
+.vital-num {
+  font-family: 'Bangers', cursive;
+  font-size: 0.95rem;
+  letter-spacing: 0.05em;
+  color: #fff;
+}
+
+.vital-bar-track {
+  height: 7px;
+  background: #140e08;
+  border-radius: 4px;
+  border: 1px solid #332314;
+  overflow: hidden;
+}
+
+.vital-hp .vital-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #dc2626 0%, #ef4444 100%);
+  box-shadow: 0 0 8px rgba(239, 68, 68, 0.6);
+  transition: width 0.3s ease;
+}
+
+.vital-sp .vital-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #2563eb 0%, #3b82f6 100%);
+  box-shadow: 0 0 8px rgba(59, 130, 246, 0.6);
+  transition: width 0.3s ease;
+}
+
+/* Reparto de Atributos */
+.attributes-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 0.25rem;
+  border-bottom: 1px solid rgba(140, 115, 53, 0.3);
+}
+
+.points-pool-badge {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  background: rgba(255, 204, 0, 0.12);
+  border: 1px solid #ffcc00;
+  padding: 0.15rem 0.5rem;
+  border-radius: 4px;
+  box-shadow: 0 0 8px rgba(255, 204, 0, 0.2);
+}
+
+.points-label {
+  font-size: 0.72rem;
+  color: #c4ab7c;
+  text-transform: uppercase;
+}
+
+.points-num {
+  font-family: 'Bangers', cursive;
+  font-size: 1.15rem;
+  color: #ffcc00;
+  line-height: 1;
+}
+
+.attributes-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.attr-row {
+  display: grid;
+  grid-template-columns: 85px 1fr 75px;
+  align-items: center;
+  gap: 0.5rem;
+  background: rgba(14, 10, 7, 0.6);
+  border: 1px solid rgba(90, 69, 32, 0.4);
+  border-radius: 3px;
+  padding: 0.3rem 0.45rem;
+  transition: all 0.15s ease;
+}
+
+.attr-row:hover {
+  background: rgba(25, 18, 11, 0.85);
+  border-color: #8c7335;
+}
+
+.attr-label {
+  font-size: 0.85rem;
+  font-weight: bold;
+  color: #eeddbb;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.attr-track {
+  height: 6px;
+  background: #140e08;
+  border-radius: 3px;
+  border: 1px solid #2d1f11;
+  overflow: hidden;
+}
+
+.attr-fill {
+  height: 100%;
+  width: 20%;
+  background: linear-gradient(90deg, #d97706 0%, #ffcc00 100%);
+  box-shadow: 0 0 5px rgba(255, 204, 0, 0.5);
+  transition: width 0.25s ease;
+}
+
+.attr-btns {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.3rem;
+}
+
+.btn-attr-dec, .btn-attr-inc {
+  width: 22px;
+  height: 22px;
+  border-radius: 3px;
+  background: #2b1d10;
+  border: 1px solid #8c7335;
+  color: #ffcc00;
+  font-family: 'MedievalSharp', cursive;
+  font-size: 1rem;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  padding: 0;
+  line-height: 1;
+  transition: all 0.15s ease;
+}
+
+.btn-attr-dec:hover:not(:disabled), .btn-attr-inc:hover:not(:disabled) {
+  background: #ffcc00;
+  color: #000;
+  box-shadow: 0 0 6px rgba(255, 204, 0, 0.6);
+}
+
+.btn-attr-dec:disabled, .btn-attr-inc:disabled {
+  opacity: 0.25;
+  cursor: not-allowed;
+  border-color: #3d2d1d;
+  color: #666;
+}
+
+.attr-num {
+  font-family: 'Bangers', cursive;
+  font-size: 1.05rem;
+  color: #ffffff;
+  min-width: 18px;
+  text-align: center;
+}
+
+/* ===================================================
+   7. PANEL CENTRAL: ESCENARIO 3D DE RAZAS
+   =================================================== */
+.panel-stage-showcase {
+  height: 100%;
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
+}
+.panel-stage-showcase::before,
+.panel-stage-showcase::after {
+  display: none;
+}
+
+/* Ficha de Lore de Raza (Arriba) */
+.stage-lore-card {
+  width: 90%;
+  max-width: 520px;
+  background: rgba(14, 10, 7, 0.88);
+  border: 1.5px solid #8c7335;
+  border-radius: 6px;
+  padding: 0.6rem 1rem;
+  text-align: center;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.8);
+  z-index: 15;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.stage-lore-top {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.stage-lore-title {
+  font-family: 'Bangers', cursive;
+  font-size: 1.6rem;
+  letter-spacing: 0.06em;
+  color: #ffcc00;
+  text-shadow: 2px 2px 0 #000, 0 0 10px rgba(255, 204, 0, 0.4);
+}
+
+.btn-stage-arrow-mini {
+  background: #2b1f11;
+  border: 1px solid #8c7335;
+  color: #e6d3a8;
+  width: 26px;
+  height: 26px;
+  border-radius: 3px;
+  font-size: 1.1rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+.btn-stage-arrow-mini:hover {
+  background: #ffcc00;
+  color: #000;
+}
+
+.stage-lore-text {
+  font-size: 0.82rem;
+  color: #c4ab7c;
+  margin: 0;
+  line-height: 1.35;
+  max-height: 48px;
+  overflow-y: auto;
+}
+
+.stage-bonuses-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  justify-content: center;
+}
+
+.bonus-pill {
+  font-size: 0.7rem;
+  font-weight: bold;
+  padding: 0.1rem 0.45rem;
+  border-radius: 3px;
+}
+.bonus-positive {
+  background: rgba(16, 185, 129, 0.2);
+  border: 1px solid #10b981;
+  color: #34d399;
+}
+.bonus-negative {
+  background: rgba(239, 68, 68, 0.2);
+  border: 1px solid #ef4444;
+  color: #f87171;
+}
+
+/* Arena 3D */
+.stage-3d-arena {
+  position: relative;
+  flex: 1;
+  width: 100%;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  perspective: 900px;
+  overflow: visible;
+  margin-top: -10px;
+}
+
+/* Cono de Luz Zenital */
+.stage-spotlight {
+  position: absolute;
+  top: -20%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 360px;
+  height: 105%;
+  background: radial-gradient(ellipse at 50% 15%, rgba(255, 220, 120, 0.24) 0%, rgba(255, 180, 50, 0.06) 50%, transparent 80%);
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Pedestal Rúnico en Perspectiva (Elevado a la mitad del escenario) */
+.stage-ground-circle {
+  position: absolute;
+  bottom: clamp(75px, 12vh, 115px);
+  left: 50%;
+  width: 350px;
+  height: 350px;
+  border-radius: 50%;
+  border: 2.5px solid rgba(255, 204, 0, 0.5);
+  box-shadow: 0 0 30px rgba(255, 204, 0, 0.3), inset 0 0 25px rgba(255, 204, 0, 0.2);
+  background: radial-gradient(circle, rgba(140, 115, 53, 0.3) 0%, rgba(13, 10, 7, 0.7) 70%, transparent 100%);
+  pointer-events: none;
+  z-index: 2;
+  animation: runeRotate 10s linear infinite;
+  transform-origin: center center;
+}
+
+@keyframes runeRotate {
+  0% { transform: translateX(-50%) rotateX(68deg) rotate(0deg); }
+  100% { transform: translateX(-50%) rotateX(68deg) rotate(360deg); }
+}
+
+.stage-ground-circle::after {
+  content: '';
+  position: absolute;
+  top: 15%;
+  left: 15%;
+  width: 70%;
+  height: 70%;
+  border-radius: 50%;
+  border: 1.5px dashed rgba(255, 204, 0, 0.55);
+}
+
+/* Vitrina de Personajes de Cuerpo Completo */
+.characters-showcase {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  z-index: 6;
+}
+
+.character-standee {
+  position: absolute;
+  bottom: clamp(95px, 15vh, 135px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+  transition: all 0.45s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+.character-standee-img {
+  max-height: calc(100vh - 290px);
+  width: auto;
+  object-fit: contain;
+  filter: drop-shadow(0 15px 25px rgba(0, 0, 0, 0.95));
+  transition: all 0.45s ease;
+  pointer-events: auto;
+}
+
+.character-foot-shadow {
+  position: absolute;
+  bottom: 0;
+  width: 160px;
+  height: 30px;
+  border-radius: 50%;
+  background: radial-gradient(ellipse at center, rgba(0, 0, 0, 0.9) 0%, transparent 75%);
+  pointer-events: none;
+  z-index: -1;
+}
+
+.character-standee.active {
+  transform: translateX(0) scale(1.22);
+  opacity: 1;
+  z-index: 10;
+  filter: brightness(1.05);
+}
+.character-standee.active .character-standee-img {
+  filter: drop-shadow(0 0 16px rgba(255, 204, 0, 0.45)) drop-shadow(0 15px 25px rgba(0, 0, 0, 0.95));
+}
+
+.character-standee.pos-left {
+  transform: translateX(-190px) scale(0.8);
+  opacity: 0.45;
+  z-index: 4;
+  filter: brightness(0.6) blur(0.5px);
+}
+.character-standee.pos-left:hover {
+  opacity: 0.8;
+  filter: brightness(0.85);
+}
+
+.character-standee.pos-right {
+  transform: translateX(190px) scale(0.8);
+  opacity: 0.45;
+  z-index: 4;
+  filter: brightness(0.6) blur(0.5px);
+}
+.character-standee.pos-right:hover {
+  opacity: 0.8;
+  filter: brightness(0.85);
+}
+
+.character-standee.pos-hidden {
+  transform: scale(0.4);
+  opacity: 0;
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Flechas Gigantes Laterales */
+.stage-big-arrow {
+  position: absolute;
+  top: 45%;
+  transform: translateY(-50%);
+  background: rgba(14, 10, 7, 0.7);
+  border: 1.5px solid #8c7335;
+  border-radius: 50%;
+  width: 44px;
+  height: 44px;
+  color: #ffcc00;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 12;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.8);
+}
+.stage-big-arrow:hover {
+  background: #ffcc00;
+  color: #000;
+  transform: translateY(-50%) scale(1.15);
+  box-shadow: 0 0 16px rgba(255, 204, 0, 0.7);
+}
+.stage-big-arrow.arrow-left { left: 10px; }
+.stage-big-arrow.arrow-right { right: 10px; }
+.stage-big-arrow svg { width: 26px; height: 26px; }
+
+/* Selector Inferior de Rostros */
+.stage-thumbs-deck {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.85rem;
+  background: rgba(14, 10, 7, 0.88);
+  border: 1.5px solid #8c7335;
+  border-radius: 30px;
+  padding: 0.35rem 1rem;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.85);
+  z-index: 15;
+}
+
+.stage-head-pill {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.15rem;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.stage-head-pill img {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  border: 2px solid #5a4520;
+  object-fit: cover;
+  background: #140e08;
+  transition: all 0.2s ease;
+}
+
+.stage-head-pill .pill-label {
+  font-size: 0.7rem;
+  color: #a89472;
+}
+
+.stage-head-pill:hover img {
+  border-color: #ffcc00;
+  transform: scale(1.1);
+}
+
+.stage-head-pill.active img {
+  border-color: #ffcc00;
+  box-shadow: 0 0 14px rgba(255, 204, 0, 0.8), inset 0 0 6px rgba(255, 204, 0, 0.5);
+  transform: scale(1.15);
+}
+.stage-head-pill.active .pill-label {
+  color: #ffcc00;
+  font-weight: bold;
+}
+
+/* ===================================================
+   8. PANEL DERECHO: HABILIDADES (2 CUADRANTES SORTABLE JS)
+   =================================================== */
+.panel-skills-manager {
+  height: 100%;
+  display: grid;
+  grid-template-rows: auto 1fr;
+  gap: 0.75rem;
+  padding: 0.85rem;
+  box-sizing: border-box;
+}
+
+/* Estilo General de Cuadrante */
+.skills-quadrant {
+  background: rgba(6, 4, 3, 0.75);
+  border: 1px solid rgba(140, 115, 53, 0.35);
+  border-radius: 4px;
+  padding: 0.7rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.quadrant-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 0.3rem;
+  border-bottom: 1px solid rgba(140, 115, 53, 0.3);
+}
+
+.quadrant-title-group {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-family: 'MedievalSharp', cursive;
+  font-size: 0.95rem;
+  color: #ffeed1;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+/* Contador de Asignadas */
+.assigned-counter-badge {
+  font-family: 'Bangers', cursive;
+  font-size: 1.05rem;
+  letter-spacing: 0.05em;
+  color: #34d399;
+  background: rgba(16, 185, 129, 0.15);
+  border: 1px solid #10b981;
+  padding: 0.1rem 0.5rem;
+  border-radius: 3px;
+  box-shadow: 0 0 8px rgba(16, 185, 129, 0.25);
+  transition: all 0.2s ease;
+}
+
+.assigned-counter-badge.limit-reached {
+  color: #ffcc00;
+  background: rgba(255, 204, 0, 0.15);
+  border-color: #ffcc00;
+  box-shadow: 0 0 10px rgba(255, 204, 0, 0.4);
+}
+
+.available-count-tag {
+  font-size: 0.72rem;
+  color: #a89472;
+}
+
+.quadrant-help-text {
+  font-size: 0.75rem;
+  color: #c4ab7c;
+  font-style: italic;
+  line-height: 1.2;
+}
+
+/* CUADRANTE 1: ZONA DE ASIGNACIÓN (MÁXIMO 2) */
+.quadrant-assigned {
+  position: relative;
+  background: rgba(18, 12, 6, 0.85);
+  border: 1.5px dashed #8c7335;
+  border-radius: 5px;
+}
+
+.quadrant-assigned.drag-over {
+  border-color: #ffcc00;
+  background: rgba(45, 30, 15, 0.9);
+  box-shadow: 0 0 15px rgba(255, 204, 0, 0.3);
+}
+
+.skills-slots-container {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  min-height: 90px;
+  z-index: 2;
+}
+
+/* Placeholders de ranura libre */
+.assigned-empty-hint {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  position: absolute;
+  top: 62px;
+  left: 0.7rem;
+  right: 0.7rem;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.rune-slot-placeholder {
+  height: 48px;
+  border: 1px dashed rgba(140, 115, 53, 0.45);
+  background: rgba(10, 7, 4, 0.5);
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  padding: 0 0.85rem;
+  gap: 0.75rem;
+  color: #6e583c;
+}
+
+.slot-rune {
+  font-family: 'MedievalSharp', cursive;
+  font-size: 0.95rem;
+  font-weight: bold;
+  color: #8c7335;
+  border: 1px solid #5a4520;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.slot-text {
+  font-size: 0.78rem;
+  font-style: italic;
+}
+
+/* Ocultar placeholders según cantidad */
+.quadrant-assigned[data-count="1"] .rune-slot-placeholder:first-child {
+  opacity: 0;
+  visibility: hidden;
+}
+.quadrant-assigned[data-count="2"] .assigned-empty-hint {
+  display: none;
+}
+
+/* CUADRANTE 2: LISTA DE HABILIDADES DISPONIBLES */
+.quadrant-available {
+  flex: 1;
+  min-height: 0;
+}
+
+.skills-available-list {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  padding-right: 0.2rem;
+}
+
+/* TARJETA DRAGGABLE DE HABILIDAD */
+.skill-card {
+  background: linear-gradient(180deg, #24190e 0%, #140d07 100%);
+  border: 1px solid #5a4520;
+  border-radius: 4px;
+  padding: 0.45rem 0.6rem;
+  display: grid;
+  grid-template-columns: 20px 1fr 26px;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: grab;
+  transition: all 0.2s ease;
+  position: relative;
+  user-select: none;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.7);
+}
+
+.skill-card:hover {
+  border-color: #ffcc00;
+  background: linear-gradient(180deg, #382716 0%, #1f140a 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(255, 204, 0, 0.25);
+}
+
+.skill-card:active {
+  cursor: grabbing;
+}
+
+/* Ícono de Arrastre */
+.skill-drag-grip {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #8c7335;
+  cursor: grab;
+}
+
+.skill-card:hover .skill-drag-grip {
+  color: #ffcc00;
+}
+
+.grip-icon {
+  width: 16px;
+  height: 16px;
+}
+
+/* Cuerpo de la Tarjeta */
+.skill-card-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  min-width: 0;
+}
+
+.skill-card-top-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.4rem;
+}
+
+.skill-card-name {
+  font-family: 'MedievalSharp', cursive;
+  font-size: 0.88rem;
+  font-weight: bold;
+  color: #fffae8;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.skill-cost-pill {
+  font-size: 0.68rem;
+  font-weight: bold;
+  color: #60a5fa;
+  background: rgba(37, 99, 235, 0.2);
+  border: 1px solid rgba(59, 130, 246, 0.4);
+  padding: 0.05rem 0.35rem;
+  border-radius: 3px;
+  flex-shrink: 0;
+}
+
+.skill-card-desc {
+  font-size: 0.72rem;
+  color: #a89472;
+  margin: 0;
+  line-height: 1.25;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Botón Rápido de Asignar / Desasignar */
+.btn-card-toggle {
+  width: 24px;
+  height: 24px;
+  border-radius: 3px;
+  background: #2b1d10;
+  border: 1px solid #8c7335;
+  color: #ffcc00;
+  font-family: 'MedievalSharp', cursive;
+  font-size: 1.1rem;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  padding: 0;
+  line-height: 1;
+  transition: all 0.15s ease;
+}
+
+.btn-card-toggle:hover {
+  background: #ffcc00;
+  color: #000;
+  box-shadow: 0 0 6px rgba(255, 204, 0, 0.6);
+}
+
+/* Estado Asignado de la Tarjeta */
+#assignedSkills .skill-card {
+  border-color: #ffcc00;
+  background: linear-gradient(180deg, #3d2a13 0%, #201408 100%);
+  box-shadow: 0 0 10px rgba(255, 204, 0, 0.3);
+}
+
+#assignedSkills .skill-card .btn-card-toggle {
+  border-color: #ef4444;
+  color: #ef4444;
+}
+
+#assignedSkills .skill-card .btn-card-toggle:hover {
+  background: #ef4444;
+  color: #fff;
+  box-shadow: 0 0 8px rgba(239, 68, 68, 0.6);
+}
+
+/* Estados de SortableJS */
+.sortable-ghost {
+  opacity: 0.3;
+  border: 1.5px dashed #ffcc00 !important;
+  background: rgba(255, 204, 0, 0.1) !important;
+}
+
+.sortable-chosen {
+  background: #4a341a !important;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.9) !important;
+}
+
+.sortable-drag {
+  opacity: 0.95;
+  transform: scale(1.03);
+  box-shadow: 0 10px 25px rgba(255, 204, 0, 0.4) !important;
+}
+
+/* Alerta Toast de Límite de 2 Habilidades */
+.skill-limit-toast {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  background: linear-gradient(180deg, #991b1b 0%, #7f1d1d 100%);
+  border: 1.5px solid #ffcc00;
+  border-radius: 6px;
+  color: #fff;
+  padding: 0.75rem 1.25rem;
+  font-family: 'MedievalSharp', cursive;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.9), 0 0 15px rgba(239, 68, 68, 0.5);
+  transform: translateY(120px);
+  opacity: 0;
+  transition: all 0.35s cubic-bezier(0.25, 1, 0.5, 1);
+  z-index: 100;
+  pointer-events: none;
+}
+
+.skill-limit-toast.show {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+.skill-limit-toast svg {
+  width: 22px;
+  height: 22px;
+  color: #ffcc00;
+  flex-shrink: 0;
+}
+
+/* ===================================================
+   9. SCROLLBARS TEMÁTICAS INTERNAS
+   =================================================== */
+.panel-inner-scroll::-webkit-scrollbar,
+.skills-available-list::-webkit-scrollbar,
+.stage-lore-text::-webkit-scrollbar {
+  width: 5px;
+}
+
+.panel-inner-scroll::-webkit-scrollbar-track,
+.skills-available-list::-webkit-scrollbar-track,
+.stage-lore-text::-webkit-scrollbar-track {
+  background: rgba(8, 6, 4, 0.8);
+  border-radius: 3px;
+}
+
+.panel-inner-scroll::-webkit-scrollbar-thumb,
+.skills-available-list::-webkit-scrollbar-thumb,
+.stage-lore-text::-webkit-scrollbar-thumb {
+  background: #5a4520;
+  border-radius: 3px;
+}
+
+.panel-inner-scroll::-webkit-scrollbar-thumb:hover,
+.skills-available-list::-webkit-scrollbar-thumb:hover,
+.stage-lore-text::-webkit-scrollbar-thumb:hover {
+  background: #8c7335;
+}
+
+/* ===================================================
+   10. RESPONSIVE DESIGN PARA PANTALLAS PEQUEÑAS / TABLETS
+   =================================================== */
+@media (max-width: 1200px) {
+  .creation-studio-grid {
+    grid-template-columns: 310px 1fr 320px;
+    gap: 0.75rem;
+    padding: 0.5rem 0.75rem;
+  }
+  .character-standee-img {
+    max-height: calc(100vh - 300px);
+  }
+}
+
+@media (max-width: 980px) {
+  html, body {
+    overflow-y: auto !important;
+    height: auto;
+  }
+  .creation-scene {
+    height: auto;
+    min-height: 100vh;
+    overflow-y: auto;
+  }
+  .creation-studio-form {
+    height: auto;
+  }
+  .creation-studio-grid {
+    grid-template-columns: 1fr;
+    height: auto;
+    overflow: visible;
+  }
+  .panel-stage-showcase {
+    min-height: 480px;
+    order: -1;
+  }
+  .character-standee-img {
+    max-height: 420px;
+  }
+}
