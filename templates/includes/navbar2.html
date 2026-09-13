@@ -3,19 +3,65 @@
 
 <nav class="warcraft-navbar">
     <div class="nav-brand"><a href="{% url 'index' %}">EL REINO</a></div>
+    
     <ul class="nav-links">
-        <li><a href="{% url 'index' %}#lore">Lore</a></li>
-        <li><a href="{% url 'index' %}#reglas">Reglas</a></li>
-        <li><a href="{% url 'index' %}#info">Información</a></li>
+        {% if request.user.is_gm %}
+            <!-- Menú de Gestión del Juego para el Game Master -->
+            <li>
+                <a href="{% url 'gm:listar-personajes' %}" class="{% if request.resolver_match.url_name == 'listar-personajes' %}active-link{% endif %}">
+                    <svg class="rpg-icon" viewBox="0 0 24 24"><path d="M12 2a9 9 0 0 0-9 9c0 4.1 2.8 7.6 6.6 8.7V22h4.8v-2.3c3.8-1.1 6.6-4.6 6.6-8.7a9 9 0 0 0-9-9zm-6 9c0-1.8.6-3.4 1.7-4.8l2.6 2.6a1 1 0 0 0 1.4 0l2.3-2.3 2.3 2.3a1 1 0 0 0 1.4 0l2.6-2.6A7 7 0 0 1 20 11H4zm3 3h10v2H7v-2z"/></svg>
+                    <span>Personajes</span>
+                </a>
+            </li>
+            <li>
+                <a href="#">
+                    <svg class="rpg-icon" viewBox="0 0 24 24"><path d="M12 2L4 5v6.1c0 5.6 3.4 10.8 8 12.9 4.6-2.1 8-7.3 8-12.9V5l-8-3zm0 2.2l6 2.3v4.6c0 4.5-2.6 8.7-6 10.6-3.4-1.9-6-6.1-6-10.6V6.5l6-2.3zm0 3.8a4 4 0 0 0-4 4c0 2 1.5 3.7 3.4 4l.6-2.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 1.5 1.5h2.5a4 4 0 0 0-4-4z"/></svg>
+                    <span>Razas</span>
+                </a>
+            </li>
+            <li>
+                <a href="#">
+                    <svg class="rpg-icon" viewBox="0 0 24 24"><path d="M11 2L9 8H3l5 4.5-2 6.5 6-4 6 4-2-6.5L21 8h-6l-2-6zm1 4.3l1.1 3.4h3.6l-2.9 2.1 1.1 3.5L12 13.2l-2.9 2.1 1.1-3.5-2.9-2.1h3.6L12 6.3z"/></svg>
+                    <span>Habilidades</span>
+                </a>
+            </li>
+            <li>
+                <a href="#">
+                    <svg class="rpg-icon" viewBox="0 0 24 24"><path d="M20 7h-4V4c0-1.1-.9-2-2-2h-4c-1.1 0-2 .9-2 2v3H4c-1.1 0-2 .9-2 2v11c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V9c0-1.1-.9-2-2-2zm-10-3h4v3h-4V4zm10 16H4V9h16v11zm-9-8h2v2h-2v-2zm-3 0h2v2H8v-2zm6 0h2v2h-2v-2z"/></svg>
+                    <span>Objetos</span>
+                </a>
+            </li>
+        {% else %}
+            <!-- Menú estándar para Jugador / Visitante -->
+            <li>
+                <a href="{% url 'index' %}#lore">
+                    <svg class="rpg-icon" viewBox="0 0 24 24"><path d="M19 3H7a4 4 0 0 0-4 4v10a4 4 0 0 0 4 4h12a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2zm-12 2h12v12H7a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2zm12 14H7a4 4 0 0 0-2 .6V17a4 4 0 0 0 2 1h12v1zM9 8h8v1.5H9V8zm0 3h8v1.5H9V11zm0 3h5v1.5H9V14z"/></svg>
+                    <span>Lore</span>
+                </a>
+            </li>
+            <li>
+                <a href="{% url 'index' %}#reglas">
+                    <svg class="rpg-icon" viewBox="0 0 24 24"><path d="M19.7 3.3a1 1 0 0 0-1.4 0l-4.6 4.6 1.4 1.4 4.6-4.6a1 1 0 0 0 0-1.4zM4.3 3.3a1 1 0 0 0 0 1.4l4.6 4.6 1.4-1.4-4.6-4.6a1 1 0 0 0-1.4 0zm7.7 7.7l-7.7 7.7-1.3-1.3-.7.7 2.7 2.7.7-.7-1.3-1.3 7.7-7.7 7.7 7.7-1.3 1.3.7.7 2.7-2.7-.7-.7-1.3 1.3-7.7-7.7z"/></svg>
+                    <span>Reglas</span>
+                </a>
+            </li>
+            <li>
+                <a href="{% url 'index' %}#info">
+                    <svg class="rpg-icon" viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm1 15h-2v-6h2zm0-8h-2V7h2z"/></svg>
+                    <span>Información</span>
+                </a>
+            </li>
+        {% endif %}
     </ul>
 
     <div class="nav-auth user-menu">
         <span class="user-greeting">
-            {{request.user}}
             {% if request.user.is_gm %}
-            Hola GM {{request.user.username}}
+                <svg class="rpg-icon" style="color: #ffcc00;" viewBox="0 0 24 24"><path d="M2 19h20v2H2v-2zm1-8l4.5 4 4.5-8 4.5 8 4.5-4L22 17H2l1-6zm4.5 1.5L5.4 14h13.2l-2.1-1.5-4.5 4-4.5-4z"/></svg>
+                <span>GM <strong>{{ request.user.username }}</strong></span>
             {% else %}
-            Hola Jugador {{request.user.username}}
+                <svg class="rpg-icon" style="color: #8c7335;" viewBox="0 0 24 24"><path d="M12 2L4 5v6.1c0 5.6 3.4 10.8 8 12.9 4.6-2.1 8-7.3 8-12.9V5l-8-3zm0 2.2l6 2.3v4.6c0 4.5-2.6 8.7-6 10.6-3.4-1.9-6-6.1-6-10.6V6.5l6-2.3z"/></svg>
+                <span>Jugador <strong>{{ request.user.username }}</strong></span>
             {% endif %}
         </span>
 
@@ -25,12 +71,34 @@
             <span class="dropdown-arrow">▼</span>
 
             <ul class="dropdown-content">
-                <li><a href="#">Ver Perfil</a></li>
-                <li><a href="{% url 'usuarios:modificar-password' %}">Cambiar Contraseña</a></li>
+                {% if request.user.is_gm %}
+                    <li>
+                        <a href="{% url 'gm:listar-personajes' %}">
+                            <svg class="rpg-icon" viewBox="0 0 24 24"><path d="M12 2a9 9 0 0 0-9 9c0 4.1 2.8 7.6 6.6 8.7V22h4.8v-2.3c3.8-1.1 6.6-4.6 6.6-8.7a9 9 0 0 0-9-9zm-6 9c0-1.8.6-3.4 1.7-4.8l2.6 2.6a1 1 0 0 0 1.4 0l2.3-2.3 2.3 2.3a1 1 0 0 0 1.4 0l2.6-2.6A7 7 0 0 1 20 11H4zm3 3h10v2H7v-2z"/></svg>
+                            <span>Gestión Personajes</span>
+                        </a>
+                    </li>
+                {% else %}
+                    <li>
+                        <a href="#">
+                            <svg class="rpg-icon" viewBox="0 0 24 24"><path d="M12 2L4 5v6.1c0 5.6 3.4 10.8 8 12.9 4.6-2.1 8-7.3 8-12.9V5l-8-3zm0 2.2l6 2.3v4.6c0 4.5-2.6 8.7-6 10.6-3.4-1.9-6-6.1-6-10.6V6.5l6-2.3z"/></svg>
+                            <span>Mis Personajes</span>
+                        </a>
+                    </li>
+                {% endif %}
+                <li>
+                    <a href="{% url 'usuarios:modificar-password' %}">
+                        <svg class="rpg-icon" viewBox="0 0 24 24"><path d="M7 14A5 5 0 0 1 3 9a5 5 0 0 1 8.5-3.5L21 15v4h-4v-2h-2v-2h-2.2l-1.3-1.3A5 5 0 0 1 7 14zm0-8a3 3 0 1 0 0 6 3 3 0 0 0 0-6zm1 2a1 1 0 1 1-2 0 1 1 0 0 1 2 0z"/></svg>
+                        <span>Cambiar Contraseña</span>
+                    </a>
+                </li>
                 <li>
                     <form action="{% url 'usuarios:logout' %}" method="post" style="margin: 0; padding: 0;">
                         {% csrf_token %}
-                        <button type="submit" class="dropdown-btn">Cerrar Sesión</button>
+                        <button type="submit" class="dropdown-btn">
+                            <svg class="rpg-icon" viewBox="0 0 24 24"><path d="M16 13v-2H7V8l-5 4 5 4v-3h9zm4-11H9c-1.1 0-2 .9-2 2v4h2V4h11v16H9v-4H7v4c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/></svg>
+                            <span>Cerrar Sesión</span>
+                        </button>
                     </form>
                 </li>
             </ul>

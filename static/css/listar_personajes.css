@@ -1,0 +1,1140 @@
+/* =============================================
+   LISTAR PERSONAJES (GM) — WARCRAFT THEME
+   static/css/listar_personajes.css
+   ============================================= */
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  width: 100%;
+  min-height: 100%;
+  overflow-x: hidden;
+  overflow-y: auto;
+  font-family: 'MedievalSharp', cursive;
+  background: url('../img/war_bg.jpg') no-repeat center center fixed;
+  background-size: cover;
+  color: #e6d3a8;
+}
+
+/* (El scrollbar temático global ahora se hereda de base.css) */
+
+/* Escena principal */
+.scene {
+  position: relative;
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: rgba(0, 0, 0, 0.55);
+}
+
+.bg-canvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  pointer-events: none;
+}
+
+/* Contenedor Principal */
+.content-wrapper {
+  position: relative;
+  z-index: 10;
+  flex: 1;
+  width: 100%;
+  padding: 2rem 1.5rem 5rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2rem;
+}
+
+/* Cabecera de la vista GM */
+.gm-header {
+  text-align: center;
+  max-width: 1100px;
+  width: 100%;
+}
+
+.main-title {
+  font-family: 'Bangers', cursive;
+  font-size: clamp(2.2rem, 5vw, 3.8rem);
+  letter-spacing: 0.08em;
+  color: #ffcc00;
+  text-shadow: 3px 3px 0 #000, 0 0 20px rgba(255, 204, 0, 0.5);
+  -webkit-text-stroke: 1.5px #4a2500;
+  margin-bottom: 0.3rem;
+}
+
+.gm-subtitle {
+  font-size: 1.15rem;
+  color: #d1b97f;
+  text-shadow: 1px 1px 3px #000;
+}
+
+/* =============================================
+   PANEL DE FILTROS (Formulario Superior GET)
+   ============================================= */
+.filter-card {
+  width: 100%;
+  max-width: 1200px;
+  background: rgba(18, 14, 10, 0.9);
+  backdrop-filter: blur(8px);
+  border: 2px solid #8c7335;
+  border-radius: 4px;
+  padding: 1.75rem 2rem;
+  box-shadow: 0 0 25px rgba(0, 0, 0, 0.9), inset 0 0 20px rgba(0, 0, 0, 0.7);
+  position: relative;
+}
+
+.filter-card::before, .filter-card::after {
+  content: '';
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  background: #ffcc00;
+  border: 1px solid #111;
+}
+.filter-card::before { top: -2px; left: -2px; }
+.filter-card::after { bottom: -2px; right: -2px; }
+
+.filter-heading {
+  font-family: 'Bangers', cursive;
+  font-size: 1.8rem;
+  color: #ffcc00;
+  letter-spacing: 0.06em;
+  margin-bottom: 1.2rem;
+  text-shadow: 2px 2px 4px #000;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  border-bottom: 1px solid rgba(140, 115, 53, 0.4);
+  padding-bottom: 0.4rem;
+}
+
+.filter-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.4rem;
+}
+
+/* Fila de búsqueda por texto */
+.search-row {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.search-input-group {
+  flex: 1;
+  min-width: 260px;
+  position: relative;
+}
+
+.search-input {
+  width: 100%;
+  padding: 0.85rem 1rem 0.85rem 2.8rem;
+  background: rgba(8, 6, 4, 0.85);
+  border: 2px solid #5a4520;
+  border-radius: 4px;
+  font-family: 'MedievalSharp', cursive;
+  font-size: 1.05rem;
+  color: #ffeed1;
+  box-shadow: inset 0 2px 6px rgba(0,0,0,0.8);
+  transition: all 0.25s ease;
+}
+
+.search-input::placeholder {
+  color: #8c7959;
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: #ffcc00;
+  box-shadow: 0 0 12px rgba(255, 204, 0, 0.4), inset 0 2px 6px rgba(0,0,0,0.8);
+}
+
+.search-icon {
+  position: absolute;
+  left: 0.9rem;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #c9a44d;
+  pointer-events: none;
+}
+
+/* =============================================
+   ICONOS RPG (SVG)
+   ============================================= */
+.rpg-icon {
+  width: 18px;
+  height: 18px;
+  display: inline-block;
+  vertical-align: -0.18em;
+  fill: currentColor;
+  flex-shrink: 0;
+  transition: transform 0.2s ease, filter 0.2s ease;
+}
+
+.rpg-icon-lg {
+  width: 22px;
+  height: 22px;
+  vertical-align: -0.22em;
+}
+
+.rpg-icon-gold {
+  color: #ffcc00;
+}
+
+.rpg-icon-empty {
+  width: 58px;
+  height: 58px;
+  fill: #8c7335;
+  filter: drop-shadow(0 0 14px rgba(255, 204, 0, 0.4));
+  margin-bottom: 0.5rem;
+}
+
+/* Sección de Checkboxes de Razas */
+.races-section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.races-title {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-size: 1rem;
+  color: #d1b97f;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: bold;
+}
+  color: #d1b97f;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: bold;
+}
+
+.races-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+/* Tarjeta / Chip de Raza */
+.race-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.5rem 1rem;
+  background: rgba(28, 22, 16, 0.85);
+  border: 1.5px solid #5c4722;
+  border-radius: 4px;
+  cursor: pointer;
+  user-select: none;
+  transition: all 0.2s ease;
+}
+
+.race-chip:hover {
+  background: rgba(45, 34, 22, 0.95);
+  border-color: #c9a44d;
+  transform: translateY(-1px);
+}
+
+/* Checkbox personalizado */
+.race-chip input[type="checkbox"] {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 18px;
+  height: 18px;
+  border: 1.5px solid #8c7335;
+  border-radius: 2px;
+  background: #0d0a07;
+  cursor: pointer;
+  display: grid;
+  place-content: center;
+  transition: all 0.2s ease;
+}
+
+.race-chip input[type="checkbox"]::before {
+  content: "";
+  width: 10px;
+  height: 10px;
+  transform: scale(0);
+  background: #ffcc00;
+  box-shadow: 0 0 6px #ffcc00;
+  transition: 0.15s transform ease-in-out;
+}
+
+.race-chip input[type="checkbox"]:checked {
+  border-color: #ffcc00;
+  background: #2a1f0d;
+}
+
+.race-chip input[type="checkbox"]:checked::before {
+  transform: scale(1);
+}
+
+.race-chip.active,
+.race-chip:has(input[type="checkbox"]:checked) {
+  background: rgba(60, 42, 18, 0.95);
+  border-color: #ffcc00;
+  box-shadow: 0 0 10px rgba(255, 204, 0, 0.3);
+}
+
+.race-chip-icon {
+  width: 22px;
+  height: 22px;
+  border-radius: 2px;
+  object-fit: cover;
+  border: 1px solid #8c7335;
+}
+
+.race-chip-name {
+  font-size: 0.95rem;
+  color: #ffeed1;
+  font-weight: 500;
+}
+
+/* Botones de acción del filtro */
+.filter-actions {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  justify-content: flex-start;
+  flex-wrap: wrap;
+  margin-top: 0.4rem;
+}
+
+.btn-filter-submit {
+  padding: 0.75rem 1.8rem;
+  font-family: 'MedievalSharp', cursive;
+  font-size: 1.05rem;
+  font-weight: bold;
+  background: linear-gradient(to bottom, #946f23 0%, #523a0e 100%);
+  color: #fffae8;
+  border: 2px solid #ffcc00;
+  border-radius: 4px;
+  cursor: pointer;
+  text-shadow: 1px 1px 2px #000;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.6), inset 0 1px 2px rgba(255,255,255,0.3);
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.btn-filter-submit:hover {
+  transform: translateY(-2px);
+  background: linear-gradient(to bottom, #b3882b 0%, #694a11 100%);
+  box-shadow: 0 6px 15px rgba(255, 204, 0, 0.3);
+}
+
+.btn-filter-reset {
+  padding: 0.75rem 1.4rem;
+  font-family: 'MedievalSharp', cursive;
+  font-size: 1rem;
+  background: rgba(25, 20, 15, 0.9);
+  color: #ba9e6e;
+  border: 1.5px solid #5a4520;
+  border-radius: 4px;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.btn-filter-reset:hover {
+  background: rgba(45, 35, 25, 0.95);
+  color: #ffeed1;
+  border-color: #8c7335;
+}
+
+/* =============================================
+   BARRA DE ESTADÍSTICAS TÁCTICAS (GM DASHBOARD)
+   ============================================= */
+.stats-overview-grid {
+  width: 100%;
+  max-width: 1200px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.25rem;
+}
+
+.stat-card {
+  position: relative;
+  background: rgba(18, 14, 10, 0.9);
+  backdrop-filter: blur(8px);
+  border: 2px solid #5c4520;
+  border-radius: 4px;
+  padding: 1.1rem 1.4rem;
+  display: flex;
+  align-items: center;
+  gap: 1.2rem;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.7), inset 0 0 12px rgba(0, 0, 0, 0.8);
+  transition: all 0.25s ease;
+  overflow: hidden;
+}
+
+.stat-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 4px;
+  height: 100%;
+  background: #8c7335;
+  transition: width 0.25s ease;
+}
+
+.stat-card:hover {
+  transform: translateY(-2px);
+  border-color: #ffcc00;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.9), inset 0 0 15px rgba(255, 204, 0, 0.08);
+}
+
+.stat-card:hover::before {
+  width: 6px;
+}
+
+.stat-icon-wrap {
+  width: 48px;
+  height: 48px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  border: 1.5px solid;
+  transition: all 0.25s ease;
+}
+
+.stat-icon-wrap .rpg-icon {
+  width: 24px;
+  height: 24px;
+}
+
+.stat-card:hover .stat-icon-wrap {
+  transform: scale(1.08);
+}
+
+.stat-content {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.stat-label {
+  font-family: 'MedievalSharp', cursive;
+  font-size: 0.95rem;
+  color: #c4ab7c;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.stat-value {
+  font-family: 'Bangers', cursive;
+  font-size: 2.2rem;
+  line-height: 1;
+  letter-spacing: 0.05em;
+  text-shadow: 2px 2px 4px #000;
+}
+
+/* VIVOS - Verde Esmeralda */
+.stat-card.stat-vivo {
+  border-left-color: #10b981;
+}
+.stat-card.stat-vivo::before {
+  background: #10b981;
+}
+.stat-card.stat-vivo .stat-icon-wrap {
+  background: rgba(16, 185, 129, 0.15);
+  border-color: #10b981;
+  color: #34d399;
+  box-shadow: 0 0 10px rgba(16, 185, 129, 0.3);
+}
+.stat-card.stat-vivo .stat-value {
+  color: #34d399;
+  text-shadow: 0 0 10px rgba(16, 185, 129, 0.5), 2px 2px 3px #000;
+}
+
+/* MUERTOS - Rojo Carmesí */
+.stat-card.stat-muerto {
+  border-left-color: #ef4444;
+}
+.stat-card.stat-muerto::before {
+  background: #ef4444;
+}
+.stat-card.stat-muerto .stat-icon-wrap {
+  background: rgba(239, 68, 68, 0.15);
+  border-color: #ef4444;
+  color: #f87171;
+  box-shadow: 0 0 10px rgba(239, 68, 68, 0.3);
+}
+.stat-card.stat-muerto .stat-value {
+  color: #f87171;
+  text-shadow: 0 0 10px rgba(239, 68, 68, 0.5), 2px 2px 3px #000;
+}
+
+/* CONGELADOS - Azul Escarcha */
+.stat-card.stat-congelado {
+  border-left-color: #38bdf8;
+}
+.stat-card.stat-congelado::before {
+  background: #38bdf8;
+}
+.stat-card.stat-congelado .stat-icon-wrap {
+  background: rgba(56, 189, 248, 0.15);
+  border-color: #38bdf8;
+  color: #7dd3fc;
+  box-shadow: 0 0 10px rgba(56, 189, 248, 0.3);
+}
+.stat-card.stat-congelado .stat-value {
+  color: #7dd3fc;
+  text-shadow: 0 0 10px rgba(56, 189, 248, 0.5), 2px 2px 3px #000;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .stats-overview-grid {
+    grid-template-columns: 1fr;
+    gap: 0.85rem;
+  }
+  .stat-card {
+    padding: 0.9rem 1.1rem;
+  }
+}
+
+/* =============================================
+   PANEL DE LA TABLA DE PERSONAJES
+   ============================================= */
+.table-card {
+  width: 100%;
+  max-width: 1200px;
+  background: rgba(16, 12, 9, 0.92);
+  backdrop-filter: blur(8px);
+  border: 2px solid #8c7335;
+  border-radius: 4px;
+  box-shadow: 0 0 30px rgba(0, 0, 0, 0.9), inset 0 0 20px rgba(0, 0, 0, 0.7);
+  position: relative;
+  overflow: hidden;
+}
+
+.table-card::before, .table-card::after {
+  content: '';
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  background: #ffcc00;
+  border: 1px solid #111;
+  z-index: 5;
+}
+.table-card::before { top: -2px; left: -2px; }
+.table-card::after { bottom: -2px; right: -2px; }
+
+.table-header-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.25rem 2rem;
+  border-bottom: 2px solid #8c7335;
+  background: rgba(30, 22, 14, 0.8);
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.table-header-left {
+  display: flex;
+  align-items: center;
+  gap: 1.2rem;
+  flex-wrap: wrap;
+}
+
+.table-header-actions {
+  display: flex;
+  align-items: center;
+}
+
+.btn-create-hero {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.6rem 1.25rem;
+  font-family: 'MedievalSharp', cursive;
+  font-size: 1rem;
+  font-weight: bold;
+  color: #fffae8;
+  background: linear-gradient(180deg, #8c1a1a 0%, #4a0505 100%);
+  border: 2px solid #ffcc00;
+  border-radius: 4px;
+  text-decoration: none;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.7), inset 0 1px 2px rgba(255, 255, 255, 0.25);
+  text-shadow: 1px 1px 2px #000;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.btn-create-hero:hover {
+  background: linear-gradient(180deg, #b02424 0%, #5e0808 100%);
+  box-shadow: 0 0 14px rgba(255, 68, 68, 0.5), 0 4px 10px rgba(0, 0, 0, 0.8);
+  transform: translateY(-2px);
+  color: #ffffff;
+}
+
+.btn-create-hero:active {
+  transform: translateY(0);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.9);
+}
+
+.table-title {
+  font-family: 'Bangers', cursive;
+  font-size: 1.6rem;
+  color: #ffeed1;
+  letter-spacing: 0.05em;
+  text-shadow: 2px 2px 4px #000;
+}
+
+.badge-counter {
+  background: #38240f;
+  border: 1px solid #8c7335;
+  color: #ffcc00;
+  padding: 0.35rem 0.8rem;
+  border-radius: 3px;
+  font-size: 0.95rem;
+  font-weight: bold;
+}
+
+/* Scroll horizontal si es necesario */
+.table-responsive {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.table-responsive::-webkit-scrollbar {
+  height: 8px;
+}
+.table-responsive::-webkit-scrollbar-track {
+  background: #110d0a;
+}
+.table-responsive::-webkit-scrollbar-thumb {
+  background: #5a4520;
+  border-radius: 4px;
+}
+.table-responsive::-webkit-scrollbar-thumb:hover {
+  background: #8c7335;
+}
+
+/* Tabla épica */
+.warcraft-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-size: 1.05rem;
+}
+
+.warcraft-table thead tr {
+  background: linear-gradient(to bottom, #2b1f13 0%, #1a1209 100%);
+  border-bottom: 2px solid #8c7335;
+}
+
+.warcraft-table th {
+  padding: 1.1rem 1.4rem;
+  font-family: 'Bangers', cursive;
+  font-size: 1.25rem;
+  letter-spacing: 0.07em;
+  color: #ffcc00;
+  text-shadow: 1px 1px 3px #000;
+  white-space: nowrap;
+}
+
+/* Encabezados Ordenables */
+th[data-sort] {
+  cursor: pointer;
+  user-select: none;
+  transition: all 0.2s ease;
+}
+
+th[data-sort]:hover {
+  background: rgba(255, 204, 0, 0.08);
+  color: #fff2b2;
+}
+
+.th-content {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.sort-indicator {
+  display: inline-flex;
+  align-items: center;
+  width: 14px;
+  height: 14px;
+}
+
+.sort-indicator svg {
+  width: 14px;
+  height: 14px;
+  fill: currentColor;
+  opacity: 0.4;
+  transition: all 0.2s ease;
+}
+
+.sort-icon-asc,
+.sort-icon-desc {
+  display: none;
+}
+.sort-icon-neutral {
+  display: block;
+}
+
+th[data-sort]:hover .sort-icon-neutral {
+  opacity: 0.9;
+  color: #ffcc00;
+}
+
+/* Estado Ascendente Activo */
+th.sorted-asc {
+  color: #fffae8;
+  text-shadow: 0 0 8px rgba(255, 204, 0, 0.7);
+  background: rgba(255, 204, 0, 0.06);
+}
+th.sorted-asc .sort-icon-neutral { display: none; }
+th.sorted-asc .sort-icon-asc {
+  display: block;
+  fill: #ffcc00;
+  opacity: 1;
+  filter: drop-shadow(0 0 4px #ffcc00);
+}
+
+/* Estado Descendente Activo */
+th.sorted-desc {
+  color: #fffae8;
+  text-shadow: 0 0 8px rgba(255, 204, 0, 0.7);
+  background: rgba(255, 204, 0, 0.06);
+}
+th.sorted-desc .sort-icon-neutral { display: none; }
+th.sorted-desc .sort-icon-desc {
+  display: block;
+  fill: #ffcc00;
+  opacity: 1;
+  filter: drop-shadow(0 0 4px #ffcc00);
+}
+
+.warcraft-table tbody tr {
+  border-bottom: 1px solid rgba(140, 115, 53, 0.25);
+  transition: background 0.2s ease;
+}
+
+.warcraft-table tbody tr:hover {
+  background: rgba(255, 204, 0, 0.06);
+}
+
+.warcraft-table td {
+  padding: 0.55rem 1.25rem;
+  vertical-align: middle;
+}
+
+/* Celdas personalizadas */
+.char-cell {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+}
+
+.char-portrait {
+  width: 44px;
+  height: 44px;
+  border-radius: 4px;
+  border: 2px solid #8c7335;
+  object-fit: cover;
+  background: #0d0a07;
+  box-shadow: 0 0 8px rgba(0,0,0,0.8);
+}
+
+.char-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.char-name {
+  font-weight: bold;
+  color: #fffae8;
+  font-size: 1.1rem;
+  text-shadow: 1px 1px 2px #000;
+}
+
+/* Celda de Nombre del Héroe (Limpia y destacada) */
+.hero-name-cell {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.hero-name {
+  font-family: 'MedievalSharp', cursive, serif;
+  font-size: 1.18rem;
+  font-weight: bold;
+  color: #fffae8;
+  letter-spacing: 0.04em;
+  text-shadow: 1px 1px 2px #000;
+  transition: color 0.2s ease, text-shadow 0.2s ease, transform 0.2s ease;
+  display: inline-block;
+}
+
+.warcraft-table tbody tr:hover .hero-name {
+  color: #ffcc00;
+  text-shadow: 0 0 12px rgba(255, 204, 0, 0.5), 1px 1px 3px #000;
+  transform: translateX(4px);
+}
+
+/* Celda de Raza: Medallón de Rostro (Grande y Detallado) */
+.race-cell {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.85rem;
+}
+
+.race-medallion {
+  width: 62px;
+  height: 62px;
+  border-radius: 50%;
+  border: 2.5px solid #8c7335;
+  background: radial-gradient(circle at 50% 35%, rgba(212, 160, 23, 0.45) 0%, rgba(35, 22, 10, 0.8) 55%, rgba(12, 9, 6, 0.98) 100%);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.85), inset 0 0 8px rgba(0, 0, 0, 0.75);
+  overflow: hidden;
+  position: relative;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.race-face-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center center;
+  transform: scale(1.22);
+  display: block;
+  pointer-events: none;
+  filter: drop-shadow(0 2px 5px rgba(0, 0, 0, 0.85));
+  transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), filter 0.25s ease;
+}
+
+.warcraft-table tbody tr:hover .race-medallion {
+  transform: scale(1.1);
+  border-color: #ffcc00;
+  box-shadow: 0 0 18px rgba(255, 204, 0, 0.65), inset 0 0 10px rgba(255, 204, 0, 0.3);
+}
+
+.warcraft-table tbody tr:hover .race-face-img {
+  transform: scale(1.32);
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.95)) brightness(1.08);
+}
+
+.race-name-label {
+  font-family: 'MedievalSharp', cursive, serif;
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: #f3e5c8;
+  letter-spacing: 0.03em;
+  white-space: nowrap;
+  transition: color 0.2s ease;
+}
+
+.warcraft-table tbody tr:hover .race-name-label {
+  color: #fffae8;
+}
+
+/* Soporte previo para compatibilidad */
+.race-portrait-wrapper {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.35rem;
+  text-align: center;
+}
+
+.race-portrait-img {
+  width: 58px;
+  height: 58px;
+  border-radius: 6px;
+  border: 2px solid #8c7335;
+  object-fit: cover;
+  background: #0d0a07;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.7), inset 0 0 6px rgba(0, 0, 0, 0.8);
+  transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+}
+
+.warcraft-table tbody tr:hover .race-portrait-img {
+  transform: scale(1.1);
+  border-color: #ffcc00;
+  box-shadow: 0 0 14px rgba(255, 204, 0, 0.45), 0 6px 14px rgba(0, 0, 0, 0.9);
+}
+
+.race-portrait-fallback {
+  width: 58px;
+  height: 58px;
+  border-radius: 6px;
+  border: 2px solid #8c7335;
+  background: #140e09;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #8c7335;
+}
+
+.race-portrait-name {
+  font-family: 'MedievalSharp', cursive, serif;
+  font-size: 0.85rem;
+  color: #c4ab7c;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  transition: color 0.2s ease;
+}
+
+.warcraft-table tbody tr:hover .race-portrait-name {
+  color: #ffeed1;
+}
+
+.char-user {
+  color: #c4ab7c;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.char-user-icon {
+  font-size: 0.85rem;
+  opacity: 0.8;
+}
+
+.race-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: rgba(35, 26, 17, 0.85);
+  padding: 0.35rem 0.75rem;
+  border-radius: 3px;
+  border: 1px solid #5a4520;
+  color: #e6d3a8;
+  font-size: 0.95rem;
+}
+
+.race-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 2px;
+  object-fit: cover;
+}
+
+/* Nivel & EXP */
+.level-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 36px;
+  height: 32px;
+  padding: 0 0.5rem;
+  background: linear-gradient(135deg, #422d10 0%, #211506 100%);
+  border: 1.5px solid #ffcc00;
+  border-radius: 3px;
+  color: #ffcc00;
+  font-weight: bold;
+  font-size: 1.05rem;
+  text-shadow: 1px 1px 2px #000;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.6);
+}
+
+/* Badges de Estado */
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.35rem 0.8rem;
+  border-radius: 3px;
+  font-size: 0.9rem;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  text-shadow: 1px 1px 2px #000;
+}
+
+.status-badge.status-vivo {
+  background: rgba(16, 185, 129, 0.15);
+  border: 1px solid #10b981;
+  color: #34d399;
+  box-shadow: 0 0 8px rgba(16, 185, 129, 0.25);
+}
+
+.status-badge.status-muerto {
+  background: rgba(239, 68, 68, 0.18);
+  border: 1px solid #ef4444;
+  color: #f87171;
+  box-shadow: 0 0 8px rgba(239, 68, 68, 0.25);
+}
+
+.status-badge.status-congelado {
+  background: rgba(56, 189, 248, 0.18);
+  border: 1px solid #38bdf8;
+  color: #7dd3fc;
+  box-shadow: 0 0 8px rgba(56, 189, 248, 0.25);
+}
+
+.status-indicator {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  display: inline-block;
+}
+.status-vivo .status-indicator { background: #10b981; box-shadow: 0 0 6px #10b981; }
+.status-muerto .status-indicator { background: #ef4444; box-shadow: 0 0 6px #ef4444; }
+.status-congelado .status-indicator { background: #38bdf8; box-shadow: 0 0 6px #38bdf8; }
+
+/* Botón Ver Ficha / Acción */
+.btn-action-view {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.45rem 0.95rem;
+  font-family: 'MedievalSharp', cursive;
+  font-size: 0.95rem;
+  font-weight: bold;
+  color: #ffeed1;
+  background: linear-gradient(180deg, #3d2a13 0%, #1f1408 100%);
+  border: 1.5px solid #8c7335;
+  border-radius: 4px;
+  text-decoration: none;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.6);
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.btn-action-view:hover {
+  background: linear-gradient(180deg, #573e1c 0%, #301f0b 100%);
+  border-color: #ffcc00;
+  color: #ffcc00;
+  box-shadow: 0 0 10px rgba(255, 204, 0, 0.4);
+  transform: translateY(-2px);
+}
+
+.btn-action-view:active {
+  transform: translateY(0);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
+}
+
+/* Estado vacío */
+.empty-state {
+  text-align: center;
+  padding: 3.5rem 1.5rem;
+  color: #ba9e6e;
+}
+
+.empty-state-icon {
+  font-size: 3.5rem;
+  margin-bottom: 1rem;
+  opacity: 0.8;
+}
+
+.empty-state-title {
+  font-family: 'Bangers', cursive;
+  font-size: 1.8rem;
+  color: #ffcc00;
+  letter-spacing: 0.05em;
+  margin-bottom: 0.5rem;
+}
+
+.empty-state-desc {
+  font-size: 1.05rem;
+  max-width: 500px;
+  margin: 0 auto;
+  line-height: 1.5;
+}
+
+/* =============================================
+   CONTROLES DE PAGINACIÓN TEMÁTICOS
+   ============================================= */
+.pagination-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 1.5rem 1rem;
+  border-top: 1px solid rgba(140, 115, 53, 0.3);
+  background: rgba(22, 16, 11, 0.85);
+}
+
+.step-links {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.page-btn {
+  padding: 0.45rem 0.9rem;
+  background: rgba(38, 28, 18, 0.9);
+  border: 1.5px solid #8c7335;
+  border-radius: 3px;
+  color: #e6d3a8;
+  text-decoration: none;
+  font-size: 0.95rem;
+  font-family: 'MedievalSharp', cursive;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.5);
+}
+
+.page-btn:hover {
+  background: rgba(65, 48, 26, 0.95);
+  border-color: #ffcc00;
+  color: #fffae8;
+  transform: translateY(-1px);
+  box-shadow: 0 0 8px rgba(255, 204, 0, 0.3);
+}
+
+.page-current {
+  padding: 0.45rem 1rem;
+  color: #ffcc00;
+  font-weight: bold;
+  font-size: 1rem;
+  text-shadow: 1px 1px 2px #000;
+  background: rgba(15, 11, 8, 0.8);
+  border: 1px dashed #5a4520;
+  border-radius: 3px;
+}
+
+/* Responsive */
+@media (max-width: 860px) {
+  .filter-card {
+    padding: 1.25rem;
+  }
+  .search-row {
+    flex-direction: column;
+  }
+  .table-header-info {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+  .warcraft-table th, .warcraft-table td {
+    padding: 0.8rem 1rem;
+  }
+}
