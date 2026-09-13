@@ -1,6 +1,6 @@
-# from .gm import (
-
-# )
+from .gm import (
+    ListarPersonajesView
+ )
 
 # from .player import (
 

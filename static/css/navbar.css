@@ -45,6 +45,13 @@
   text-shadow: 0 0 8px rgba(255, 204, 0, 0.6);
 }
 
+.nav-links a.active-link {
+  color: #ffcc00;
+  text-shadow: 0 0 10px rgba(255, 204, 0, 0.8);
+  border-bottom: 2px solid #ffcc00;
+  padding-bottom: 4px;
+}
+
 .nav-auth {
   display: flex; gap: 1rem;
 }
@@ -148,9 +155,50 @@
   padding: 0.5rem 0;
 }
 
-.profile-dropdown:hover .dropdown-content {
+.profile-dropdown:hover .dropdown-content,
+.nav-dropdown:hover .dropdown-content {
   display: block;
   animation: fadeInDown 0.2s ease-out forwards;
+}
+
+/* Dropdown dentro de nav-links (Forjar / Crear) */
+.nav-dropdown {
+  position: relative;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  padding: 0.5rem 0;
+}
+
+.nav-dropdown-title {
+  font-family: 'MedievalSharp', cursive;
+  font-size: 1.1rem;
+  color: #ffcc00 !important;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  transition: all 0.2s;
+  text-shadow: 1px 1px 2px #000;
+}
+
+.nav-dropdown-title::after {
+  content: '▼';
+  font-size: 0.65rem;
+  color: #8c7335;
+  transition: transform 0.2s, color 0.2s;
+}
+
+.nav-dropdown:hover .nav-dropdown-title::after {
+  transform: rotate(180deg);
+  color: #ffcc00;
+}
+
+.nav-dropdown .dropdown-content {
+  left: 0;
+  right: auto;
+  min-width: 220px;
 }
 
 @keyframes fadeInDown {
@@ -188,3 +236,41 @@
   .warcraft-navbar { flex-direction: column; height: auto; padding: 1rem; gap: 1rem; }
   .nav-links { gap: 1rem; flex-wrap: wrap; justify-content: center; }
 }
+
+/* =============================================
+   ICONOS RPG (SVG)
+   ============================================= */
+.rpg-icon {
+  width: 18px;
+  height: 18px;
+  display: inline-block;
+  vertical-align: -0.2em;
+  fill: currentColor;
+  flex-shrink: 0;
+  transition: transform 0.2s ease, filter 0.2s ease;
+}
+
+.nav-links a {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.nav-links a:hover .rpg-icon {
+  transform: scale(1.15);
+  filter: drop-shadow(0 0 5px #ffcc00);
+}
+
+.user-greeting {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.dropdown-content li a,
+.dropdown-content li .dropdown-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+

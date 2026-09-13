@@ -23,7 +23,7 @@ class InicioJuegoView(TemplateView):
 class RedireccionInicioView(LoginRequiredMixin, View):
     def get(self, request, *args, **kwargs):
         if request.user.is_gm:
-            return redirect()
+            return redirect('index')
         return redirect('index')
 
 
