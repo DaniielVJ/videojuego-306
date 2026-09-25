@@ -14,13 +14,13 @@ class CrearPersonajeForm(forms.ModelForm):
     """
 
     # 7 Atributos numéricos para el modelo Atributo
-    fuerza = forms.IntegerField(min_value=1, max_value=100, initial=5, required=True)
-    destreza = forms.IntegerField(min_value=1, max_value=100, initial=5, required=True)
-    vigor = forms.IntegerField(min_value=1, max_value=100, initial=5, required=True)
-    inteligencia = forms.IntegerField(min_value=1, max_value=100, initial=5, required=True)
-    percepcion = forms.IntegerField(min_value=1, max_value=100, initial=5, required=True)
-    carisma = forms.IntegerField(min_value=1, max_value=100, initial=5, required=True)
-    suerte = forms.IntegerField(min_value=1, max_value=100, initial=5, required=True)
+    fuerza = forms.IntegerField(min_value=0, max_value=100, initial=0, required=True)
+    destreza = forms.IntegerField(min_value=0, max_value=100, initial=0, required=True)
+    vigor = forms.IntegerField(min_value=0, max_value=100, initial=0, required=True)
+    inteligencia = forms.IntegerField(min_value=0, max_value=100, initial=0, required=True)
+    percepcion = forms.IntegerField(min_value=0, max_value=100, initial=0, required=True)
+    carisma = forms.IntegerField(min_value=0, max_value=100, initial=0, required=True)
+    suerte = forms.IntegerField(min_value=0, max_value=100, initial=0, required=True)
 
     # Habilidades seleccionadas mediante Drag & Drop (máximo 2)
     habilidades = forms.ModelMultipleChoiceField(
@@ -58,6 +58,22 @@ class CrearPersonajeForm(forms.ModelForm):
             raise forms.ValidationError("No puedes asignar más de 2 habilidades iniciales al personaje.")
         return habilidades
 
+
+    def clean(self):
+        puntos_base = 20
+        cleaned_data = super().clean()
+        atributos = (cleaned_data.get('fuerza'), cleaned_data.get('destreza'), cleaned_data.get('vigor'), 
+        cleaned_data.get('inteligencia'), cleaned_data.get('percepcion'), cleaned_data.get('carisma'), cleaned_data.get('suerte'))
+
+    
+        # La suma de los atributos no pueden dar un valor diferente a 20 ya que debe asignar todos los atributos ni mas ni menos.
+        if puntos_base != sum(atributos):
+            raise forms.ValidationError("Debes otorgar todos los puntos que se te dio")
+        return cleaned_data
+
+
+
+        
     def save(self, commit=True):
         """
         Crea el Personaje, sus Atributos asociados y vincula las Habilidades

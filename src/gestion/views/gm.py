@@ -10,7 +10,7 @@ from django.db import transaction
 
 from src.usuarios.mixins import GmRequiredMixin
 from ..models import Personaje, Raza, Atributo, Habilidad
-
+from ..forms import CrearPersonajeForm
 
 User = get_user_model()
 
@@ -63,7 +63,7 @@ class ListarPersonajesView(GmRequiredMixin, ListView):
         return context_data
 
 
-from ..forms import CrearPersonajeForm
+
 
 
 # View para crear un personaje
@@ -113,5 +113,5 @@ class CrearPersonajeView(GmRequiredMixin, View):
             first_err_list = next(iter(form.errors.values()))
             error_msg = first_err_list[0] if first_err_list else "Por favor verifica los campos del personaje."
 
-        return render(request, self.template_name, self._get_context(request, form=form, error_msg=error_msg))
+        return render(request, self.template_name, self.get_context_data(request, form=form, error_msg=error_msg))
 

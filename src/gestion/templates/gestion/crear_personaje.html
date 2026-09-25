@@ -20,13 +20,25 @@
     <input type="hidden" name="raza" id="selectedRazaInput" value="{{ razas.0.id|default:'' }}">
 
     <!-- Inputs Ocultos de los 7 Atributos del Modelo Atributo -->
-    <input type="hidden" name="fuerza" id="input_fuerza" value="5">
-    <input type="hidden" name="destreza" id="input_destreza" value="5">
-    <input type="hidden" name="vigor" id="input_vigor" value="5">
-    <input type="hidden" name="inteligencia" id="input_inteligencia" value="5">
-    <input type="hidden" name="percepcion" id="input_percepcion" value="5">
-    <input type="hidden" name="carisma" id="input_carisma" value="5">
-    <input type="hidden" name="suerte" id="input_suerte" value="5">
+    <input type="hidden" name="fuerza" id="input_fuerza" value="{{form.fuerza.value}}">
+    <input type="hidden" name="destreza" id="input_destreza" value="{{form.destreza.value}}">
+    <input type="hidden" name="vigor" id="input_vigor" value="{{form.vigor.value}}">
+    <input type="hidden" name="inteligencia" id="input_inteligencia" value="{{form.inteligencia.value}}">
+    <input type="hidden" name="percepcion" id="input_percepcion" value="{{form.percepcion.value}}">
+    <input type="hidden" name="carisma" id="input_carisma" value="{{form.carisma.value}}">
+    <input type="hidden" name="suerte" id="input_suerte" value="{{form.suerte.value}}">
+
+
+    {% comment %} DATASET VALORES ATRIBUTOS {% endcomment %}
+    <div id="atributos-value"
+    data-fuerza="{{ form.fuerza.value }}"
+    data-destreza="{{ form.destreza.value }}"
+    data-vigor="{{ form.vigor.value }}"
+    data-inteligencia="{{ form.inteligencia.value }}"
+    data-percepcion="{{ form.percepcion.value }}"
+    data-carisma="{{ form.carisma.value }}"
+    data-suerte="{{ form.suerte.value }}"
+    ></div>
 
     <!-- Contenedor dinámico de IDs de Habilidades Asignadas (Drag & Drop) -->
     <div id="assignedSkillsInputs"></div>
@@ -34,10 +46,10 @@
     <!-- 1. BARRA SUPERIOR COMPACTA (HEADER DEL ESTUDIO) -->
     <header class="creation-top-bar">
       <div class="top-bar-left">
-        <button type="button" class="btn-top-back" id="btnCancelCreation" onclick="if(window.history.length > 1){history.back();}else{window.location.href='{% url 'gm:listar-personajes' %}';}" title="Regresar a la lista de personajes">
+        <a href="{% url 'gm:listar-personajes' %}" type="button" class="btn-top-back" id="btnCancelCreation" onclick="if(window.history.length > 1){history.back();}else{window.location.href='{% url 'gm:listar-personajes' %}';}" title="Regresar a la lista de personajes">
           <svg class="rpg-icon" viewBox="0 0 24 24"><path fill="currentColor" d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>
           <span>CANCELAR</span>
-        </button>
+        </a>
       </div>
 
       <div class="top-bar-center">
@@ -138,7 +150,7 @@
                 <div class="attr-track"><div class="attr-fill"></div></div>
                 <div class="attr-btns">
                   <button type="button" class="btn-attr-dec" disabled>-</button>
-                  <span class="attr-num">5</span>
+                  <span class="attr-num">{{form.fuerza.value}}</span>
                   <button type="button" class="btn-attr-inc">+</button>
                 </div>
               </div>
@@ -149,7 +161,7 @@
                 <div class="attr-track"><div class="attr-fill"></div></div>
                 <div class="attr-btns">
                   <button type="button" class="btn-attr-dec" disabled>-</button>
-                  <span class="attr-num">5</span>
+                  <span class="attr-num">{{form.destreza.value}}</span>
                   <button type="button" class="btn-attr-inc">+</button>
                 </div>
               </div>
@@ -160,18 +172,17 @@
                 <div class="attr-track"><div class="attr-fill"></div></div>
                 <div class="attr-btns">
                   <button type="button" class="btn-attr-dec" disabled>-</button>
-                  <span class="attr-num">5</span>
+                  <span class="attr-num">{{form.vigor.value}}</span>
                   <button type="button" class="btn-attr-inc">+</button>
                 </div>
               </div>
-
               <!-- INTELIGENCIA -->
               <div class="attr-row attr-inteligencia" title="Poder arcano y maná mágico (SP)">
                 <span class="attr-label">Inteligencia</span>
                 <div class="attr-track"><div class="attr-fill"></div></div>
                 <div class="attr-btns">
                   <button type="button" class="btn-attr-dec" disabled>-</button>
-                  <span class="attr-num">5</span>
+                  <span class="attr-num">{{form.inteligencia.value}}</span>
                   <button type="button" class="btn-attr-inc">+</button>
                 </div>
               </div>
@@ -182,7 +193,7 @@
                 <div class="attr-track"><div class="attr-fill"></div></div>
                 <div class="attr-btns">
                   <button type="button" class="btn-attr-dec" disabled>-</button>
-                  <span class="attr-num">5</span>
+                  <span class="attr-num">{{form.percepcion.value}}</span>
                   <button type="button" class="btn-attr-inc">+</button>
                 </div>
               </div>
@@ -193,7 +204,7 @@
                 <div class="attr-track"><div class="attr-fill"></div></div>
                 <div class="attr-btns">
                   <button type="button" class="btn-attr-dec" disabled>-</button>
-                  <span class="attr-num">5</span>
+                  <span class="attr-num">{{form.carisma.value}}</span>
                   <button type="button" class="btn-attr-inc">+</button>
                 </div>
               </div>
@@ -204,7 +215,7 @@
                 <div class="attr-track"><div class="attr-fill"></div></div>
                 <div class="attr-btns">
                   <button type="button" class="btn-attr-dec" disabled>-</button>
-                  <span class="attr-num">5</span>
+                  <span class="attr-num">{{form.suerte.value}}</span>
                   <button type="button" class="btn-attr-inc">+</button>
                 </div>
               </div>

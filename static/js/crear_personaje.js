@@ -224,8 +224,8 @@ function initRaceStage() {
    =================================================== */
 function initAttributeSystem() {
   const TOTAL_POINTS = 20;
-  const BASE_STAT = 5;
-  const MAX_STAT_SCALE = 25;
+  const BASE_STAT = 0;
+  const MAX_STAT_SCALE = 50;
 
   const attributes = [
     'fuerza',
@@ -236,28 +236,36 @@ function initAttributeSystem() {
     'carisma',
     'suerte'
   ];
-
+  const atributos = document.querySelector("#atributos-value");
+  let fuerza= Number(atributos.dataset.fuerza)
+  let destreza= Number(atributos.dataset.destreza)
+  let vigor= Number(atributos.dataset.vigor)
+  let inteligencia= Number(atributos.dataset.inteligencia)
+  let percepcion= Number(atributos.dataset.percepcion)
+  let carisma= Number(atributos.dataset.carisma)
+  let suerte  =Number(atributos.dataset.suerte)
   const state = {
-    availablePoints: TOTAL_POINTS,
+    availablePoints: TOTAL_POINTS - [fuerza, destreza, vigor, inteligencia, percepcion, carisma, suerte].reduce((a, b) => a + b, 0),
     allocated: {
-      fuerza: 0,
-      destreza: 0,
-      vigor: 0,
-      inteligencia: 0,
-      percepcion: 0,
-      carisma: 0,
-      suerte: 0
+        fuerza: fuerza,
+        destreza: destreza,
+        vigor: vigor,
+        inteligencia: inteligencia,
+        percepcion: percepcion,
+        carisma: carisma,
+        suerte: suerte
     },
     racialBonus: {
-      fuerza: 0,
-      destreza: 0,
-      vigor: 0,
-      inteligencia: 0,
-      percepcion: 0,
-      carisma: 0,
-      suerte: 0
+        fuerza: 0,
+        destreza: 0,
+        vigor: 0,
+        inteligencia: 0,
+        percepcion: 0,
+        carisma: 0,
+        suerte: 0
     }
-  };
+};
+  console.log(state.availablePoints)
 
   const poolValEl = document.getElementById('pointsPoolVal');
 
@@ -536,15 +544,5 @@ function initFormValidation() {
       return;
     }
 
-    const poolValEl = document.getElementById('pointsPoolVal');
-    const remaining = poolValEl ? parseInt(poolValEl.textContent, 10) : 0;
-
-    if (remaining > 0) {
-      const confirmSpend = confirm(`Aún tienes ${remaining} puntos de atributos sin asignar. ¿Deseas forjar el guerrero de todas formas?`);
-      if (!confirmSpend) {
-        e.preventDefault();
-        return;
-      }
-    }
   });
 }
