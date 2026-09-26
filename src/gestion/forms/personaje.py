@@ -2,6 +2,7 @@ from django import forms
 from django.db import transaction
 from django.contrib.auth import get_user_model
 from ..models.personaje import Personaje, Raza, Habilidad, Atributo
+from ..models import Objeto
 
 User = get_user_model()
 
@@ -25,6 +26,11 @@ class CrearPersonajeForm(forms.ModelForm):
     # Habilidades seleccionadas mediante Drag & Drop (máximo 2)
     habilidades = forms.ModelMultipleChoiceField(
         queryset=Habilidad.objects.none(),
+        required=True
+    )
+
+    objetos = forms.ModelMultipleChoiceField(
+        queryset=Objeto.objects.all(),
         required=False
     )
 
