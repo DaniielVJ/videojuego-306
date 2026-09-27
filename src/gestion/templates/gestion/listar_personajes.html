@@ -253,7 +253,7 @@ Personajes (GM)
 
               <!-- Acción: Ver Ficha de Personaje -->
               <td>
-                <a href="#" class="btn-action-view" title="Ver ficha y detalles de {{ personaje.nombre }}">
+                <a href="{% url 'gm:detalle-personaje' pk=personaje.pk %}" class="btn-action-view" title="Ver ficha y detalles de {{ personaje.nombre }}">
                   <svg class="rpg-icon" viewBox="0 0 24 24"><path d="M19 3H7a4 4 0 0 0-4 4v10a4 4 0 0 0 4 4h12a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2zm-12 2h12v12H7a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2zm12 14H7a4 4 0 0 0-2 .6V17a4 4 0 0 0 2 1h12v1zM9 8h8v1.5H9V8zm0 3h8v1.5H9V11zm0 3h5v1.5H9V14z"/></svg>
                   <span>Ver Ficha</span>
                 </a>
