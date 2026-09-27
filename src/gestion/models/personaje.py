@@ -4,8 +4,10 @@ from .inventario import Objeto
 
 
 class Personaje(models.Model):
+
     class Estado(models.TextChoices):
-        VIVO = "vivo", "Vivo",
+
+        VIVO = "vivo", "Vivo"
         MUERTO = 'muerto', 'Muerto'
         CONGELADO = 'congelado', 'Congelado'
 
@@ -32,18 +34,19 @@ class Personaje(models.Model):
 
 class Atributo(models.Model):
 
-    class Meta:
-        verbose_name = "Atributo"
-        verbose_name_plural = "Atributos"
+	class Meta:
+		verbose_name = "Atributo"
+		verbose_name_plural = "Atributos"
 
-    personaje = models.OneToOneField(Personaje, on_delete=models.PROTECT, related_name="atributos")
-    fuerza = models.PositiveIntegerField(null = False)
-    destreza = models.PositiveIntegerField(null = False)
-    vigor = models.PositiveIntegerField(null = False)
-    inteligencia = models.PositiveIntegerField(null = False)
-    percepcion = models.PositiveIntegerField(null = False)
-    carisma = models.PositiveIntegerField(null = False)
-    suerte = models.IntegerField(null = False)
+	personaje = models.OneToOneField(Personaje, on_delete=models.PROTECT, related_name="atributos")
+	
+	fuerza = models.PositiveIntegerField(null = False)
+	destreza = models.PositiveIntegerField(null = False)
+	vigor = models.PositiveIntegerField(null = False)
+	inteligencia = models.PositiveIntegerField(null = False)
+	percepcion = models.PositiveIntegerField(null = False)
+	carisma = models.PositiveIntegerField(null = False)
+	suerte = models.IntegerField(null = False)
 
     def __str__(self):
         return self.personaje.nombre
