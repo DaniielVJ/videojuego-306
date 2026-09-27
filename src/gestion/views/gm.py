@@ -1,11 +1,8 @@
 import json
-
-
-from django.views.generic import ListView, View
+from django.views.generic import ListView, View, DetailView
 from django.db.models import Q
 from django.shortcuts import render, redirect
 from django.contrib.auth import get_user_model
-from django.db import transaction
 
 
 from src.usuarios.mixins import GmRequiredMixin
@@ -116,4 +113,20 @@ class CrearPersonajeView(GmRequiredMixin, View):
             error_msg = first_err_list[0] if first_err_list else "Por favor verifica los campos del personaje."
 
         return render(request, self.template_name, self.get_context_data(request, form=form, error_msg=error_msg))
+
+
+class DetallePersonajeView(DetailView):
+    template_name="gestion/detalle_personaje.html"
+    model=Personaje
+    context_object_name='personaje'
+
+
+    def get_queryset(self):
+        if self.request.user.is_gm:
+            queryset=self.model.objects.select_related('usuario', 'raza', 'atributos').prefetch_related('habilidades', 'objetos')
+        else:
+            queryset=self.model.objects.select_related('usuario', 'raza', 'atributos').prefetch_related('habilidades', 'objetos').filter(usuario=self.request.user)
+        return queryset
+
+
 
