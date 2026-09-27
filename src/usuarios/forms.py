@@ -6,10 +6,14 @@ from django.contrib.auth.views import PasswordChangeView
 from django.contrib import messages
 
 Usuario = get_user_model()
+
 class CreacionUsuarioForm(UserCreationForm):
+
     email = forms.EmailField(max_length=100, required=True,
                              widget=forms.EmailInput(attrs={'placeholder': 'jugador@correo.com', 'class': 'input-email'}))
+    
     class Meta:
+        
         model = Usuario
         fields = ('username', 'email', 'password1', 'password2')
         widgets = {
