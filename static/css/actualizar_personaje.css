@@ -1,0 +1,514 @@
+/* ===================================================
+   ACTUALIZAR_PERSONAJE.CSS — FORJA DE EDICIÓN DEL HÉROE
+   Estilo World of Warcraft / Dark Fantasy RPG
+   Hereda la base visual de detalle_personaje.css y añade
+   los controles de edición interactivos desbloqueados.
+   =================================================== */
+
+@import url('detalle_personaje.css');
+
+/* ===================================================
+   1. BOTÓN GUARDAR CAMBIOS (ACCIÓN HEROICA)
+   =================================================== */
+.btn-save-hero {
+  background: linear-gradient(180deg, #1d6837 0%, #0f3d1e 60%, #082411 100%);
+  border: 1.5px solid var(--warcraft-gold, #ffcc00);
+  color: #fffae8;
+  text-shadow: 1px 1px 2px #000;
+  box-shadow: 0 0 16px rgba(16, 185, 129, 0.4), inset 0 1px 2px rgba(255, 255, 255, 0.3);
+  font-family: var(--font-medieval, 'MedievalSharp', cursive);
+  font-size: 1rem;
+  font-weight: bold;
+  letter-spacing: 0.05em;
+  padding: 0.6rem 1.4rem;
+  border-radius: 4px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  transition: all 0.25s cubic-bezier(0.25, 1, 0.5, 1);
+  text-transform: uppercase;
+}
+
+.btn-save-hero:hover {
+  background: linear-gradient(180deg, #248346 0%, #15572b 60%, #0c3319 100%);
+  border-color: var(--warcraft-gold-hover, #ffe066);
+  color: #ffffff;
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 0 24px rgba(16, 185, 129, 0.6), 0 4px 12px rgba(0, 0, 0, 0.85);
+}
+
+.btn-save-hero:active {
+  transform: translateY(0);
+}
+
+.btn-save-hero svg {
+  width: 20px;
+  height: 20px;
+  fill: var(--warcraft-gold, #ffcc00);
+  filter: drop-shadow(0 0 4px rgba(255, 204, 0, 0.6));
+}
+
+/* ===================================================
+   2. NOMBRE DEL HÉROE EDITABLE
+   =================================================== */
+.hero-name-edit-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  width: 100%;
+}
+
+.edit-field-label {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--warcraft-gold-dim, #c4ab7c);
+  font-weight: bold;
+}
+
+.edit-field-label svg {
+  width: 15px;
+  height: 15px;
+  fill: var(--warcraft-gold, #ffcc00);
+}
+
+.hero-name-input {
+  font-family: var(--font-title, 'Bangers', cursive);
+  font-size: clamp(2rem, 3.8vw, 3.2rem);
+  letter-spacing: 0.06em;
+  color: var(--warcraft-gold, #ffcc00);
+  text-shadow: 2px 2px 0 #000, 0 0 15px rgba(255, 204, 0, 0.4);
+  background: rgba(10, 7, 5, 0.9);
+  border: 2px solid var(--warcraft-bronze, #8c7335);
+  border-radius: 4px;
+  padding: 0.4rem 0.85rem;
+  width: 100%;
+  box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.9);
+  transition: all 0.25s ease;
+  line-height: 1.1;
+}
+
+.hero-name-input:focus {
+  outline: none;
+  border-color: var(--warcraft-gold, #ffcc00);
+  box-shadow: 0 0 18px rgba(255, 204, 0, 0.45), inset 0 2px 6px rgba(0, 0, 0, 0.9);
+  background: rgba(18, 13, 8, 0.95);
+}
+
+/* ===================================================
+   3. SELECTOR DE ESTADO VITAL (VIVO, MUERTO, CONGELADO)
+   =================================================== */
+.edit-status-container {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  width: 100%;
+  max-width: 350px;
+}
+
+.edit-section-mini-label {
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--warcraft-gold-dim, #c4ab7c);
+  font-weight: bold;
+  text-align: center;
+}
+
+.status-options-group {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.5rem;
+  width: 100%;
+}
+
+.status-option-label {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  padding: 0.45rem 0.5rem;
+  background: rgba(18, 14, 10, 0.85);
+  border: 1.5px solid var(--warcraft-bronze-dark, #5a4520);
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-weight: bold;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  transition: all 0.2s ease;
+  user-select: none;
+}
+
+.status-option-label input[type="radio"] {
+  display: none;
+}
+
+.status-option-label:hover {
+  background: rgba(30, 22, 14, 0.95);
+  transform: translateY(-1px);
+}
+
+/* Estado Vivo */
+.status-opt-vivo { color: #a7f3d0; }
+.status-opt-vivo .status-dot { background: #10b981; box-shadow: 0 0 6px #10b981; }
+.status-opt-vivo.is-selected,
+.status-opt-vivo:has(input:checked) {
+  background: rgba(16, 185, 129, 0.25);
+  border-color: #10b981;
+  color: #34d399;
+  box-shadow: 0 0 12px rgba(16, 185, 129, 0.45);
+}
+
+/* Estado Muerto */
+.status-opt-muerto { color: #fca5a5; }
+.status-opt-muerto .status-dot { background: #ef4444; box-shadow: 0 0 6px #ef4444; }
+.status-opt-muerto.is-selected,
+.status-opt-muerto:has(input:checked) {
+  background: rgba(239, 68, 68, 0.25);
+  border-color: #ef4444;
+  color: #f87171;
+  box-shadow: 0 0 12px rgba(239, 68, 68, 0.45);
+}
+
+/* Estado Congelado */
+.status-opt-congelado { color: #bae6fd; }
+.status-opt-congelado .status-dot { background: #38bdf8; box-shadow: 0 0 6px #38bdf8; }
+.status-opt-congelado.is-selected,
+.status-opt-congelado:has(input:checked) {
+  background: rgba(56, 189, 248, 0.25);
+  border-color: #38bdf8;
+  color: #7dd3fc;
+  box-shadow: 0 0 12px rgba(56, 189, 248, 0.45);
+}
+
+/* ===================================================
+   4. PILAS DE METADATOS EDITABLES (SELECTS Y CHECKBOX)
+   =================================================== */
+.badge-edit-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.35rem 0.85rem;
+  background: rgba(22, 16, 10, 0.9);
+  border: 1px solid var(--warcraft-bronze, #8c7335);
+  border-radius: 4px;
+  font-size: 0.9rem;
+  color: #eeddbb;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.7);
+}
+
+.badge-edit-pill svg {
+  width: 16px;
+  height: 16px;
+  fill: var(--warcraft-gold, #ffcc00);
+  flex-shrink: 0;
+}
+
+.edit-select-pill {
+  background: rgba(10, 7, 4, 0.85);
+  border: 1px solid var(--warcraft-bronze-dark, #5a4520);
+  color: var(--warcraft-gold, #ffcc00);
+  font-family: var(--font-medieval, 'MedievalSharp', cursive);
+  font-size: 0.9rem;
+  font-weight: bold;
+  padding: 0.2rem 0.5rem;
+  border-radius: 3px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.edit-select-pill:focus {
+  outline: none;
+  border-color: var(--warcraft-gold, #ffcc00);
+  box-shadow: 0 0 8px rgba(255, 204, 0, 0.4);
+}
+
+.edit-select-pill option {
+  background: #140e09;
+  color: #ffeed1;
+}
+
+/* Checkbox de Activo */
+.checkbox-pill {
+  cursor: pointer;
+  user-select: none;
+}
+
+.checkbox-pill input[type="checkbox"] {
+  accent-color: var(--warcraft-gold, #ffcc00);
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+}
+
+/* ===================================================
+   5. CONTROLES DE NIVEL Y EXPERIENCIA EDITABLES
+   =================================================== */
+.level-edit-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+}
+
+.number-stepper {
+  display: inline-flex;
+  align-items: center;
+  background: #090604;
+  border: 1.5px solid var(--warcraft-bronze, #8c7335);
+  border-radius: 4px;
+  overflow: hidden;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.9);
+}
+
+.btn-step-action {
+  background: linear-gradient(180deg, #382715 0%, #1f1408 100%);
+  border: none;
+  color: var(--warcraft-gold, #ffcc00);
+  font-family: var(--font-title, 'Bangers', cursive);
+  font-size: 1.3rem;
+  width: 32px;
+  height: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  user-select: none;
+}
+
+.btn-step-action:hover {
+  background: linear-gradient(180deg, #573e1c 0%, #301f0b 100%);
+  color: #ffffff;
+  box-shadow: 0 0 8px rgba(255, 204, 0, 0.4);
+}
+
+.btn-step-action:active {
+  background: #160e05;
+}
+
+.stepper-input {
+  width: 50px;
+  height: 34px;
+  background: transparent;
+  border: none;
+  color: var(--warcraft-gold, #ffcc00);
+  font-family: var(--font-title, 'Bangers', cursive);
+  font-size: 1.4rem;
+  text-align: center;
+  -moz-appearance: textfield;
+}
+
+.stepper-input::-webkit-outer-spin-button,
+.stepper-input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.stepper-input:focus {
+  outline: none;
+  background: rgba(255, 204, 0, 0.08);
+}
+
+/* Inputs de Experiencia */
+.exp-edit-inputs-row {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+}
+
+.exp-box {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.85rem;
+  color: var(--warcraft-gold-dim, #c4ab7c);
+}
+
+.exp-number-input {
+  width: 80px;
+  height: 30px;
+  background: #090604;
+  border: 1px solid var(--warcraft-bronze-dark, #5a4520);
+  border-radius: 3px;
+  color: #ffeed1;
+  font-family: var(--font-medieval, 'MedievalSharp', cursive);
+  font-size: 0.95rem;
+  font-weight: bold;
+  text-align: center;
+  padding: 0 0.35rem;
+}
+
+.exp-number-input:focus {
+  outline: none;
+  border-color: var(--warcraft-gold, #ffcc00);
+  box-shadow: 0 0 6px rgba(255, 204, 0, 0.4);
+}
+
+/* ===================================================
+   6. ATRIBUTOS PRIMARIOS EDITABLES (STEPPERS)
+   =================================================== */
+.attr-edit-card {
+  display: grid;
+  grid-template-columns: 140px 1fr 100px;
+  align-items: center;
+  gap: 0.85rem;
+  background: rgba(12, 9, 6, 0.85);
+  border: 1px solid rgba(90, 69, 32, 0.5);
+  border-radius: 4px;
+  padding: 0.55rem 0.85rem;
+  transition: all 0.2s ease;
+}
+
+.attr-edit-card:hover {
+  background: rgba(25, 18, 11, 0.95);
+  border-color: var(--warcraft-bronze, #8c7335);
+}
+
+.attr-stepper-wrap {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.attr-stepper {
+  display: inline-flex;
+  align-items: center;
+  background: #090604;
+  border: 1px solid var(--warcraft-bronze, #8c7335);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.attr-step-btn {
+  background: #23160a;
+  border: none;
+  color: var(--warcraft-gold, #ffcc00);
+  font-family: var(--font-title, 'Bangers', cursive);
+  font-size: 1.15rem;
+  width: 26px;
+  height: 28px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s ease;
+}
+
+.attr-step-btn:hover {
+  background: var(--warcraft-bronze, #8c7335);
+  color: #fff;
+}
+
+.attr-input-field {
+  width: 44px;
+  height: 28px;
+  background: transparent;
+  border: none;
+  color: var(--warcraft-gold, #ffcc00);
+  font-family: var(--font-title, 'Bangers', cursive);
+  font-size: 1.25rem;
+  text-align: center;
+  -moz-appearance: textfield;
+}
+
+.attr-input-field::-webkit-outer-spin-button,
+.attr-input-field::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.attr-input-field:focus {
+  outline: none;
+  background: rgba(255, 204, 0, 0.1);
+}
+
+/* ===================================================
+   7. HABILIDADES Y OBJETOS CON SELECCIÓN ACTIVA
+   =================================================== */
+.skill-checkbox-card,
+.item-checkbox-card {
+  cursor: pointer;
+  user-select: none;
+  position: relative;
+  transition: all 0.25s ease;
+}
+
+.skill-checkbox-card input[type="checkbox"],
+.item-checkbox-card input[type="checkbox"] {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 20px;
+  height: 20px;
+  accent-color: var(--warcraft-gold, #ffcc00);
+  cursor: pointer;
+  z-index: 5;
+}
+
+/* Estado Seleccionado */
+.skill-checkbox-card.is-selected,
+.skill-checkbox-card:has(input:checked) {
+  border-color: var(--warcraft-gold, #ffcc00);
+  background: rgba(35, 25, 14, 0.95);
+  box-shadow: 0 0 16px rgba(255, 204, 0, 0.3), inset 0 0 10px rgba(255, 204, 0, 0.1);
+}
+
+.item-checkbox-card.is-selected,
+.item-checkbox-card:has(input:checked) {
+  border-color: var(--warcraft-gold, #ffcc00);
+  background: rgba(35, 25, 14, 0.95);
+  box-shadow: 0 0 16px rgba(255, 204, 0, 0.3), inset 0 0 10px rgba(255, 204, 0, 0.1);
+}
+
+/* Distintivo de selección activa */
+.selection-check-indicator {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.75rem;
+  color: var(--warcraft-gold, #ffcc00);
+  font-weight: bold;
+  text-transform: uppercase;
+  margin-top: 0.2rem;
+}
+
+.selection-check-indicator svg {
+  width: 14px;
+  height: 14px;
+  fill: currentColor;
+}
+
+/* ===================================================
+   8. BANNER DE ERROR EN ACTUALIZACIÓN
+   =================================================== */
+.update-error-banner {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  background: rgba(140, 26, 26, 0.92);
+  border: 1.5px solid #ef4444;
+  border-radius: 4px;
+  padding: 0.85rem 1.4rem;
+  color: #fffae8;
+  font-family: var(--font-medieval, 'MedievalSharp', cursive);
+  font-size: 1.05rem;
+  box-shadow: 0 4px 15px rgba(239, 68, 68, 0.4), inset 0 0 10px rgba(0, 0, 0, 0.5);
+  animation: bannerShake 0.4s ease;
+}
+
+.update-error-banner svg {
+  width: 24px;
+  height: 24px;
+  fill: var(--warcraft-gold, #ffcc00);
+  flex-shrink: 0;
+}
+
+@keyframes bannerShake {
+  0%, 100% { transform: translateX(0); }
+  20%, 60% { transform: translateX(-4px); }
+  40%, 80% { transform: translateX(4px); }
+}

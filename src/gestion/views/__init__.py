@@ -1,5 +1,5 @@
 from .gm import (
-    ListarPersonajesView, CrearPersonajeView, DetallePersonajeView
+    ListarPersonajesView, CrearPersonajeView, DetallePersonajeView, ActualizarPersonajeView, EliminarPersonajeView
  )
 
 # from .player import (

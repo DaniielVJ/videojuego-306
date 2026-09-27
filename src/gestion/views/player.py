@@ -8,7 +8,6 @@ from django.db.models import Q
 from django.urls import reverse_lazy
 from django.db import transaction
 from src.gestion.models.personaje import Personaje, Raza
-from src.gestion.models.inventario import InventarioObjetos
 from src.gestion.forms.formsPersonaje import PersonajeEditCreateFrom, AtributosEditCreateForm
 
 class CrearPersonaje(LoginRequiredMixin, CreateView):

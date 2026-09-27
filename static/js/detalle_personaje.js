@@ -159,7 +159,7 @@
       document.body.style.overflow = '';
     }
 
-    if (btnEditar) {
+    if (btnEditar && (!btnEditar.getAttribute('href') || btnEditar.getAttribute('href') === '#')) {
       btnEditar.addEventListener('click', (e) => {
         e.preventDefault();
         openModal();

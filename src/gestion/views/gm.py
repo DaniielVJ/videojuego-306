@@ -1,13 +1,13 @@
 import json
-from django.views.generic import ListView, View, DetailView
+from django.views.generic import ListView, View, DetailView, UpdateView, DeleteView
 from django.db.models import Q
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import get_user_model
 
 
 from src.usuarios.mixins import GmRequiredMixin
 from ..models import Personaje, Raza, Atributo, Habilidad, Objeto
-from ..forms import CrearPersonajeForm
+from ..forms import CrearPersonajeForm, ActualizarPersonajeForm
 
 User = get_user_model()
 
@@ -129,4 +129,59 @@ class DetallePersonajeView(DetailView):
         return queryset
 
 
+class ActualizarPersonajeView(GmRequiredMixin, View):
+    template_name = 'gestion/actualizar_personaje.html'
 
+    def get_object(self, pk):
+        if self.request.user.is_gm:
+            return get_object_or_404(
+                Personaje.objects.select_related('raza', 'usuario', 'atributos')
+                .prefetch_related('habilidades', 'objetos'),
+                pk=pk
+            )
+        return get_object_or_404(
+            Personaje.objects.select_related('raza', 'usuario', 'atributos')
+            .prefetch_related('habilidades', 'objetos'),
+            pk=pk,
+            usuario=self.request.user
+        )
+
+    def get_context_data(self, request, personaje, form=None, error_msg=None):
+        razas = list(Raza.objects.filter(activo=True))
+        usuarios = User.objects.filter(is_active=True).order_by('username')
+        habilidades = list(Habilidad.objects.filter(activo=True))
+        objetos = list(Objeto.objects.filter(activo=True))
+
+        return {
+            'personaje': personaje,
+            'form': form or ActualizarPersonajeForm(instance=personaje, request_user=request.user),
+            'razas': razas,
+            'usuarios': usuarios,
+            'habilidades': habilidades,
+            'objetos': objetos,
+            'error_message': error_msg,
+        }
+
+    def get(self, request, pk):
+        personaje = self.get_object(pk)
+        return render(request, self.template_name, self.get_context_data(request, personaje))
+
+    def post(self, request, pk):
+        personaje = self.get_object(pk)
+        form = ActualizarPersonajeForm(request.POST, instance=personaje, request_user=request.user)
+
+        if form.is_valid():
+            form.save()
+            return redirect('gm:detalle-personaje', pk=personaje.pk)
+
+        # Extraer el primer error amigable para el banner superior
+        error_msg = None
+        if form.errors:
+            first_err_list = next(iter(form.errors.values()))
+            error_msg = first_err_list[0] if first_err_list else "Por favor verifica los campos modificados."
+
+        return render(request, self.template_name, self.get_context_data(request, personaje, form=form, error_msg=error_msg))
+
+
+class EliminarPersonajeView(DeleteView):
+    pass
