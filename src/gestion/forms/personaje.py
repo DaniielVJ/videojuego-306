@@ -133,3 +133,122 @@ class CrearPersonajeForm(forms.ModelForm):
                     personaje.objetos.add(*objetos)
 
         return personaje
+
+
+
+class ActualizarPersonajeForm(forms.ModelForm):
+    """
+    Formulario de actualización y modificación de personaje para el Game Master.
+    Permite modificar identidad, estado, nivel, experiencia, los 7 atributos
+    numéricos del modelo Atributo, habilidades y objetos del inventario.
+    """
+
+    # 7 Atributos numéricos para el modelo Atributo
+    fuerza = forms.IntegerField(min_value=0, max_value=100, required=True)
+    destreza = forms.IntegerField(min_value=0, max_value=100, required=True)
+    vigor = forms.IntegerField(min_value=0, max_value=100, required=True)
+    inteligencia = forms.IntegerField(min_value=0, max_value=100, required=True)
+    percepcion = forms.IntegerField(min_value=0, max_value=100, required=True)
+    carisma = forms.IntegerField(min_value=0, max_value=100, required=True)
+    suerte = forms.IntegerField(min_value=0, max_value=100, required=True)
+
+    # Habilidades seleccionables mediante checkboxes
+    habilidades = forms.ModelMultipleChoiceField(
+        queryset=Habilidad.objects.none(),
+        required=False,
+        widget=forms.CheckboxSelectMultiple
+    )
+
+    # Objetos de equipamiento seleccionables mediante checkboxes
+    objetos = forms.ModelMultipleChoiceField(
+        queryset=Objeto.objects.none(),
+        required=False,
+        widget=forms.CheckboxSelectMultiple
+    )
+
+    class Meta:
+        model = Personaje
+        fields = [
+            'nombre', 'raza', 'usuario', 'estado',
+            'nivel', 'experiencia', 'exp_siguiente_nivel', 'activo',
+            'habilidades', 'objetos'
+        ]
+
+    def __init__(self, *args, request_user=None, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.request_user = request_user
+
+        # Filtrar solo razas, habilidades y objetos activos en el reino
+        self.fields['raza'].queryset = Raza.objects.filter(activo=True)
+        self.fields['habilidades'].queryset = Habilidad.objects.filter(activo=True)
+        self.fields['objetos'].queryset = Objeto.objects.filter(activo=True)
+
+        # Configurar usuarios activos para reasignación
+        self.fields['usuario'].queryset = User.objects.filter(is_active=True).order_by('username')
+        self.fields['usuario'].required = False
+
+        # Si hay instancia existente, pre-cargar los 7 atributos numéricos
+        if self.instance and self.instance.pk:
+            if hasattr(self.instance, 'atributos') and self.instance.atributos:
+                self.fields['fuerza'].initial = self.instance.atributos.fuerza
+                self.fields['destreza'].initial = self.instance.atributos.destreza
+                self.fields['vigor'].initial = self.instance.atributos.vigor
+                self.fields['inteligencia'].initial = self.instance.atributos.inteligencia
+                self.fields['percepcion'].initial = self.instance.atributos.percepcion
+                self.fields['carisma'].initial = self.instance.atributos.carisma
+                self.fields['suerte'].initial = self.instance.atributos.suerte
+
+    def clean_nombre(self):
+        nombre = self.cleaned_data.get('nombre', '').strip()
+        if len(nombre) < 3:
+            raise forms.ValidationError("El nombre del héroe debe contener al menos 3 caracteres.")
+        qs = Personaje.objects.filter(nombre__iexact=nombre)
+        if self.instance and self.instance.pk:
+            qs = qs.exclude(pk=self.instance.pk)
+        if qs.exists():
+            raise forms.ValidationError(f"Ya existe un guerrero con el nombre '{nombre}'. Elige otro.")
+        return nombre
+
+    def save(self, commit=True):
+        """
+        Guarda los cambios del personaje y actualiza o crea sus atributos
+        asociados dentro de una transacción atómica.
+        """
+        with transaction.atomic():
+            personaje = super().save(commit=commit)
+
+            # Extraer valores de los 7 atributos
+            fuerza = self.cleaned_data.get('fuerza', 0)
+            destreza = self.cleaned_data.get('destreza', 0)
+            vigor = self.cleaned_data.get('vigor', 0)
+            inteligencia = self.cleaned_data.get('inteligencia', 0)
+            percepcion = self.cleaned_data.get('percepcion', 0)
+            carisma = self.cleaned_data.get('carisma', 0)
+            suerte = self.cleaned_data.get('suerte', 0)
+
+            # Actualizar o crear registro OneToOne de Atributo
+            if hasattr(personaje, 'atributos') and personaje.atributos:
+                atributo = personaje.atributos
+                atributo.fuerza = fuerza
+                atributo.destreza = destreza
+                atributo.vigor = vigor
+                atributo.inteligencia = inteligencia
+                atributo.percepcion = percepcion
+                atributo.carisma = carisma
+                atributo.suerte = suerte
+                if commit:
+                    atributo.save()
+            else:
+                if commit:
+                    Atributo.objects.create(
+                        personaje=personaje,
+                        fuerza=fuerza,
+                        destreza=destreza,
+                        vigor=vigor,
+                        inteligencia=inteligencia,
+                        percepcion=percepcion,
+                        carisma=carisma,
+                        suerte=suerte,
+                    )
+
+        return personaje
