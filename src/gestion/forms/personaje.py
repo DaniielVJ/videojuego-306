@@ -29,9 +29,11 @@ class CrearPersonajeForm(forms.ModelForm):
         required=True
     )
 
+    # Objetos de equipamiento seleccionables con checkboxes
     objetos = forms.ModelMultipleChoiceField(
-        queryset=Objeto.objects.all(),
-        required=False
+        queryset=Objeto.objects.filter(kit_inicial=True, activo=True),
+        required=False,
+        widget=forms.CheckboxSelectMultiple
     )
 
     class Meta:
@@ -42,7 +44,7 @@ class CrearPersonajeForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         self.request_user = request_user
 
-        # Filtrar solo razas y habilidades activas en el reino
+        # Filtrar solo razas, habilidades y objetos activos en el reino
         self.fields['raza'].queryset = Raza.objects.filter(activo=True)
         self.fields['habilidades'].queryset = Habilidad.objects.filter(activo=True)
 
@@ -60,10 +62,17 @@ class CrearPersonajeForm(forms.ModelForm):
 
     def clean_habilidades(self):
         habilidades = self.cleaned_data.get('habilidades')
-        if habilidades and habilidades.count() > 2:
-            raise forms.ValidationError("No puedes asignar más de 2 habilidades iniciales al personaje.")
+        if habilidades.count() != 2:
+            raise forms.ValidationError("Debes seleccionar al menos 2 habilidades")
         return habilidades
 
+
+    def clean_objetos(self):
+        objetos = self.cleaned_data.get('objetos')
+        if objetos.count() != 2:
+            raise forms.ValidationError("Debes seleccionar al menos 3 objetos")
+        return objetos
+    
 
     def clean(self):
         puntos_base = 20
@@ -117,5 +126,8 @@ class CrearPersonajeForm(forms.ModelForm):
                 habilidades = self.cleaned_data.get('habilidades')
                 if habilidades:
                     personaje.habilidades.add(*habilidades)
+
+                # 3. Asociar objetos de inventario seleccionados
+                objetos = self.cleaned_data.get('objetos')
 
         return personaje

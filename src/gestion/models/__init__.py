@@ -1,3 +1,3 @@
-from .inventario import (Objeto, InventarioObjetos)
+from .inventario import Objeto
 from .personaje import (Personaje, Atributo, Raza, Habilidad)
 

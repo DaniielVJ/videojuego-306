@@ -376,8 +376,43 @@
             </div>
             {% endfor %}
           </div>
-          <div>
-            a
+        </div>
+
+        <!-- CUADRANTE 3: EQUIPAMIENTO / OBJETOS INICIALES (CHECKBOXES) -->
+        <div class="skills-quadrant quadrant-objects">
+          <div class="quadrant-header">
+            <div class="quadrant-title-group">
+              <svg class="rpg-icon" viewBox="0 0 24 24"><path fill="currentColor" d="M20 7h-4V4c0-1.1-.9-2-2-2h-4c-1.1 0-2 .9-2 2v3H4c-1.1 0-2 .9-2 2v11c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V9c0-1.1-.9-2-2-2zm-10-3h4v3h-4V4zm10 16H4V9h16v11zm-9-8h2v2h-2v-2zm-3 0h2v2H8v-2zm6 0h2v2h-2v-2z"/></svg>
+              <span>Objetos de Inventario</span>
+            </div>
+            <span class="available-count-tag" id="objectsSelectedCount">0 seleccionados</span>
+          </div>
+
+          <div class="quadrant-help-text">
+            Selecciona los objetos y pertrechos que llevará tu personaje:
+          </div>
+
+          <div class="objects-checkbox-grid" id="objectsCheckboxGrid">
+            {% for objeto in objetos %}
+            <label class="rpg-checkbox-card" for="obj_{{ objeto.pk }}">
+              <input type="checkbox" name="objetos" value="{{ objeto.pk }}" id="obj_{{ objeto.pk }}"/>
+              <span class="rpg-checkbox-box">
+                <svg class="check-icon" viewBox="0 0 24 24"><path fill="currentColor" d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+              </span>
+              <div class="rpg-item-thumb">
+                <img src="{{ objeto.img.url }}" alt="{{ objeto.nombre }}" class="rpg-item-img">
+              </div>
+              
+              <div class="rpg-item-info">
+                <span class="rpg-checkbox-label">{{ objeto.nombre }}</span>
+                <span class="rpg-item-weight" title="Peso">{{ objeto.peso }} kg</span>
+              </div>
+            </label>
+            {% empty %}
+            <div class="empty-skills-state">
+              <p>No hay objetos de equipamiento registrados en el reino actualmente.</p>
+            </div>
+            {% endfor %}
           </div>
         </div>
       </aside>

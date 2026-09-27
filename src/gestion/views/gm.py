@@ -9,7 +9,7 @@ from django.db import transaction
 
 
 from src.usuarios.mixins import GmRequiredMixin
-from ..models import Personaje, Raza, Atributo, Habilidad
+from ..models import Personaje, Raza, Atributo, Habilidad, Objeto
 from ..forms import CrearPersonajeForm
 
 User = get_user_model()
@@ -76,6 +76,7 @@ class CrearPersonajeView(GmRequiredMixin, View):
         razas = list(Raza.objects.filter(activo=True))
         usuarios = User.objects.filter(is_active=True).order_by('username')
         habilidades = Habilidad.objects.filter(activo=True)
+        objetos = Objeto.objects.filter(kit_inicial=True, activo=True)
         razas_json = [
             {
                 'id': r.id,
@@ -93,6 +94,7 @@ class CrearPersonajeView(GmRequiredMixin, View):
             'habilidades': habilidades,
             'razas_json': json.dumps(razas_json),
             'error_message': error_msg,
+            'objetos': objetos,
         }
 
 

@@ -1,5 +1,5 @@
 from django.contrib import admin
-from ..models import Personaje, Atributo, Raza, Habilidad, InventarioObjetos, Objeto
+from ..models import Personaje, Atributo, Raza, Habilidad, Objeto
 
 @admin.register(Personaje)
 class PersonajeAdmin(admin.ModelAdmin):
@@ -58,18 +58,3 @@ class ObjetoAdmin(admin.ModelAdmin):
     # Permite ajustar el peso de los ítems en masa desde la tabla
     list_editable = ('peso', 'activo')
 
-@admin.register(InventarioObjetos)
-class InventarioObjetosAdmin(admin.ModelAdmin):
-    # Muestra exactamente qué personaje tiene qué ítem
-    list_display = ('personaje', 'objeto')
-    
-    # Búsqueda cruzada relacional profunda
-    search_fields = ('personaje__nombre', 'personaje__usuario__username', 'objeto__nombre')
-
-
-class InventarioInline(admin.TabularInline):
-    model = InventarioObjetos
-    extra = 1  # Deja una fila vacía siempre lista para añadir un nuevo ítem
-    
-    # Habilita un buscador de ítems en lugar de un menú desplegable gigante
-    autocomplete_fields = ['objeto']

@@ -21,6 +21,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // 5. Validación de Envío de Formulario
   initFormValidation();
+
+  // 6. Inicializar Selección de Objetos de Inventario
+  initObjectsCheckboxSystem();
 });
 
 /* ===================================================
@@ -546,3 +549,40 @@ function initFormValidation() {
 
   });
 }
+
+/* ===================================================
+   6. GESTOR DE CHECKBOXES DE OBJETOS DE INVENTARIO
+   =================================================== */
+function initObjectsCheckboxSystem() {
+  const container = document.getElementById('objectsCheckboxGrid');
+  const countBadge = document.getElementById('objectsSelectedCount');
+  if (!container) return;
+
+  const checkboxes = container.querySelectorAll('input[type="checkbox"]');
+
+  function updateCount() {
+    let selected = 0;
+    checkboxes.forEach((cb) => {
+      const card = cb.closest('.rpg-checkbox-card');
+      if (cb.checked) {
+        selected++;
+        if (card) card.classList.add('is-checked');
+      } else {
+        if (card) card.classList.remove('is-checked');
+      }
+    });
+
+    if (countBadge) {
+      countBadge.textContent = selected === 1 ? '1 seleccionado' : `${selected} seleccionados`;
+      countBadge.style.color = selected > 0 ? '#ffcc00' : '#a89472';
+    }
+  }
+
+  checkboxes.forEach((cb) => {
+    cb.addEventListener('change', updateCount);
+  });
+
+  // Estado inicial
+  updateCount();
+}
+

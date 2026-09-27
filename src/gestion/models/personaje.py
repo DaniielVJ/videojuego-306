@@ -1,12 +1,13 @@
 from django.db import models
 from django.conf import settings
+from .inventario import Objeto
+
 
 class Personaje(models.Model):
     class Estado(models.TextChoices):
         VIVO = "vivo", "Vivo",
         MUERTO = 'muerto', 'Muerto'
         CONGELADO = 'congelado', 'Congelado'
-
 
     class Meta:
         verbose_name = "Personaje"
@@ -21,10 +22,13 @@ class Personaje(models.Model):
     exp_siguiente_nivel = models.PositiveIntegerField(default = 100)
     activo = models.BooleanField(default = True)
     habilidades = models.ManyToManyField('Habilidad', related_name='personajes')
+    objetos = models.ManyToManyField(Objeto, related_name='personajes')
 
 
     def __str__(self):
         return self.nombre
+
+
 
 class Atributo(models.Model):
 
