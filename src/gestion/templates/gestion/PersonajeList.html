@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <h2>Tus Personajes</h2>
+  
+  <!-- Enlace para crear uno nuevo -->
+  <a href="{% url 'player:crear_personaje' %}">Crear Nuevo Personaje</a>
+  <br><br>
+
+  <!-- Formulario básico de búsqueda -->
+  <form method="GET">
+    <input type="text" name="q" placeholder="Buscar por nombre..." value="{{ filtros.query }}">
+    <button type="submit">Buscar</button>
+  </form>
+  <br>
+
+  <table border="1">
+    <thead>
+      <tr>
+        <th>Nombre</th>
+        <th>Raza</th>
+        <th>Nivel</th>
+        <th>Estado</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for personaje in Personajes %}
+        <tr>
+          <td>{{ personaje.nombre }}</td>
+          <td>{{ personaje.raza.nombre }}</td>
+          <td>{{ personaje.nivel }}</td>
+          <td>{{ personaje.estado }}</td>
+          <td>
+             <!-- Asegúrate de cambiar estos nombres por los nombres reales de tus URLs -->
+             <a href="{% url 'player:actualizar_personaje' personaje.id %}">Editar</a> | 
+             <a href="{% url 'player:eliminar_personaje' personaje.id %}">Borrar</a>
+          </td>
+        </tr>
+      {% empty %}
+        <tr>
+          <td colspan="5">No tienes personajes activos.</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <!-- Paginación básica -->
+  {% if is_paginated %}
+    <div style="margin-top: 10px;">
+      Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}
+    </div>
+  {% endif %}
+{% endblock %}

@@ -4,8 +4,10 @@ from .inventario import Objeto
 
 
 class Personaje(models.Model):
+
     class Estado(models.TextChoices):
-        VIVO = "vivo", "Vivo",
+
+        VIVO = "vivo", "Vivo"
         MUERTO = 'muerto', 'Muerto'
         CONGELADO = 'congelado', 'Congelado'
 
@@ -37,6 +39,7 @@ class Atributo(models.Model):
         verbose_name_plural = "Atributos"
 
     personaje = models.OneToOneField(Personaje, on_delete=models.PROTECT, related_name="atributos")
+
     fuerza = models.PositiveIntegerField(null = False)
     destreza = models.PositiveIntegerField(null = False)
     vigor = models.PositiveIntegerField(null = False)
