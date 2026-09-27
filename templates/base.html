@@ -27,13 +27,15 @@
         
 </head>
 <body>
-    
-    
+    <!-- Reproductor de Audio Global y Botón de Silencio -->
+    {% include "includes/audio_player.html" %}
+
     {% block main %}
         
     {% endblock main %}
-        
 
+    <!-- Script del Reproductor de Audio Global -->
+    <script src="{% static 'js/audio_player.js' %}"></script>
     
     {% block scripts %}
         

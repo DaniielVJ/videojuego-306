@@ -1,9 +1,18 @@
+import json
+
+
 from django.views.generic import ListView, View
 from django.db.models import Q
+from django.shortcuts import render, redirect
+from django.contrib.auth import get_user_model
+from django.db import transaction
+
 
 from src.usuarios.mixins import GmRequiredMixin
-from ..models import Personaje, Raza
+from ..models import Personaje, Raza, Atributo, Habilidad, Objeto
+from ..forms import CrearPersonajeForm
 
+User = get_user_model()
 
 class ListarPersonajesView(GmRequiredMixin, ListView):
     model = Personaje
@@ -54,5 +63,57 @@ class ListarPersonajesView(GmRequiredMixin, ListView):
         return context_data
 
 
+
+
+
+# View para crear un personaje
 class CrearPersonajeView(GmRequiredMixin, View):
-    pass
+    template_name = 'gestion/crear_personaje.html'
+
+
+    # Implemento mi propio get context data como las view genericas para obtener los datos que mandaremos al template
+    def get_context_data(self, request, form=None, error_msg=None):
+        razas = list(Raza.objects.filter(activo=True))
+        usuarios = User.objects.filter(is_active=True).order_by('username')
+        habilidades = Habilidad.objects.filter(activo=True)
+        objetos = Objeto.objects.filter(kit_inicial=True, activo=True)
+        razas_json = [
+            {
+                'id': r.id,
+                'nombre': r.nombre,
+                'descripcion': r.descripcion,
+                'bonificadores': r.r_bonificadores or {},
+                'handicap': r.r_handicap or {},
+            }
+            for r in razas
+        ]
+        return {
+            'form': form or CrearPersonajeForm(request_user=request.user),
+            'razas': razas,
+            'usuarios': usuarios,
+            'habilidades': habilidades,
+            'razas_json': json.dumps(razas_json),
+            'error_message': error_msg,
+            'objetos': objetos,
+        }
+
+
+    # Solo devolvemos el template para rellenar en el form
+    def get(self, request):
+        return render(request, self.template_name, self.get_context_data(request))
+
+
+    def post(self, request):
+        form = CrearPersonajeForm(request.POST, request_user=request.user)
+        if form.is_valid():
+            form.save()
+            return redirect('gm:listar-personajes')
+
+        # Extraer el primer error amigable para el banner superior
+        error_msg = None
+        if form.errors:
+            first_err_list = next(iter(form.errors.values()))
+            error_msg = first_err_list[0] if first_err_list else "Por favor verifica los campos del personaje."
+
+        return render(request, self.template_name, self.get_context_data(request, form=form, error_msg=error_msg))
+
