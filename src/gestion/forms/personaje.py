@@ -129,5 +129,7 @@ class CrearPersonajeForm(forms.ModelForm):
 
                 # 3. Asociar objetos de inventario seleccionados
                 objetos = self.cleaned_data.get('objetos')
+                if objetos:
+                    personaje.objetos.add(*objetos)
 
         return personaje
