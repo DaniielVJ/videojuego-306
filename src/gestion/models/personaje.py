@@ -22,10 +22,28 @@ class Personaje(models.Model):
     nivel = models.PositiveIntegerField(default = 1)
     experiencia = models.PositiveIntegerField(default = 0)
     exp_siguiente_nivel = models.PositiveIntegerField(default = 100)
+    hp_base = models.PositiveIntegerField(default = 100)
+    mana_base = models.PositiveIntegerField(default = 50)
     activo = models.BooleanField(default = True)
     habilidades = models.ManyToManyField('Habilidad', related_name='personajes')
     objetos = models.ManyToManyField(Objeto, related_name='personajes')
 
+
+    @property
+    def hp_total(self):
+        try:
+            # Vigor da 10 puntos de salud extra por cada punto
+            return self.hp_base + (self.atributos.vigor * 10)
+        except Exception:
+            return self.hp_base
+
+    @property
+    def mana_total(self):
+        try:
+            # Inteligencia da 10 puntos de mana extra por cada punto
+            return self.mana_base + (self.atributos.inteligencia * 10)
+        except Exception:
+            return self.mana_base
 
     def __str__(self):
         return self.nombre
@@ -70,6 +88,7 @@ class Habilidad(models.Model):
     descripcion = models.TextField(max_length = 500, null = False)
     efectos = models.JSONField(blank=True, null=True)
     costo = models.JSONField(blank=True, null=True)
+    kit_inicial = models.BooleanField(default=False)
     activo = models.BooleanField(default = True)
 
 

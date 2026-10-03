@@ -230,8 +230,8 @@ Modificar {{ personaje.nombre }}
                 <svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm1 15h-2v-6h2zm0-8h-2V7h2z"/></svg>
               </div>
               <div class="metric-content">
-                <span class="metric-label">Afinidad Mágica</span>
-                <span class="metric-value" id="metricMagicVal">0 PTS</span>
+                <span class="metric-label">Poder Arcano / Maná</span>
+                <span class="metric-value" id="metricMagicVal">0 PM</span>
               </div>
             </div>
 
@@ -476,8 +476,12 @@ Modificar {{ personaje.nombre }}
               </div>
               <span class="section-badge-counter" id="skillCounterBadge">{{ personaje.habilidades.count }} Asignadas</span>
             </header>
+            
+            <div style="padding: 0 1.5rem 1rem 1.5rem;">
+                <input type="text" id="searchHabilidades" placeholder="Buscar habilidad por nombre..." style="width: 100%; padding: 10px; background: rgba(0,0,0,0.6); border: 1px solid #8c7335; color: #ffeed1; font-family: 'MedievalSharp', cursive; border-radius: 4px;" />
+            </div>
 
-            <div class="skills-deck-grid">
+            <div class="skills-deck-grid" style="max-height: 400px; overflow-y: auto; padding-right: 10px;">
               {% for habilidad in habilidades|default:personaje.habilidades.all %}
               <article class="skill-codex-card skill-checkbox-card {% if habilidad in personaje.habilidades.all %}is-selected{% endif %}" title="Haz clic para asignar o retirar esta habilidad">
                 <!-- Checkbox de asignación -->
@@ -542,8 +546,12 @@ Modificar {{ personaje.nombre }}
               </div>
               <span class="section-badge-counter" id="totalInventoryWeight">0.0 kg Total</span>
             </header>
+            
+            <div style="padding: 0 1.5rem 1rem 1.5rem;">
+                <input type="text" id="searchObjetos" placeholder="Buscar objeto por nombre..." style="width: 100%; padding: 10px; background: rgba(0,0,0,0.6); border: 1px solid #8c7335; color: #ffeed1; font-family: 'MedievalSharp', cursive; border-radius: 4px;" />
+            </div>
 
-            <div class="inventory-deck-grid">
+            <div class="inventory-deck-grid" style="max-height: 400px; overflow-y: auto; padding-right: 10px;">
               {% for objeto in objetos|default:personaje.objetos.all %}
               <article class="item-codex-card item-checkbox-card {% if objeto in personaje.objetos.all %}is-selected{% endif %}" data-peso="{{ objeto.peso }}" title="Haz clic para agregar o retirar este objeto">
                 <!-- Checkbox del objeto -->
@@ -613,5 +621,5 @@ Modificar {{ personaje.nombre }}
 
 {% block scripts %}
 <!-- Motor Interactivo de Edición de Personaje (Steppers, Barras y Canvas) -->
-<script src="{% static 'js/actualizar_personaje.js' %}"></script>
+<script src="{% static 'js/actualizar_personaje.js' %}?v=2"></script>
 {% endblock scripts %}

@@ -76,7 +76,7 @@ class CrearPersonajeView(GmRequiredMixin, View):
     def get_context_data(self, request, form=None, error_msg=None):
         razas = list(Raza.objects.filter(activo=True))
         usuarios = User.objects.filter(is_active=True).order_by('username')
-        habilidades = Habilidad.objects.filter(activo=True)
+        habilidades = Habilidad.objects.filter(kit_inicial=True, activo=True)
         objetos = Objeto.objects.filter(kit_inicial=True, activo=True)
         razas_json = [
             {
