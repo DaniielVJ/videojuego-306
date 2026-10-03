@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Modificar Raza{% endblock %}
+{% block styles %}
+<link rel="stylesheet" href="{% static 'css/actualizar_raza.css' %}">
+<style>
+  .creation-form input[type="text"],
+  .creation-form textarea {
+    width: 100%;
+    padding: 10px;
+    background: rgba(0,0,0,0.6);
+    border: 1px solid #8c7335;
+    color: #ffeed1;
+    font-family: 'MedievalSharp', cursive;
+    border-radius: 4px;
+  }
+  .creation-form input[type="file"] {
+    color: #ffcc00;
+  }
+</style>
+{% endblock %}
+{% block main %}
+<div class="scene">
+  <canvas id="bgCanvas" class="bg-canvas"></canvas>
+  {% include "includes/navbar2.html" %}
+  <main class="delete-container">
+    <div class="warcraft-panel" style="max-width: 800px; width: 100%;">
+      <h1 class="warcraft-title">Modificar Raza: {{ form.instance.nombre }}</h1>
+      <form method="POST" enctype="multipart/form-data" class="creation-form">
+        {% csrf_token %}
+        {% for field in form %}
+          <div style="margin-bottom: 1.5rem; text-align: left;">
+            <label style="color: #ffcc00; font-family: 'Bangers'; font-size: 1.4rem; display: block; margin-bottom: 0.5rem; letter-spacing: 1px;">
+                {{ field.label }}
+            </label>
+            {{ field }}
+            {% if field.errors %}
+              <div style="color: #ff4444; margin-top: 0.5rem; font-weight: bold;">{{ field.errors }}</div>
+            {% endif %}
+          </div>
+        {% endfor %}
+        <div class="action-buttons" style="margin-top: 2rem;">
+          <a href="{% url 'gm:detalle-raza' pk=form.instance.pk %}" class="btn-alliance">CANCELAR</a>
+          <button type="submit" class="btn-horde">ACTUALIZAR RAZA</button>
+        </div>
+      </form>
+    </div>
+  </main>
+</div>
+{% endblock %}
+{% block scripts %}
+<script src="{% static 'js/actualizar_raza.js' %}"></script>
+{% endblock %}

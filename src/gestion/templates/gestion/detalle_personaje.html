@@ -44,10 +44,17 @@
         </a>
 
         <!-- BOTÓN DE ELIMINACIÓN: NAVEGA AL DESTIERRO (GET) -->
-        <a href="{% url 'gm:eliminar-personaje' pk=personaje.pk %}" class="btn-hero-nav btn-delete-hero" style="color: #ff4444; border-color: #8a0303;" title="Desterrar a {{ personaje.nombre }}">
+        {% if personaje.activo %}
+        <a href="{% url 'gm:eliminar-personaje' pk=personaje.pk %}" class="btn-hero-nav btn-delete-hero" style="color: #ff4444; border-color: #8a0303;" title="Deshabilitar a {{ personaje.nombre }}">
           <svg class="rpg-icon" viewBox="0 0 24 24"><path fill="currentColor" d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>
-          <span>ELIMINAR HÉROE</span>
+          <span>DESHABILITAR HÉROE</span>
         </a>
+        {% else %}
+        <a href="{% url 'gm:eliminar-personaje' pk=personaje.pk %}" class="btn-hero-nav btn-delete-hero" style="color: #10b981; border-color: #059669;" title="Habilitar a {{ personaje.nombre }}">
+          <svg class="rpg-icon" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+          <span>HABILITAR HÉROE</span>
+        </a>
+        {% endif %}
       </div>
     </header>
 
