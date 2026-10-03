@@ -15,7 +15,28 @@
     border-radius: 4px;
   }
   .creation-form input[type="file"] {
-    color: #ffcc00;
+    color: #ffeed1;
+    font-family: 'MedievalSharp', cursive;
+    margin-top: 10px;
+  }
+  .creation-form a {
+    color: #10b981;
+    text-decoration: none;
+    font-weight: bold;
+  }
+  .creation-form a:hover {
+    text-decoration: underline;
+  }
+  .creation-form input[type="checkbox"] {
+    margin-left: 10px;
+    accent-color: #ff4444;
+    transform: scale(1.2);
+  }
+  .img-container {
+    background: rgba(0,0,0,0.4);
+    border: 1px dashed #8c7335;
+    padding: 15px;
+    border-radius: 4px;
   }
 </style>
 {% endblock %}
@@ -33,7 +54,13 @@
             <label style="color: #ffcc00; font-family: 'Bangers'; font-size: 1.4rem; display: block; margin-bottom: 0.5rem; letter-spacing: 1px;">
                 {{ field.label }}
             </label>
-            {{ field }}
+            {% if field.name == 'img_body' or field.name == 'img_head' %}
+                <div class="img-container">
+                    {{ field }}
+                </div>
+            {% else %}
+                {{ field }}
+            {% endif %}
             {% if field.errors %}
               <div style="color: #ff4444; margin-top: 0.5rem; font-weight: bold;">{{ field.errors }}</div>
             {% endif %}

@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Inventario del Reino{% endblock %}
+{% block styles %}
+<link rel="stylesheet" href="{% static 'css/listar_objetos.css' %}">
+<style>
+.roster-card { border-color: #555; }
+.hero-portrait { object-fit: contain; }
+</style>
+{% endblock %}
+{% block main %}
+<div class="scene">
+  <canvas id="bgCanvas" class="bg-canvas"></canvas>
+  {% include "includes/navbar2.html" %}
+  <main class="roster-container">
+    <div class="roster-header">
+      <h1 class="roster-title">Objetos del Reino</h1>
+      <a href="{% url 'gm:crear-objeto' %}" class="btn-create-hero">FORJAR OBJETO</a>
+    </div>
+    <div class="roster-grid">
+      {% for objeto in objetos %}
+      <a href="{% url 'gm:detalle-objeto' pk=objeto.pk %}" class="roster-card">
+        <div class="roster-card-inner">
+          <div class="roster-portrait-wrap">
+              {% if objeto.img %}
+                <img src="{{ objeto.img.url }}" alt="{{ objeto.nombre }}" class="hero-portrait">
+              {% else %}
+                <div class="portrait-placeholder" style="font-size: 3rem; color: #c4ab7c;">🛡️</div>
+              {% endif %}
+          </div>
+          <div class="roster-info">
+            <h2 class="hero-name">
+              {{ objeto.nombre }}
+              {% if not objeto.activo %}
+              <span style="font-size: 0.75rem; color: #ff4444; border: 1px solid #ff4444; padding: 2px 4px; border-radius: 3px; margin-left: 5px;">DESHABILITADO</span>
+              {% endif %}
+            </h2>
+            <div class="hero-class" style="color: #c4ab7c; font-size: 0.9rem;">
+              Peso: {{ objeto.peso }} 
+              {% if objeto.es_equipable %}| Equipable{% endif %}
+              {% if objeto.kit_inicial %}| Kit Inicial{% endif %}
+            </div>
+            <div class="hero-class" style="color: #9d8c6b; font-size: 0.8rem; margin-top: 5px;">{{ objeto.descripcion|truncatechars:60 }}</div>
+          </div>
+        </div>
+      </a>
+      {% endfor %}
+    </div>
+  </main>
+</div>
+{% endblock %}
+{% block scripts %}
+<script src="{% static 'js/listar_objetos.js' %}"></script>
+{% endblock %}
