@@ -153,7 +153,11 @@
             <div class="metric-content">
               <span class="metric-label">Salud Máxima</span>
               <span class="metric-value">
-                {{ personaje.hp_total }} PV
+                {% if personaje.atributos %}
+                  {{ personaje.atributos.vigor|default:10|add:personaje.nivel|add:80 }} PV
+                {% else %}
+                  100 PV
+                {% endif %}
               </span>
             </div>
           </div>
@@ -181,9 +185,13 @@
               <svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm1 15h-2v-6h2zm0-8h-2V7h2z"/></svg>
             </div>
             <div class="metric-content">
-              <span class="metric-label">Poder Arcano / Maná</span>
+              <span class="metric-label">Afinidad Mágica</span>
               <span class="metric-value">
-                {{ personaje.mana_total }} PM
+                {% if personaje.atributos %}
+                  {{ personaje.atributos.inteligencia|default:0 }} PTS
+                {% else %}
+                  -- PTS
+                {% endif %}
               </span>
             </div>
           </div>

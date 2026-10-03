@@ -15,7 +15,7 @@ class HabilidadUpdateCreateForm(forms.ModelForm):
 	class Meta:
 
 		model = Habilidad
-		fields = ["nombre", "descripcion", "kit_inicial"]
+		fields = ["nombre", "descripcion"]
 
 	def clean_nombre(self):
 		nombre = self.cleaned_data.get('nombre', '').strip()
