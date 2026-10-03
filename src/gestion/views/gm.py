@@ -211,7 +211,25 @@ class ListarRazasView(GmRequiredMixin, ListView):
     context_object_name = "razas"
 
     def get_queryset(self):
-        return Raza.objects.all()
+        qs = Raza.objects.all().order_by('nombre')
+        q = self.request.GET.get('q')
+        estado = self.request.GET.get('estado', 'todos')
+        
+        if q:
+            qs = qs.filter(nombre__icontains=q)
+            
+        if estado == 'activos':
+            qs = qs.filter(activo=True)
+        elif estado == 'deshabilitados':
+            qs = qs.filter(activo=False)
+            
+        return qs
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['q'] = self.request.GET.get('q', '')
+        context['estado'] = self.request.GET.get('estado', 'todos')
+        return context
 
 class DetalleRazaView(GmRequiredMixin, DetailView):
     model = Raza
@@ -253,7 +271,25 @@ class ListarHabilidadesView(GmRequiredMixin, ListView):
     paginate_by = 12
 
     def get_queryset(self):
-        return Habilidad.objects.all().order_by('nombre')
+        qs = Habilidad.objects.all().order_by('nombre')
+        q = self.request.GET.get('q')
+        estado = self.request.GET.get('estado', 'todos')
+        
+        if q:
+            qs = qs.filter(nombre__icontains=q)
+            
+        if estado == 'activos':
+            qs = qs.filter(activo=True)
+        elif estado == 'deshabilitados':
+            qs = qs.filter(activo=False)
+            
+        return qs
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['q'] = self.request.GET.get('q', '')
+        context['estado'] = self.request.GET.get('estado', 'todos')
+        return context
 
 class DetalleHabilidadView(GmRequiredMixin, DetailView):
     model = Habilidad
@@ -298,7 +334,25 @@ class ListarObjetosView(GmRequiredMixin, ListView):
     paginate_by = 12
 
     def get_queryset(self):
-        return Objeto.objects.all().order_by('nombre')
+        qs = Objeto.objects.all().order_by('nombre')
+        q = self.request.GET.get('q')
+        estado = self.request.GET.get('estado', 'todos')
+        
+        if q:
+            qs = qs.filter(nombre__icontains=q)
+            
+        if estado == 'activos':
+            qs = qs.filter(activo=True)
+        elif estado == 'deshabilitados':
+            qs = qs.filter(activo=False)
+            
+        return qs
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['q'] = self.request.GET.get('q', '')
+        context['estado'] = self.request.GET.get('estado', 'todos')
+        return context
 
 class DetalleObjetoView(GmRequiredMixin, DetailView):
     model = Objeto
