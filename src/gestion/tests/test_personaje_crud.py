@@ -56,6 +56,12 @@ class PersonajeCRUDTests(TestCase):
         self.personaje.refresh_from_db()
         self.assertEqual(Personaje.objects.count(), 1)
         self.assertFalse(self.personaje.activo)
+        
+        # Probar volver a habilitar (Toggle)
+        response_habilitar = self.client.post(url)
+        self.assertEqual(response_habilitar.status_code, 302)
+        self.personaje.refresh_from_db()
+        self.assertTrue(self.personaje.activo)
 
     def test_full_crud_gm(self):
         """Prueba el ciclo completo de Lectura, Creación, Modificación y Detalles por parte del GM."""

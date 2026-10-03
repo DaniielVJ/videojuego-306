@@ -1,0 +1,1286 @@
+/* ===================================================
+   DETALLE_PERSONAJE.CSS — FICHA ÉPICA DEL HÉROE
+   Estilo World of Warcraft / Dark Fantasy RPG
+   =================================================== */
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  width: 100%;
+  min-height: 100%;
+  overflow-x: hidden;
+  overflow-y: auto;
+  font-family: var(--font-medieval, 'MedievalSharp', cursive, serif);
+  background: url('../img/war_bg.jpg') no-repeat center center fixed;
+  background-size: cover;
+  color: var(--warcraft-text, #e6d3a8);
+}
+
+/* Escena Principal */
+.scene {
+  position: relative;
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: rgba(0, 0, 0, 0.65);
+}
+
+/* Canvas de Brasas y Cenizas de Fondo */
+.bg-canvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  pointer-events: none;
+}
+
+/* Contenedor Central de Contenido */
+.content-wrapper {
+  position: relative;
+  z-index: 10;
+  flex: 1;
+  width: 100%;
+  max-width: 1320px;
+  margin: 0 auto;
+  padding: 1.75rem 1.5rem 5rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.75rem;
+}
+
+/* ===================================================
+   1. BARRA SUPERIOR DE NAVEGACIÓN Y ACCIÓN
+   =================================================== */
+.hero-action-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+  padding: 0.85rem 1.25rem;
+  background: rgba(18, 14, 10, 0.9);
+  border: 1.5px solid var(--warcraft-bronze, #8c7335);
+  border-radius: 4px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.8), inset 0 0 10px rgba(0, 0, 0, 0.7);
+}
+
+.action-bar-left, .action-bar-right {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.hero-chronicle-tag {
+  font-family: var(--font-title, 'Bangers', cursive);
+  font-size: 1.2rem;
+  letter-spacing: 0.08em;
+  color: var(--warcraft-gold-dim, #c4ab7c);
+  text-shadow: 1px 1px 2px #000;
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.hero-chronicle-tag .tag-highlight {
+  color: var(--warcraft-gold, #ffcc00);
+}
+
+/* Botones de Barra Superior */
+.btn-hero-nav {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0.55rem 1.2rem;
+  font-family: var(--font-medieval, 'MedievalSharp', cursive);
+  font-size: 0.95rem;
+  font-weight: bold;
+  text-decoration: none;
+  border-radius: 4px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.25, 1, 0.5, 1);
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.7);
+  white-space: nowrap;
+}
+
+.btn-hero-nav svg {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+}
+
+/* Botón Volver */
+.btn-back {
+  background: linear-gradient(180deg, #2b1f14 0%, #160f08 100%);
+  border: 1.5px solid var(--warcraft-bronze, #8c7335);
+  color: #eeddbb;
+}
+
+.btn-back:hover {
+  background: linear-gradient(180deg, #443120 0%, #24170d 100%);
+  border-color: var(--warcraft-gold, #ffcc00);
+  color: var(--warcraft-gold, #ffcc00);
+  transform: translateX(-2px);
+  box-shadow: 0 0 12px rgba(255, 204, 0, 0.35);
+}
+
+/* Botón Editar Héroe (Rojo Horda / Borde Dorado) */
+.btn-edit-hero {
+  background: linear-gradient(180deg, #8c1a1a 0%, #4a0505 100%);
+  border: 1.5px solid var(--warcraft-gold, #ffcc00);
+  color: #fffae8;
+  text-shadow: 1px 1px 2px #000;
+  box-shadow: 0 0 14px rgba(255, 68, 68, 0.3), inset 0 1px 2px rgba(255, 255, 255, 0.25);
+}
+
+.btn-edit-hero:hover {
+  background: linear-gradient(180deg, #b02424 0%, #610707 100%);
+  border-color: var(--warcraft-gold-hover, #ffe066);
+  color: #ffffff;
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 0 20px rgba(255, 204, 0, 0.5), 0 4px 10px rgba(0, 0, 0, 0.8);
+}
+
+.btn-edit-hero:active {
+  transform: translateY(0);
+}
+
+/* ===================================================
+   2. TARJETA DE IDENTIDAD PRINCIPAL (HERO DOSSIER)
+   =================================================== */
+.hero-dossier-card {
+  width: 100%;
+  background: rgba(16, 12, 9, 0.94);
+  backdrop-filter: blur(10px);
+  border: 2px solid var(--warcraft-bronze, #8c7335);
+  border-radius: 4px;
+  box-shadow: 0 0 35px rgba(0, 0, 0, 0.9), inset 0 0 30px rgba(0, 0, 0, 0.8);
+  position: relative;
+  overflow: hidden;
+  display: grid;
+  grid-template-columns: 360px 1fr;
+  gap: 2rem;
+  padding: 2rem;
+}
+
+/* Remaches de esquina */
+.hero-dossier-card::before, .hero-dossier-card::after {
+  content: '';
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  background: var(--warcraft-gold, #ffcc00);
+  border: 1.5px solid #111;
+  z-index: 5;
+}
+.hero-dossier-card::before { top: -2px; left: -2px; }
+.hero-dossier-card::after { bottom: -2px; right: -2px; }
+
+/* 2.1 Columna Izquierda: Retrato del Héroe */
+.hero-portrait-column {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.25rem;
+}
+
+.hero-portrait-frame {
+  position: relative;
+  width: 100%;
+  max-width: 350px;
+  height: 470px;
+  border-radius: 4px;
+  border: 3px solid var(--warcraft-bronze, #8c7335);
+  background: radial-gradient(circle at 50% 35%, rgba(255, 204, 0, 0.12) 0%, rgba(43, 31, 19, 0.7) 45%, #0d0a07 80%, #050403 100%);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.95), inset 0 0 25px rgba(0, 0, 0, 0.85);
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.hero-portrait-frame:hover {
+  border-color: var(--warcraft-gold, #ffcc00);
+  box-shadow: 0 0 25px rgba(255, 204, 0, 0.4), inset 0 0 15px rgba(0, 0, 0, 0.8);
+}
+
+/* Sombra de Suelo / Pedestal de Combate */
+.hero-ground-shadow {
+  position: absolute;
+  bottom: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 220px;
+  height: 32px;
+  border-radius: 50%;
+  background: radial-gradient(ellipse at center, rgba(0, 0, 0, 0.95) 0%, rgba(0, 0, 0, 0.6) 45%, transparent 75%);
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Imagen del Héroe: Perfectamente Centrada y a Gran Escala */
+.hero-body-img {
+  position: absolute;
+  height: 110%;
+  width: auto;
+  max-width: none;
+  max-height: none;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  object-fit: contain;
+  filter: drop-shadow(0 10px 22px rgba(0, 0, 0, 0.95)) drop-shadow(0 0 14px rgba(255, 204, 0, 0.22));
+  transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1), filter 0.4s ease;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.hero-portrait-frame:hover .hero-body-img {
+  transform: translate(-50%, -52%) scale(1.05);
+  filter: drop-shadow(0 14px 28px rgba(0, 0, 0, 0.98)) drop-shadow(0 0 22px rgba(255, 204, 0, 0.45));
+}
+
+.hero-body-img.hero-head-only {
+  height: 85%;
+  width: 85%;
+  object-fit: contain;
+  border-radius: 6px;
+}
+
+.hero-portrait-fallback {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  color: var(--warcraft-bronze, #8c7335);
+  text-align: center;
+  padding: 1rem;
+}
+
+.hero-portrait-fallback svg {
+  width: 75px;
+  height: 75px;
+  fill: currentColor;
+  opacity: 0.6;
+}
+
+/* Medallón de Rostro Superpuesto en el Retrato */
+.hero-race-medallion {
+  position: absolute;
+  bottom: 12px;
+  right: 12px;
+  width: 66px;
+  height: 66px;
+  border-radius: 50%;
+  border: 2.5px solid var(--warcraft-gold, #ffcc00);
+  background: #140e08;
+  overflow: hidden;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.95), inset 0 0 8px rgba(0, 0, 0, 0.8);
+  z-index: 5;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.hero-race-medallion:hover {
+  transform: scale(1.1);
+  box-shadow: 0 0 16px rgba(255, 204, 0, 0.6);
+}
+
+.hero-race-medallion img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transform: scale(1.15);
+}
+
+/* 2.2 Columna Derecha: Información Principal del Héroe */
+.hero-details-column {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 1.5rem;
+}
+
+.hero-identity-header {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.hero-title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.hero-name {
+  font-family: var(--font-title, 'Bangers', cursive);
+  font-size: clamp(2.4rem, 4.5vw, 3.8rem);
+  letter-spacing: 0.08em;
+  color: var(--warcraft-gold, #ffcc00);
+  text-shadow: 3px 3px 0 #000, 0 0 25px rgba(255, 204, 0, 0.5);
+  -webkit-text-stroke: 1.5px #4a2500;
+  line-height: 1;
+}
+
+.hero-badges-strip {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 0.25rem;
+}
+
+/* Insignias de linaje y usuario */
+.badge-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.35rem 0.85rem;
+  background: rgba(30, 22, 14, 0.85);
+  border: 1px solid var(--warcraft-bronze-dark, #5a4520);
+  border-radius: 4px;
+  font-size: 0.92rem;
+  color: #eeddbb;
+  text-shadow: 1px 1px 2px #000;
+}
+
+.badge-pill svg {
+  width: 16px;
+  height: 16px;
+  fill: var(--warcraft-gold, #ffcc00);
+}
+
+.badge-pill strong {
+  color: var(--warcraft-gold, #ffcc00);
+}
+
+/* Badges de Estado del Personaje (Vivo / Muerto / Congelado) */
+.hero-status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.45rem 1rem;
+  border-radius: 4px;
+  font-size: 0.95rem;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  text-shadow: 1px 1px 3px #000;
+}
+
+.hero-status-badge.status-vivo {
+  background: rgba(16, 185, 129, 0.18);
+  border: 1.5px solid #10b981;
+  color: #34d399;
+  box-shadow: 0 0 12px rgba(16, 185, 129, 0.3);
+}
+
+.hero-status-badge.status-muerto {
+  background: rgba(239, 68, 68, 0.2);
+  border: 1.5px solid #ef4444;
+  color: #f87171;
+  box-shadow: 0 0 12px rgba(239, 68, 68, 0.3);
+}
+
+.hero-status-badge.status-congelado {
+  background: rgba(56, 189, 248, 0.2);
+  border: 1.5px solid #38bdf8;
+  color: #7dd3fc;
+  box-shadow: 0 0 12px rgba(56, 189, 248, 0.3);
+}
+
+.status-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  display: inline-block;
+}
+.status-vivo .status-dot { background: #10b981; box-shadow: 0 0 8px #10b981; }
+.status-muerto .status-dot { background: #ef4444; box-shadow: 0 0 8px #ef4444; }
+.status-congelado .status-dot { background: #38bdf8; box-shadow: 0 0 8px #38bdf8; }
+
+/* 2.3 Medidores de Nivel y Experiencia */
+.hero-level-progression {
+  background: rgba(10, 7, 5, 0.7);
+  border: 1px solid rgba(140, 115, 53, 0.4);
+  border-radius: 4px;
+  padding: 1.15rem 1.4rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.level-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.level-crest-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.65rem;
+  background: linear-gradient(135deg, #422d10 0%, #1f1406 100%);
+  border: 2px solid var(--warcraft-gold, #ffcc00);
+  border-radius: 4px;
+  padding: 0.4rem 1rem;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.7), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+.level-crest-badge svg {
+  width: 24px;
+  height: 24px;
+  fill: var(--warcraft-gold, #ffcc00);
+}
+
+.level-number {
+  font-family: var(--font-title, 'Bangers', cursive);
+  font-size: 1.7rem;
+  letter-spacing: 0.05em;
+  color: var(--warcraft-gold, #ffcc00);
+  line-height: 1;
+  text-shadow: 1px 1px 3px #000;
+}
+
+.exp-numeric-display {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 1rem;
+  color: #eeddbb;
+}
+
+.exp-current {
+  color: var(--warcraft-gold, #ffcc00);
+  font-weight: bold;
+}
+
+.exp-target {
+  color: var(--warcraft-gold-dim, #c4ab7c);
+}
+
+/* Barra de EXP Animada */
+.exp-bar-track {
+  width: 100%;
+  height: 16px;
+  background: #080604;
+  border: 1.5px solid var(--warcraft-bronze-dark, #5a4520);
+  border-radius: 4px;
+  overflow: hidden;
+  position: relative;
+  box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.9);
+}
+
+.exp-bar-fill {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, #b07d18 0%, #ffcc00 50%, #ffe57f 100%);
+  box-shadow: 0 0 12px rgba(255, 204, 0, 0.8);
+  border-radius: 2px;
+  transition: width 1s cubic-bezier(0.2, 0.8, 0.2, 1);
+  position: relative;
+}
+
+.exp-bar-fill::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.4) 50%, rgba(255, 255, 255, 0) 100%);
+  animation: expShimmer 2.5s infinite;
+}
+
+@keyframes expShimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(200%); }
+}
+
+/* 2.4 Resumen Táctico (Tarjetas de Vitalidad y Poder) */
+.hero-tactical-metrics {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 0.85rem;
+}
+
+.metric-card {
+  background: rgba(20, 15, 10, 0.85);
+  border: 1px solid var(--warcraft-bronze-dark, #5a4520);
+  border-radius: 4px;
+  padding: 0.75rem 0.95rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  transition: all 0.2s ease;
+}
+
+.metric-card:hover {
+  background: rgba(30, 22, 14, 0.95);
+  border-color: var(--warcraft-bronze, #8c7335);
+  transform: translateY(-2px);
+}
+
+.metric-icon-wrap {
+  width: 36px;
+  height: 36px;
+  border-radius: 4px;
+  background: rgba(8, 6, 4, 0.7);
+  border: 1px solid var(--warcraft-bronze-dark, #5a4520);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.metric-icon-wrap svg {
+  width: 20px;
+  height: 20px;
+}
+
+.metric-health svg { fill: #ef4444; }
+.metric-combat svg { fill: #f59e0b; }
+.metric-magic svg { fill: #3b82f6; }
+.metric-carry svg { fill: #10b981; }
+
+.metric-content {
+  display: flex;
+  flex-direction: column;
+}
+
+.metric-label {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  color: var(--warcraft-gold-dim, #c4ab7c);
+  letter-spacing: 0.05em;
+}
+
+.metric-value {
+  font-family: var(--font-title, 'Bangers', cursive);
+  font-size: 1.35rem;
+  color: #fffae8;
+  line-height: 1.1;
+  text-shadow: 1px 1px 2px #000;
+}
+
+/* ===================================================
+   3. SECCIONES Y CUADRANTES DE LA FICHA (GRID DUAL)
+   =================================================== */
+.hero-dossier-grid {
+  display: grid;
+  grid-template-columns: 1fr 1.1fr;
+  gap: 1.75rem;
+  width: 100%;
+}
+
+/* Estilo Base de Tarjeta de Sección */
+.dossier-section-card {
+  background: rgba(16, 12, 9, 0.92);
+  backdrop-filter: blur(8px);
+  border: 2px solid var(--warcraft-bronze, #8c7335);
+  border-radius: 4px;
+  box-shadow: 0 0 25px rgba(0, 0, 0, 0.9), inset 0 0 20px rgba(0, 0, 0, 0.7);
+  position: relative;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.dossier-section-card::before, .dossier-section-card::after {
+  content: '';
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  background: var(--warcraft-gold, #ffcc00);
+  border: 1px solid #111;
+}
+.dossier-section-card::before { top: -2px; left: -2px; }
+.dossier-section-card::after { bottom: -2px; right: -2px; }
+
+/* Encabezado de Sección */
+.section-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1.5px solid rgba(140, 115, 53, 0.4);
+  padding-bottom: 0.65rem;
+}
+
+.section-title-wrap {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+}
+
+.section-title-wrap svg {
+  width: 22px;
+  height: 22px;
+  fill: var(--warcraft-gold, #ffcc00);
+}
+
+.section-title {
+  font-family: var(--font-title, 'Bangers', cursive);
+  font-size: 1.6rem;
+  letter-spacing: 0.06em;
+  color: var(--warcraft-gold, #ffcc00);
+  text-shadow: 2px 2px 4px #000;
+  margin: 0;
+}
+
+.section-badge-counter {
+  font-family: var(--font-medieval, 'MedievalSharp', cursive);
+  font-size: 0.85rem;
+  color: #ffeed1;
+  background: rgba(140, 115, 53, 0.25);
+  border: 1px solid var(--warcraft-bronze, #8c7335);
+  padding: 0.2rem 0.65rem;
+  border-radius: 3px;
+  text-transform: uppercase;
+}
+
+/* ===================================================
+   4. ATRIBUTOS PRIMARIOS (LOS 7 PILARES)
+   =================================================== */
+.attributes-list-container {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+}
+
+.attribute-row-card {
+  display: grid;
+  grid-template-columns: 140px 1fr 50px;
+  align-items: center;
+  gap: 0.85rem;
+  background: rgba(12, 9, 6, 0.8);
+  border: 1px solid rgba(90, 69, 32, 0.45);
+  border-radius: 4px;
+  padding: 0.6rem 0.85rem;
+  transition: all 0.2s ease;
+}
+
+.attribute-row-card:hover {
+  background: rgba(25, 18, 11, 0.95);
+  border-color: var(--warcraft-bronze, #8c7335);
+  transform: translateX(3px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.7);
+}
+
+.attr-info-left {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+}
+
+.attr-icon-mini {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+}
+
+.attr-str .attr-icon-mini { fill: #ef4444; }
+.attr-dex .attr-icon-mini { fill: #10b981; }
+.attr-vig .attr-icon-mini { fill: #f59e0b; }
+.attr-int .attr-icon-mini { fill: #3b82f6; }
+.attr-per .attr-icon-mini { fill: #8b5cf6; }
+.attr-cha .attr-icon-mini { fill: #ec4899; }
+.attr-luk .attr-icon-mini { fill: #eab308; }
+
+.attr-name-block {
+  display: flex;
+  flex-direction: column;
+}
+
+.attr-name {
+  font-size: 0.95rem;
+  font-weight: bold;
+  color: #ffeed1;
+  line-height: 1.1;
+}
+
+.attr-abbr {
+  font-size: 0.7rem;
+  color: var(--warcraft-gold-dim, #c4ab7c);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* Barra de Medidor de Atributo */
+.attr-meter-track {
+  width: 100%;
+  height: 8px;
+  background: #090604;
+  border-radius: 4px;
+  border: 1px solid #23160a;
+  overflow: hidden;
+}
+
+.attr-meter-fill {
+  height: 100%;
+  border-radius: 3px;
+  transition: width 0.6s ease;
+}
+
+.attr-str .attr-meter-fill { background: linear-gradient(90deg, #7f1d1d, #ef4444); }
+.attr-dex .attr-meter-fill { background: linear-gradient(90deg, #064e3b, #10b981); }
+.attr-vig .attr-meter-fill { background: linear-gradient(90deg, #78350f, #f59e0b); }
+.attr-int .attr-meter-fill { background: linear-gradient(90deg, #1e3a8a, #3b82f6); }
+.attr-per .attr-meter-fill { background: linear-gradient(90deg, #4c1d95, #8b5cf6); }
+.attr-cha .attr-meter-fill { background: linear-gradient(90deg, #831843, #ec4899); }
+.attr-luk .attr-meter-fill { background: linear-gradient(90deg, #713f12, #eab308); }
+
+.attr-value-badge {
+  font-family: var(--font-title, 'Bangers', cursive);
+  font-size: 1.3rem;
+  color: var(--warcraft-gold, #ffcc00);
+  text-align: right;
+  text-shadow: 1px 1px 2px #000;
+}
+
+/* Modificador Racial si Aplica */
+.attr-racial-bonus {
+  font-size: 0.72rem;
+  color: #34d399;
+  font-weight: bold;
+  margin-left: 0.25rem;
+}
+.attr-racial-penalty {
+  font-size: 0.72rem;
+  color: #f87171;
+  font-weight: bold;
+  margin-left: 0.25rem;
+}
+
+/* ===================================================
+   5. CÓDICE DE LINAJE (RAZA Y TRASFONDOS)
+   =================================================== */
+.race-lore-box {
+  background: rgba(12, 9, 6, 0.75);
+  border: 1px solid rgba(140, 115, 53, 0.35);
+  border-radius: 4px;
+  padding: 1rem 1.15rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.race-lore-text {
+  font-size: 0.95rem;
+  line-height: 1.5;
+  color: #d8c49e;
+  font-style: italic;
+  border-left: 2px solid var(--warcraft-gold, #ffcc00);
+  padding-left: 0.85rem;
+}
+
+.race-modifiers-row {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+}
+
+.modifiers-subgroup {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.subgroup-label {
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: bold;
+}
+
+.subgroup-bonuses .subgroup-label { color: #34d399; }
+.subgroup-penalties .subgroup-label { color: #f87171; }
+
+.mod-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.25rem 0.65rem;
+  border-radius: 3px;
+  font-size: 0.82rem;
+  font-weight: bold;
+}
+
+.mod-chip-bonus {
+  background: rgba(16, 185, 129, 0.15);
+  border: 1px solid #10b981;
+  color: #a7f3d0;
+}
+
+.mod-chip-penalty {
+  background: rgba(239, 68, 68, 0.15);
+  border: 1px solid #ef4444;
+  color: #fca5a5;
+}
+
+/* ===================================================
+   6. GRIMORIO DE HABILIDADES
+   =================================================== */
+.skills-deck-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.skill-codex-card {
+  background: rgba(12, 9, 6, 0.85);
+  border: 1.5px solid var(--warcraft-bronze-dark, #5a4520);
+  border-radius: 4px;
+  padding: 1rem 1.15rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+  transition: all 0.2s ease;
+}
+
+.skill-codex-card:hover {
+  background: rgba(25, 18, 12, 0.95);
+  border-color: var(--warcraft-gold, #ffcc00);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.8);
+  transform: translateY(-2px);
+}
+
+.skill-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.skill-title-block {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.skill-icon-rune {
+  width: 26px;
+  height: 26px;
+  fill: var(--warcraft-gold, #ffcc00);
+  filter: drop-shadow(0 0 6px rgba(255, 204, 0, 0.5));
+}
+
+.skill-name {
+  font-family: var(--font-title, 'Bangers', cursive);
+  font-size: 1.35rem;
+  letter-spacing: 0.05em;
+  color: #fffae8;
+  margin: 0;
+  text-shadow: 1px 1px 2px #000;
+}
+
+.skill-status-tag {
+  font-size: 0.75rem;
+  padding: 0.2rem 0.55rem;
+  border-radius: 3px;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+.skill-status-active {
+  background: rgba(16, 185, 129, 0.15);
+  border: 1px solid #10b981;
+  color: #34d399;
+}
+
+.skill-desc {
+  font-size: 0.9rem;
+  color: #d1b97f;
+  line-height: 1.45;
+}
+
+/* Etiquetas de Efectos y Costo */
+.skill-meta-tags {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.2rem;
+}
+
+.skill-cost-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.78rem;
+  padding: 0.2rem 0.55rem;
+  background: rgba(59, 130, 246, 0.15);
+  border: 1px solid #3b82f6;
+  color: #93c5fd;
+  border-radius: 3px;
+}
+
+.skill-effect-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.78rem;
+  padding: 0.2rem 0.55rem;
+  background: rgba(245, 158, 11, 0.15);
+  border: 1px solid #f59e0b;
+  color: #fde68a;
+  border-radius: 3px;
+}
+
+/* ===================================================
+   7. ARSENAL, PERTRECHOS Y EQUIPAMIENTO
+   =================================================== */
+.inventory-deck-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 1rem;
+}
+
+.item-codex-card {
+  background: rgba(12, 9, 6, 0.85);
+  border: 1.5px solid var(--warcraft-bronze-dark, #5a4520);
+  border-radius: 4px;
+  padding: 0.95rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+  transition: all 0.2s ease;
+  position: relative;
+}
+
+.item-codex-card:hover {
+  background: rgba(24, 17, 11, 0.95);
+  border-color: var(--warcraft-bronze, #8c7335);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.8);
+  transform: translateY(-2px);
+}
+
+.item-card-header {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+}
+
+.item-thumb-box {
+  width: 54px;
+  height: 54px;
+  border-radius: 4px;
+  border: 2px solid var(--warcraft-bronze, #8c7335);
+  background: #090604;
+  overflow: hidden;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.8);
+}
+
+.item-thumb-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.item-codex-card:hover .item-thumb-img {
+  transform: scale(1.15);
+}
+
+.item-thumb-fallback {
+  color: var(--warcraft-bronze, #8c7335);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.item-thumb-fallback svg {
+  width: 28px;
+  height: 28px;
+  fill: currentColor;
+}
+
+.item-header-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.item-name {
+  font-family: var(--font-title, 'Bangers', cursive);
+  font-size: 1.25rem;
+  letter-spacing: 0.04em;
+  color: #ffeed1;
+  line-height: 1.15;
+}
+
+.item-weight-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.8rem;
+  color: var(--warcraft-gold-dim, #c4ab7c);
+}
+
+.item-weight-tag svg {
+  width: 13px;
+  height: 13px;
+  fill: currentColor;
+}
+
+.item-desc {
+  font-size: 0.85rem;
+  color: #baa47d;
+  line-height: 1.4;
+}
+
+.item-tags-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-top: auto;
+}
+
+.item-pill {
+  font-size: 0.72rem;
+  padding: 0.15rem 0.5rem;
+  border-radius: 3px;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+.pill-equipable {
+  background: rgba(59, 130, 246, 0.15);
+  border: 1px solid #3b82f6;
+  color: #93c5fd;
+}
+
+.pill-kit {
+  background: rgba(234, 179, 8, 0.15);
+  border: 1px solid #eab308;
+  color: #fef08a;
+}
+
+.pill-effect {
+  background: rgba(168, 85, 247, 0.15);
+  border: 1px solid #a855f7;
+  color: #e9d5ff;
+}
+
+/* ===================================================
+   8. ESTADOS VACÍOS ÉPICOS (EMPTY STATES)
+   =================================================== */
+.empty-codex-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2.5rem 1.5rem;
+  text-align: center;
+  background: rgba(10, 7, 5, 0.6);
+  border: 1px dashed rgba(140, 115, 53, 0.4);
+  border-radius: 4px;
+  gap: 0.75rem;
+}
+
+.empty-codex-state svg {
+  width: 48px;
+  height: 48px;
+  fill: var(--warcraft-bronze, #8c7335);
+  opacity: 0.7;
+}
+
+.empty-state-title {
+  font-family: var(--font-title, 'Bangers', cursive);
+  font-size: 1.3rem;
+  letter-spacing: 0.05em;
+  color: var(--warcraft-gold-dim, #c4ab7c);
+}
+
+.empty-state-text {
+  font-size: 0.9rem;
+  color: #8c7553;
+  max-width: 380px;
+}
+
+/* ===================================================
+   9. MODAL DE AVISO DE EDICIÓN (WARCRAFT MODAL)
+   =================================================== */
+.warcraft-modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(8px);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.warcraft-modal-backdrop.is-active {
+  opacity: 1;
+  visibility: visible;
+}
+
+.warcraft-modal-dialog {
+  background: rgba(18, 14, 10, 0.96);
+  border: 2px solid var(--warcraft-gold, #ffcc00);
+  border-radius: 4px;
+  box-shadow: 0 0 40px rgba(0, 0, 0, 0.95), 0 0 20px rgba(255, 204, 0, 0.35);
+  max-width: 520px;
+  width: 100%;
+  padding: 2rem;
+  position: relative;
+  transform: translateY(-20px) scale(0.95);
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  text-align: center;
+}
+
+.warcraft-modal-backdrop.is-active .warcraft-modal-dialog {
+  transform: translateY(0) scale(1);
+}
+
+.modal-icon-wrap {
+  width: 68px;
+  height: 68px;
+  margin: 0 auto;
+  border-radius: 50%;
+  background: radial-gradient(circle, #521212 0%, #220505 100%);
+  border: 2px solid var(--warcraft-gold, #ffcc00);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 18px rgba(255, 68, 68, 0.5);
+}
+
+.modal-icon-wrap svg {
+  width: 36px;
+  height: 36px;
+  fill: var(--warcraft-gold, #ffcc00);
+}
+
+.modal-title {
+  font-family: var(--font-title, 'Bangers', cursive);
+  font-size: 2rem;
+  color: var(--warcraft-gold, #ffcc00);
+  letter-spacing: 0.06em;
+  text-shadow: 2px 2px 4px #000;
+  margin: 0;
+}
+
+.modal-desc {
+  font-size: 1.05rem;
+  color: #eeddbb;
+  line-height: 1.5;
+}
+
+.modal-desc strong {
+  color: var(--warcraft-gold, #ffcc00);
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 0.5rem;
+}
+
+.btn-modal-close {
+  background: linear-gradient(180deg, #8c1a1a 0%, #4a0505 100%);
+  border: 1.5px solid var(--warcraft-gold, #ffcc00);
+  color: #fffae8;
+  font-family: var(--font-medieval, 'MedievalSharp', cursive);
+  font-size: 1.05rem;
+  font-weight: bold;
+  padding: 0.6rem 1.8rem;
+  border-radius: 4px;
+  cursor: pointer;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.7);
+  transition: all 0.2s ease;
+}
+
+.btn-modal-close:hover {
+  background: linear-gradient(180deg, #ad2222 0%, #610707 100%);
+  border-color: #ffe066;
+  transform: translateY(-2px);
+  box-shadow: 0 0 16px rgba(255, 204, 0, 0.5);
+}
+
+/* ===================================================
+   10. RESPONSIVE / ADAPTABILIDAD MULTIPANTALLA
+   =================================================== */
+@media (max-width: 1024px) {
+  .hero-dossier-card {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+  .hero-portrait-column {
+    flex-direction: column;
+    align-items: center;
+  }
+  .hero-portrait-frame {
+    max-width: 340px;
+    height: 440px;
+  }
+  .hero-dossier-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .content-wrapper {
+    padding: 1rem 0.85rem 4rem 0.85rem;
+    gap: 1.25rem;
+  }
+  .hero-action-bar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .action-bar-left, .action-bar-right {
+    justify-content: center;
+  }
+  .hero-portrait-column {
+    flex-direction: column;
+  }
+  .hero-title-row {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .hero-name {
+    font-size: 2.2rem;
+  }
+  .inventory-deck-grid {
+    grid-template-columns: 1fr;
+  }
+  .attribute-row-card {
+    grid-template-columns: 120px 1fr 40px;
+    gap: 0.5rem;
+  }
+}

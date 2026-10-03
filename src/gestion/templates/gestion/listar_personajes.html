@@ -206,7 +206,12 @@ Personajes (GM)
               <!-- Personaje (Nombre del Héroe) -->
               <td>
                 <div class="hero-name-cell">
-                  <span class="hero-name">{{ personaje.nombre }}</span>
+                  <span class="hero-name">
+                    {{ personaje.nombre }}
+                    {% if not personaje.activo %}
+                    <span style="font-size: 0.65rem; color: #ff4444; border: 1px solid #ff4444; padding: 2px 4px; border-radius: 3px; margin-left: 5px; vertical-align: middle;">INACTIVO</span>
+                    {% endif %}
+                  </span>
                 </div>
               </td>
 

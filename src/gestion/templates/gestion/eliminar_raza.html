@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Desterrar Raza{% endblock %}
+{% block styles %}
+<link rel="stylesheet" href="{% static 'css/eliminar_raza.css' %}">
+{% endblock %}
+{% block main %}
+<div class="scene">
+  <canvas id="bgCanvas" class="bg-canvas"></canvas>
+  {% include "includes/navbar2.html" %}
+  <main class="delete-container">
+    <div class="warcraft-panel">
+      {% if raza.activo %}
+      <h1 class="warcraft-title">Deshabilitar Raza</h1>
+      <p class="warcraft-text">
+        ¿Estás seguro de que deseas deshabilitar la raza <strong>{{ raza.nombre }}</strong> de las crónicas del reino?<br>
+        <span style="font-size: 1rem; color: #9d8c6b; margin-top: 10px; display: block;">
+          (Esta acción no borrará los datos ni afectará a los personajes existentes, pero la ocultará para nuevas creaciones).
+        </span>
+      </p>
+      {% else %}
+      <h1 class="warcraft-title" style="color: #10b981;">Habilitar Raza</h1>
+      <p class="warcraft-text">
+        ¿Estás seguro de que deseas restaurar la raza <strong>{{ raza.nombre }}</strong> a las crónicas del reino?<br>
+        <span style="font-size: 1rem; color: #9d8c6b; margin-top: 10px; display: block;">
+          (Esto permitirá que los jugadores puedan volver a crear personajes con esta raza).
+        </span>
+      </p>
+      {% endif %}
+      
+      <form method="POST" action="{% url 'gm:eliminar-raza' pk=raza.pk %}">
+        {% csrf_token %}
+        <div class="action-buttons">
+          <a href="{% url 'gm:detalle-raza' pk=raza.pk %}" class="btn-alliance">RETROCEDER Y CANCELAR</a>
+          {% if raza.activo %}
+          <button type="submit" class="btn-horde">SÍ, DESHABILITAR RAZA</button>
+          {% else %}
+          <button type="submit" class="btn-horde" style="background: linear-gradient(180deg, #059669 0%, #064e3b 100%); box-shadow: 0 0 15px rgba(16, 185, 129, 0.4);">SÍ, HABILITAR RAZA</button>
+          {% endif %}
+        </div>
+      </form>
+    </div>
+  </main>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static 'js/eliminar_raza.js' %}"></script>
+{% endblock %}
