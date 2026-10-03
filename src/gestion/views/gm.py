@@ -25,7 +25,7 @@ class ListarPersonajesView(GmRequiredMixin, ListView):
 
     def get_queryset(self):
         # Por defecto el metodo de la clase padre ListView retorna .all()
-        qs =  Personaje.objects.select_related('raza', 'usuario').all()
+        qs =  Personaje.objects.select_related('raza', 'usuario').filter(activo=True)
         query, razas, orden = ( self.request.GET.get('q'), 
                         [ int(pk_raza) for pk_raza in self.request.GET.getlist('raza') if pk_raza.isdigit() ],
                         self.request.GET.get('orden', 'nombre'))
@@ -183,5 +183,14 @@ class ActualizarPersonajeView(GmRequiredMixin, View):
         return render(request, self.template_name, self.get_context_data(request, personaje, form=form, error_msg=error_msg))
 
 
-class EliminarPersonajeView(DeleteView):
-    pass
+class EliminarPersonajeView(GmRequiredMixin, DeleteView):
+    model = Personaje
+    template_name = "gestion/eliminar_personaje.html"
+    context_object_name = "personaje"
+
+    def post(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        # Borrado lógico: en lugar de eliminar físicamente, desactivamos el personaje
+        self.object.activo = False
+        self.object.save()
+        return redirect('gm:listar-personajes')

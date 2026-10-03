@@ -70,7 +70,7 @@ class CrearPersonajeForm(forms.ModelForm):
     def clean_objetos(self):
         objetos = self.cleaned_data.get('objetos')
         if objetos.count() != 2:
-            raise forms.ValidationError("Debes seleccionar al menos 3 objetos")
+            raise forms.ValidationError("Debes seleccionar al menos 2 objetos")
         return objetos
     
 
