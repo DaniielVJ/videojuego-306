@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Desterrar a {{ personaje.nombre }}{% endblock title %}
+
+{% block styles %}
+<link rel="stylesheet" href="{% static 'css/eliminar_personaje.css' %}">
+{% endblock styles %}
+
+{% block main %}
+<div class="scene">
+  <!-- Lienzo de Brasas y Cenizas de Fondo -->
+  <canvas id="bgCanvas" class="bg-canvas"></canvas>
+
+  {% include "includes/navbar2.html" %}
+
+  <main class="delete-container">
+    <div class="warcraft-panel">
+      <h1 class="warcraft-title">Destierro de Héroe</h1>
+      <p class="warcraft-text">
+        ¿Estás seguro de que deseas eliminar a <strong>{{ personaje.nombre }}</strong> de las crónicas activas del reino?<br>
+        <span style="font-size: 1rem; color: #9d8c6b; margin-top: 10px; display: block;">
+          (Esta acción no borrará los datos, pero marcará al personaje como inactivo).
+        </span>
+      </p>
+      
+      <form method="POST" action="{% url 'gm:eliminar-personaje' pk=personaje.pk %}">
+        {% csrf_token %}
+        <div class="action-buttons">
+          <a href="{% url 'gm:detalle-personaje' pk=personaje.pk %}" class="btn-alliance">RETROCEDER Y CANCELAR</a>
+          <button type="submit" class="btn-horde">SÍ, DESTERRAR AL VACÍO</button>
+        </div>
+      </form>
+    </div>
+  </main>
+</div>
+{% endblock main %}
+
+{% block scripts %}
+<!-- Motor de partículas de destrucción para esta vista -->
+<script src="{% static 'js/eliminar_personaje.js' %}"></script>
+{% endblock scripts %}
