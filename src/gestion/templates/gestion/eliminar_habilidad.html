@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Desterrar Habilidad{% endblock %}
+{% block styles %}
+<link rel="stylesheet" href="{% static 'css/eliminar_habilidad.css' %}">
+{% endblock %}
+{% block main %}
+<div class="scene">
+  <canvas id="bgCanvas" class="bg-canvas"></canvas>
+  {% include "includes/navbar2.html" %}
+  <main class="delete-container">
+    <div class="warcraft-panel">
+      {% if habilidad.activo %}
+      <h1 class="warcraft-title">Deshabilitar Habilidad</h1>
+      <p class="warcraft-text">
+        ¿Estás seguro de que deseas deshabilitar la habilidad <strong>{{ habilidad.nombre }}</strong> de las crónicas del reino?<br>
+        <span style="font-size: 1rem; color: #ff4444; margin-top: 10px; display: block; font-weight: bold;">
+          (¡Atención! Esto eliminará la habilidad del arsenal de cualquier personaje que la posea actualmente).
+        </span>
+      </p>
+      {% else %}
+      <h1 class="warcraft-title" style="color: #10b981;">Habilitar Habilidad</h1>
+      <p class="warcraft-text">
+        ¿Estás seguro de que deseas restaurar la habilidad <strong>{{ habilidad.nombre }}</strong> a las crónicas del reino?<br>
+        <span style="font-size: 1rem; color: #9d8c6b; margin-top: 10px; display: block;">
+          (Esto permitirá que los jugadores puedan volver a seleccionar esta habilidad).
+        </span>
+      </p>
+      {% endif %}
+      
+      <form method="POST" action="{% url 'gm:eliminar-habilidad' pk=habilidad.pk %}">
+        {% csrf_token %}
+        <div class="action-buttons">
+          <a href="{% url 'gm:detalle-habilidad' pk=habilidad.pk %}" class="btn-alliance">RETROCEDER Y CANCELAR</a>
+          {% if habilidad.activo %}
+          <button type="submit" class="btn-horde">SÍ, DESHABILITAR HABILIDAD</button>
+          {% else %}
+          <button type="submit" class="btn-horde" style="background: linear-gradient(180deg, #059669 0%, #064e3b 100%); box-shadow: 0 0 15px rgba(16, 185, 129, 0.4);">SÍ, HABILITAR HABILIDAD</button>
+          {% endif %}
+        </div>
+      </form>
+    </div>
+  </main>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static 'js/eliminar_habilidad.js' %}"></script>
+{% endblock %}
