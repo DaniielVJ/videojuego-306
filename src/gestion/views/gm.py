@@ -11,6 +11,7 @@ from ..models import Personaje, Raza, Atributo, Habilidad, Objeto
 from ..forms import CrearPersonajeForm, ActualizarPersonajeForm
 from ..forms.raza import RazaForm
 from ..forms.habilidad import HabilidadUpdateCreateForm
+from ..forms.objeto import ObjetoUpdateCreateForm
 
 User = get_user_model()
 
@@ -285,6 +286,51 @@ class EliminarHabilidadView(GmRequiredMixin, DeleteView):
         self.object.activo = not self.object.activo
         if not self.object.activo:
             # Si se deshabilita, quitamos la habilidad de todos los personajes
+            self.object.personajes.clear()
+        self.object.save()
+        return redirect(self.success_url)
+
+# --- CRUD Objetos ---
+class ListarObjetosView(GmRequiredMixin, ListView):
+    model = Objeto
+    template_name = "gestion/listar_objetos.html"
+    context_object_name = "objetos"
+    paginate_by = 12
+
+    def get_queryset(self):
+        return Objeto.objects.all().order_by('nombre')
+
+class DetalleObjetoView(GmRequiredMixin, DetailView):
+    model = Objeto
+    template_name = "gestion/detalle_objeto.html"
+    context_object_name = "objeto"
+
+class CrearObjetoView(GmRequiredMixin, CreateView):
+    model = Objeto
+    form_class = ObjetoUpdateCreateForm
+    template_name = "gestion/crear_objeto.html"
+    success_url = reverse_lazy('gm:listar-objetos')
+
+class ActualizarObjetoView(GmRequiredMixin, UpdateView):
+    model = Objeto
+    form_class = ObjetoUpdateCreateForm
+    template_name = "gestion/actualizar_objeto.html"
+    
+    def get_success_url(self):
+        return reverse('gm:detalle-objeto', kwargs={'pk': self.object.pk})
+
+class EliminarObjetoView(GmRequiredMixin, DeleteView):
+    model = Objeto
+    template_name = "gestion/eliminar_objeto.html"
+    context_object_name = "objeto"
+    success_url = reverse_lazy('gm:listar-objetos')
+
+    def post(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        # Borrado lógico: alternamos el estado
+        self.object.activo = not self.object.activo
+        if not self.object.activo:
+            # Si se deshabilita, quitamos el objeto del inventario de todos los personajes
             self.object.personajes.clear()
         self.object.save()
         return redirect(self.success_url)

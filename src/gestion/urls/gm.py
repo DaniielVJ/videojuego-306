@@ -2,7 +2,8 @@ from django.urls import path
 from ..views import (
     ListarPersonajesView, CrearPersonajeView, DetallePersonajeView, ActualizarPersonajeView, EliminarPersonajeView,
     ListarRazasView, CrearRazaView, DetalleRazaView, ActualizarRazaView, EliminarRazaView,
-    ListarHabilidadesView, CrearHabilidadView, DetalleHabilidadView, ActualizarHabilidadView, EliminarHabilidadView
+    ListarHabilidadesView, CrearHabilidadView, DetalleHabilidadView, ActualizarHabilidadView, EliminarHabilidadView,
+    ListarObjetosView, CrearObjetoView, DetalleObjetoView, ActualizarObjetoView, EliminarObjetoView
 )
 
 app_name = "gm"
@@ -28,4 +29,11 @@ urlpatterns = [
     path('habilidades/<int:pk>/detail/', DetalleHabilidadView.as_view(), name='detalle-habilidad'),
     path('habilidades/<int:pk>/update/', ActualizarHabilidadView.as_view(), name='actualizar-habilidad'),
     path('habilidades/<int:pk>/delete/', EliminarHabilidadView.as_view(), name='eliminar-habilidad'),
+
+    # CRUD Objetos
+    path('objetos/', ListarObjetosView.as_view(), name='listar-objetos'),
+    path('objetos/add/', CrearObjetoView.as_view(), name='crear-objeto'),
+    path('objetos/<int:pk>/detail/', DetalleObjetoView.as_view(), name='detalle-objeto'),
+    path('objetos/<int:pk>/update/', ActualizarObjetoView.as_view(), name='actualizar-objeto'),
+    path('objetos/<int:pk>/delete/', EliminarObjetoView.as_view(), name='eliminar-objeto'),
 ]
