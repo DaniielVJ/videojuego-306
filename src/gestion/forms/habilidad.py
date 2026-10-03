@@ -17,6 +17,17 @@ class HabilidadUpdateCreateForm(forms.ModelForm):
 		model = Habilidad
 		fields = ["nombre", "descripcion"]
 
+	def clean_nombre(self):
+		nombre = self.cleaned_data.get('nombre', '').strip()
+		if len(nombre) < 3:
+			raise forms.ValidationError("El nombre de la habilidad debe contener al menos 3 caracteres.")
+		qs = Habilidad.objects.filter(nombre__iexact=nombre)
+		if self.instance and self.instance.pk:
+			qs = qs.exclude(pk=self.instance.pk)
+		if qs.exists():
+			raise forms.ValidationError(f"Ya existe una habilidad con el nombre '{nombre}'. Elige otro.")
+		return nombre
+
 	def __init__(self, *args, **kwargs):
 
 		super().__init__(*args, **kwargs)
