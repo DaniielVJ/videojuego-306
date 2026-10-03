@@ -17,6 +17,17 @@
       <h1 class="roster-title">Objetos del Reino</h1>
       <a href="{% url 'gm:crear-objeto' %}" class="btn-create-hero">FORJAR OBJETO</a>
     </div>
+    <div class="search-bar" style="margin-bottom: 2rem; display: flex; gap: 1rem;">
+      <form method="GET" action="" style="display: flex; gap: 1rem; width: 100%; max-width: 800px;">
+        <input type="text" name="q" value="{{ q }}" placeholder="Buscar objeto por nombre..." style="flex: 1; padding: 10px; background: rgba(0,0,0,0.6); border: 1px solid #8c7335; color: #ffeed1; font-family: 'MedievalSharp', cursive; border-radius: 4px;">
+        <select name="estado" style="padding: 10px; background: rgba(0,0,0,0.6); border: 1px solid #8c7335; color: #ffeed1; font-family: 'MedievalSharp', cursive; border-radius: 4px;">
+          <option value="todos" {% if estado == 'todos' %}selected{% endif %}>Todos los Estados</option>
+          <option value="activos" {% if estado == 'activos' %}selected{% endif %}>Solo Activos</option>
+          <option value="deshabilitados" {% if estado == 'deshabilitados' %}selected{% endif %}>Solo Deshabilitados</option>
+        </select>
+        <button type="submit" class="btn-create-hero" style="padding: 10px 20px; font-size: 1rem;">BUSCAR</button>
+      </form>
+    </div>
     <div class="roster-grid">
       {% for objeto in objetos %}
       <a href="{% url 'gm:detalle-objeto' pk=objeto.pk %}" class="roster-card">
