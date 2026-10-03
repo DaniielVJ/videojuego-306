@@ -16,19 +16,33 @@
 
   <main class="delete-container">
     <div class="warcraft-panel">
-      <h1 class="warcraft-title">Destierro de Héroe</h1>
+      {% if personaje.activo %}
+      <h1 class="warcraft-title">Deshabilitar Héroe</h1>
       <p class="warcraft-text">
-        ¿Estás seguro de que deseas eliminar a <strong>{{ personaje.nombre }}</strong> de las crónicas activas del reino?<br>
+        ¿Estás seguro de que deseas deshabilitar a <strong>{{ personaje.nombre }}</strong> de las crónicas activas del reino?<br>
         <span style="font-size: 1rem; color: #9d8c6b; margin-top: 10px; display: block;">
-          (Esta acción no borrará los datos, pero marcará al personaje como inactivo).
+          (Esta acción lo ocultará temporalmente, pero no borrará sus datos).
         </span>
       </p>
+      {% else %}
+      <h1 class="warcraft-title" style="color: #10b981;">Habilitar Héroe</h1>
+      <p class="warcraft-text">
+        ¿Estás seguro de que deseas restaurar a <strong>{{ personaje.nombre }}</strong> a las crónicas del reino?<br>
+        <span style="font-size: 1rem; color: #9d8c6b; margin-top: 10px; display: block;">
+          (El jugador podrá volver a utilizar este personaje).
+        </span>
+      </p>
+      {% endif %}
       
       <form method="POST" action="{% url 'gm:eliminar-personaje' pk=personaje.pk %}">
         {% csrf_token %}
         <div class="action-buttons">
           <a href="{% url 'gm:detalle-personaje' pk=personaje.pk %}" class="btn-alliance">RETROCEDER Y CANCELAR</a>
-          <button type="submit" class="btn-horde">SÍ, DESTERRAR AL VACÍO</button>
+          {% if personaje.activo %}
+          <button type="submit" class="btn-horde">SÍ, DESHABILITAR</button>
+          {% else %}
+          <button type="submit" class="btn-horde" style="background: linear-gradient(180deg, #059669 0%, #064e3b 100%); box-shadow: 0 0 15px rgba(16, 185, 129, 0.4);">SÍ, HABILITAR</button>
+          {% endif %}
         </div>
       </form>
     </div>

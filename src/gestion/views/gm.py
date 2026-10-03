@@ -1,5 +1,6 @@
 import json
-from django.views.generic import ListView, View, DetailView, UpdateView, DeleteView
+from django.urls import reverse, reverse_lazy
+from django.views.generic import ListView, View, DetailView, UpdateView, DeleteView, CreateView
 from django.db.models import Q
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import get_user_model
@@ -8,6 +9,7 @@ from django.contrib.auth import get_user_model
 from src.usuarios.mixins import GmRequiredMixin
 from ..models import Personaje, Raza, Atributo, Habilidad, Objeto
 from ..forms import CrearPersonajeForm, ActualizarPersonajeForm
+from ..forms.raza import RazaForm
 
 User = get_user_model()
 
@@ -25,7 +27,7 @@ class ListarPersonajesView(GmRequiredMixin, ListView):
 
     def get_queryset(self):
         # Por defecto el metodo de la clase padre ListView retorna .all()
-        qs =  Personaje.objects.select_related('raza', 'usuario').filter(activo=True)
+        qs =  Personaje.objects.select_related('raza', 'usuario').all()
         query, razas, orden = ( self.request.GET.get('q'), 
                         [ int(pk_raza) for pk_raza in self.request.GET.getlist('raza') if pk_raza.isdigit() ],
                         self.request.GET.get('orden', 'nombre'))
@@ -148,6 +150,8 @@ class ActualizarPersonajeView(GmRequiredMixin, View):
 
     def get_context_data(self, request, personaje, form=None, error_msg=None):
         razas = list(Raza.objects.filter(activo=True))
+        if personaje.raza and personaje.raza not in razas:
+            razas.append(personaje.raza)
         usuarios = User.objects.filter(is_active=True).order_by('username')
         habilidades = list(Habilidad.objects.filter(activo=True))
         objetos = list(Objeto.objects.filter(activo=True))
@@ -190,7 +194,51 @@ class EliminarPersonajeView(GmRequiredMixin, DeleteView):
 
     def post(self, request, *args, **kwargs):
         self.object = self.get_object()
-        # Borrado lógico: en lugar de eliminar físicamente, desactivamos el personaje
-        self.object.activo = False
+        # Borrado lógico: alternamos el estado
+        self.object.activo = not self.object.activo
         self.object.save()
         return redirect('gm:listar-personajes')
+
+# ==========================================
+# CRUD DE RAZAS
+# ==========================================
+
+class ListarRazasView(GmRequiredMixin, ListView):
+    model = Raza
+    template_name = "gestion/listar_razas.html"
+    context_object_name = "razas"
+
+    def get_queryset(self):
+        return Raza.objects.all()
+
+class DetalleRazaView(GmRequiredMixin, DetailView):
+    model = Raza
+    template_name = "gestion/detalle_raza.html"
+    context_object_name = "raza"
+
+class CrearRazaView(GmRequiredMixin, CreateView):
+    model = Raza
+    form_class = RazaForm
+    template_name = "gestion/crear_raza.html"
+    success_url = reverse_lazy('gm:listar-razas')
+
+class ActualizarRazaView(GmRequiredMixin, UpdateView):
+    model = Raza
+    form_class = RazaForm
+    template_name = "gestion/actualizar_raza.html"
+    
+    def get_success_url(self):
+        return reverse('gm:detalle-raza', kwargs={'pk': self.object.pk})
+
+class EliminarRazaView(GmRequiredMixin, DeleteView):
+    model = Raza
+    template_name = "gestion/eliminar_raza.html"
+    context_object_name = "raza"
+    success_url = reverse_lazy('gm:listar-razas')
+
+    def post(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        # Borrado lógico: alternamos el estado
+        self.object.activo = not self.object.activo
+        self.object.save()
+        return redirect(self.success_url)
