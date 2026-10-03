@@ -53,7 +53,7 @@ class Atributo(models.Model):
 
 
 class Raza(models.Model):
-    nombre = models.CharField(max_length = 100, null = False)
+    nombre = models.CharField(max_length = 100, null = False, unique=True)
     descripcion = models.TextField(max_length = 500, null = False)
     r_bonificadores = models.JSONField(blank=True, null=True)
     r_handicap = models.JSONField(blank=True, null=True)
@@ -66,7 +66,7 @@ class Raza(models.Model):
 
 
 class Habilidad(models.Model):
-    nombre = models.CharField(max_length = 100, null = False)
+    nombre = models.CharField(max_length = 100, null = False, unique=True)
     descripcion = models.TextField(max_length = 500, null = False)
     efectos = models.JSONField(blank=True, null=True)
     costo = models.JSONField(blank=True, null=True)

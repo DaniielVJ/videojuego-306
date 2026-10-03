@@ -1,0 +1,113 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Modificar Objeto{% endblock %}
+{% block styles %}
+<link rel="stylesheet" href="{% static 'css/actualizar_objeto.css' %}">
+<style>
+  .creation-form input[type="text"],
+  .creation-form input[type="number"],
+  .creation-form textarea {
+    width: 100%;
+    padding: 10px;
+    background: rgba(0,0,0,0.6);
+    border: 1px solid #8c7335;
+    color: #ffeed1;
+    font-family: 'MedievalSharp', cursive;
+    border-radius: 4px;
+  }
+  .creation-form input[type="file"] {
+    color: #ffeed1;
+    font-family: 'MedievalSharp', cursive;
+    margin-top: 10px;
+  }
+  .creation-form a {
+    color: #10b981;
+    text-decoration: none;
+    font-weight: bold;
+  }
+  .creation-form a:hover {
+    text-decoration: underline;
+  }
+  .creation-form input[type="checkbox"] {
+    margin-left: 10px;
+    accent-color: #ff4444;
+    transform: scale(1.2);
+  }
+  .img-container {
+    background: rgba(0,0,0,0.4);
+    border: 1px dashed #8c7335;
+    padding: 15px;
+    border-radius: 4px;
+  }
+</style>
+{% endblock %}
+{% block main %}
+<div class="scene">
+  <canvas id="bgCanvas" class="bg-canvas"></canvas>
+  {% include "includes/navbar2.html" %}
+  <main class="delete-container">
+    <div class="warcraft-panel" style="max-width: 800px; width: 100%;">
+      <h1 class="warcraft-title">Modificar Objeto: {{ form.instance.nombre }}</h1>
+      <form method="POST" enctype="multipart/form-data" class="creation-form">
+        {% csrf_token %}
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+            <div style="grid-column: 1 / -1;">
+                <label style="color: #ffcc00; font-family: 'Bangers'; font-size: 1.4rem; display: block; margin-bottom: 0.5rem; letter-spacing: 1px;">{{ form.nombre.label }}</label>
+                {{ form.nombre }}
+                {% if form.nombre.errors %}<div style="color: #ff4444;">{{ form.nombre.errors }}</div>{% endif %}
+            </div>
+            <div style="grid-column: 1 / -1;">
+                <label style="color: #ffcc00; font-family: 'Bangers'; font-size: 1.4rem; display: block; margin-bottom: 0.5rem; letter-spacing: 1px;">{{ form.descripcion.label }}</label>
+                {{ form.descripcion }}
+                {% if form.descripcion.errors %}<div style="color: #ff4444;">{{ form.descripcion.errors }}</div>{% endif %}
+            </div>
+            
+            <div>
+                <label style="color: #ffcc00; font-family: 'Bangers'; font-size: 1.4rem; display: block; margin-bottom: 0.5rem;">{{ form.peso.label }}</label>
+                {{ form.peso }}
+                {% if form.peso.errors %}<div style="color: #ff4444;">{{ form.peso.errors }}</div>{% endif %}
+            </div>
+            
+            <div>
+                <label style="color: #ffcc00; font-family: 'Bangers'; font-size: 1.4rem; display: block; margin-bottom: 0.5rem;">{{ form.img.label }}</label>
+                <div class="img-container">
+                    {{ form.img }}
+                </div>
+                {% if form.img.errors %}<div style="color: #ff4444;">{{ form.img.errors }}</div>{% endif %}
+            </div>
+            
+            <div>
+                <label style="color: #ffcc00; font-family: 'Bangers'; font-size: 1.4rem; display: block; margin-bottom: 0.5rem;">{{ form.es_equipable.label }}</label>
+                {{ form.es_equipable }}
+                {% if form.es_equipable.errors %}<div style="color: #ff4444;">{{ form.es_equipable.errors }}</div>{% endif %}
+            </div>
+
+            <div>
+                <label style="color: #ffcc00; font-family: 'Bangers'; font-size: 1.4rem; display: block; margin-bottom: 0.5rem;">{{ form.kit_inicial.label }}</label>
+                {{ form.kit_inicial }}
+                {% if form.kit_inicial.errors %}<div style="color: #ff4444;">{{ form.kit_inicial.errors }}</div>{% endif %}
+            </div>
+            
+            <h3 style="grid-column: 1 / -1; color: #ffcc00; font-family: 'Bangers'; margin-top: 1rem; border-bottom: 1px solid #8c7335;">Efectos (Estadísticas al equipar)</h3>
+            {% for field in form %}
+                {% if field.name != 'nombre' and field.name != 'descripcion' and field.name != 'peso' and field.name != 'img' and field.name != 'es_equipable' and field.name != 'kit_inicial' %}
+                    <div>
+                        <label style="color: #ffcc00; font-family: 'Bangers'; font-size: 1.1rem; display: block; margin-bottom: 0.3rem;">{{ field.label }}</label>
+                        {{ field }}
+                        {% if field.errors %}<div style="color: #ff4444;">{{ field.errors }}</div>{% endif %}
+                    </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+        <div class="action-buttons" style="margin-top: 2rem;">
+          <a href="{% url 'gm:detalle-objeto' pk=form.instance.pk %}" class="btn-alliance">CANCELAR</a>
+          <button type="submit" class="btn-horde">ACTUALIZAR OBJETO</button>
+        </div>
+      </form>
+    </div>
+  </main>
+</div>
+{% endblock %}
+{% block scripts %}
+<script src="{% static 'js/actualizar_objeto.js' %}"></script>
+{% endblock %}

@@ -15,7 +15,24 @@ class ObjetoUpdateCreateForm(forms.ModelForm):
 	class Meta:
 
 		model = Objeto
-		fields = ["nombre", "descripcion", "peso"]
+		fields = ["nombre", "descripcion", "peso", "img", "es_equipable", "kit_inicial"]
+
+	def clean_nombre(self):
+		nombre = self.cleaned_data.get('nombre', '').strip()
+		if len(nombre) < 3:
+			raise forms.ValidationError("El nombre del objeto debe contener al menos 3 caracteres.")
+		qs = Objeto.objects.filter(nombre__iexact=nombre)
+		if self.instance and self.instance.pk:
+			qs = qs.exclude(pk=self.instance.pk)
+		if qs.exists():
+			raise forms.ValidationError(f"Ya existe un objeto con el nombre '{nombre}'. Elige otro.")
+		return nombre
+
+	def clean_img(self):
+		img = self.cleaned_data.get('img')
+		if img and getattr(img, 'size', 0) > 10 * 1024 * 1024:
+			raise forms.ValidationError("La imagen no puede pesar más de 10 MB.")
+		return img
 
 	def __init__(self, *args, **kwargs):
 
