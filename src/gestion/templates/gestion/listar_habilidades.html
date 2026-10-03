@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Códice de Habilidades{% endblock %}
+{% block styles %}
+<link rel="stylesheet" href="{% static 'css/listar_habilidades.css' %}">
+<style>
+.roster-card { border-color: #555; }
+.hero-portrait { object-fit: contain; }
+</style>
+{% endblock %}
+{% block main %}
+<div class="scene">
+  <canvas id="bgCanvas" class="bg-canvas"></canvas>
+  {% include "includes/navbar2.html" %}
+  <main class="roster-container">
+    <div class="roster-header">
+      <h1 class="roster-title">Habilidades del Reino</h1>
+      <a href="{% url 'gm:crear-habilidad' %}" class="btn-create-hero">NUEVA HABILIDAD</a>
+    </div>
+    <div class="roster-grid">
+      {% for habilidad in habilidades %}
+      <a href="{% url 'gm:detalle-habilidad' pk=habilidad.pk %}" class="roster-card">
+        <div class="roster-card-inner">
+          <div class="roster-portrait-wrap">
+              <div class="portrait-placeholder" style="font-size: 3rem; color: #c4ab7c;">✨</div>
+          </div>
+          <div class="roster-info">
+            <h2 class="hero-name">
+              {{ habilidad.nombre }}
+              {% if not habilidad.activo %}
+              <span style="font-size: 0.75rem; color: #ff4444; border: 1px solid #ff4444; padding: 2px 4px; border-radius: 3px; margin-left: 5px;">DESHABILITADA</span>
+              {% endif %}
+            </h2>
+            <div class="hero-class" style="color: #c4ab7c; font-size: 0.9rem;">{{ habilidad.descripcion|truncatechars:80 }}</div>
+          </div>
+        </div>
+      </a>
+      {% endfor %}
+    </div>
+  </main>
+</div>
+{% endblock %}
+{% block scripts %}
+<script src="{% static 'js/listar_habilidades.js' %}"></script>
+{% endblock %}

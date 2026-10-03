@@ -1,7 +1,8 @@
 from django.urls import path
 from ..views import (
     ListarPersonajesView, CrearPersonajeView, DetallePersonajeView, ActualizarPersonajeView, EliminarPersonajeView,
-    ListarRazasView, CrearRazaView, DetalleRazaView, ActualizarRazaView, EliminarRazaView
+    ListarRazasView, CrearRazaView, DetalleRazaView, ActualizarRazaView, EliminarRazaView,
+    ListarHabilidadesView, CrearHabilidadView, DetalleHabilidadView, ActualizarHabilidadView, EliminarHabilidadView
 )
 
 app_name = "gm"
@@ -20,4 +21,11 @@ urlpatterns = [
     path('razas/<int:pk>/detail/', DetalleRazaView.as_view(), name='detalle-raza'),
     path('razas/<int:pk>/update/', ActualizarRazaView.as_view(), name='actualizar-raza'),
     path('razas/<int:pk>/delete/', EliminarRazaView.as_view(), name='eliminar-raza'),
+
+    # CRUD Habilidades
+    path('habilidades/', ListarHabilidadesView.as_view(), name='listar-habilidades'),
+    path('habilidades/add/', CrearHabilidadView.as_view(), name='crear-habilidad'),
+    path('habilidades/<int:pk>/detail/', DetalleHabilidadView.as_view(), name='detalle-habilidad'),
+    path('habilidades/<int:pk>/update/', ActualizarHabilidadView.as_view(), name='actualizar-habilidad'),
+    path('habilidades/<int:pk>/delete/', EliminarHabilidadView.as_view(), name='eliminar-habilidad'),
 ]
