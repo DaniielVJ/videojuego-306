@@ -36,11 +36,17 @@
         <span class="tag-highlight">// REGISTRO #{{ personaje.pk }}</span>
       </div>
 
-      <div class="action-bar-right">
+      <div class="action-bar-right" style="display: flex; gap: 1rem;">
         <!-- BOTÓN DE EDICIÓN: NAVEGA A LA FORJA DE MODIFICACIÓN -->
         <a href="{% url 'gm:actualizar-personaje' pk=personaje.pk %}" class="btn-hero-nav btn-edit-hero" id="btnEditarHeroe" data-id="{{ personaje.pk }}" data-name="{{ personaje.nombre }}" title="Modificar Atributos y Pertrechos de {{ personaje.nombre }}">
           <svg class="rpg-icon" viewBox="0 0 24 24"><path fill="currentColor" d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a.996.996 0 0 0 0-1.41l-2.34-2.34a.996.996 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
           <span>MODIFICAR HÉROE</span>
+        </a>
+
+        <!-- BOTÓN DE ELIMINACIÓN: NAVEGA AL DESTIERRO (GET) -->
+        <a href="{% url 'gm:eliminar-personaje' pk=personaje.pk %}" class="btn-hero-nav btn-delete-hero" style="color: #ff4444; border-color: #8a0303;" title="Desterrar a {{ personaje.nombre }}">
+          <svg class="rpg-icon" viewBox="0 0 24 24"><path fill="currentColor" d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>
+          <span>ELIMINAR HÉROE</span>
         </a>
       </div>
     </header>
