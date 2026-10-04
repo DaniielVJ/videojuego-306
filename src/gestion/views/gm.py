@@ -3,6 +3,7 @@ from django.urls import reverse, reverse_lazy
 from django.views.generic import ListView, View, DetailView, UpdateView, DeleteView, CreateView
 from django.db.models import Q
 from django.shortcuts import render, redirect, get_object_or_404
+from django.http import JsonResponse
 from django.contrib.auth import get_user_model
 
 
@@ -76,7 +77,7 @@ class CrearPersonajeView(GmRequiredMixin, View):
     def get_context_data(self, request, form=None, error_msg=None):
         razas = list(Raza.objects.filter(activo=True))
         usuarios = User.objects.filter(is_active=True).order_by('username')
-        habilidades = Habilidad.objects.filter(activo=True)
+        habilidades = Habilidad.objects.filter(kit_inicial=True, activo=True)
         objetos = Objeto.objects.filter(kit_inicial=True, activo=True)
         razas_json = [
             {
@@ -157,11 +158,16 @@ class ActualizarPersonajeView(GmRequiredMixin, View):
         usuarios = User.objects.filter(is_active=True).order_by('username')
         habilidades = list(Habilidad.objects.filter(activo=True))
         objetos = list(Objeto.objects.filter(activo=True))
+        
+        cantidades_inventario = {}
+        if personaje.pk:
+            cantidades_inventario = {item.objeto_id: item.cantidad for item in personaje.inventarioitem_set.all()}
 
         return {
             'personaje': personaje,
             'form': form or ActualizarPersonajeForm(instance=personaje, request_user=request.user),
             'razas': razas,
+            'cantidades_inventario': cantidades_inventario,
             'usuarios': usuarios,
             'habilidades': habilidades,
             'objetos': objetos,
@@ -200,6 +206,148 @@ class EliminarPersonajeView(GmRequiredMixin, DeleteView):
         self.object.activo = not self.object.activo
         self.object.save()
         return redirect('gm:listar-personajes')
+
+# ==========================================
+# API DE EQUIPAMIENTO
+# ==========================================
+class ApiEquiparObjetoView(GmRequiredMixin, View):
+    def post(self, request, pk):
+        personaje = get_object_or_404(Personaje, pk=pk)
+        
+        try:
+            data = json.loads(request.body)
+            objeto_id = data.get('objeto_id')
+            accion = data.get('accion') # 'equipar' o 'desequipar'
+            
+            if not objeto_id or not accion:
+                return JsonResponse({"error": "Faltan parámetros (objeto_id, accion)."}, status=400)
+                
+            objeto = get_object_or_404(Objeto, pk=objeto_id)
+            
+            # Verificamos si el personaje realmente posee este objeto en su inventario
+            if not personaje.objetos.filter(pk=objeto_id).exists():
+                return JsonResponse({"error": "El personaje no posee este objeto en su inventario."}, status=403)
+                
+            tipo = objeto.tipo_equipamiento
+            if not tipo:
+                return JsonResponse({"error": "Este objeto no es equipable o no tiene un tipo definido."}, status=400)
+                
+            # Mapeamos el tipo de equipamiento (de la base de datos) a nuestro Slot (ForeignKey)
+            mapa_slots = {
+                'arma': 'arma_equipada',
+                'casco': 'casco_equipado',
+                'armadura': 'armadura_equipada',
+                'zapatos': 'zapatos_equipados',
+                'collar': 'collar_equipado',
+                'brazalete': 'brazalete_equipado',
+                'escudo': 'escudo_equipado'
+            }
+            
+            campo_slot = mapa_slots.get(tipo)
+            if not campo_slot:
+                return JsonResponse({"error": f"Slot inválido o no reconocido: {tipo}"}, status=500)
+                
+            if accion == 'equipar':
+                setattr(personaje, campo_slot, objeto)
+            elif accion == 'desequipar':
+                setattr(personaje, campo_slot, None)
+            else:
+                return JsonResponse({"error": "Acción inválida. Usa 'equipar' o 'desequipar'."}, status=400)
+                
+            personaje.save()
+            
+            return JsonResponse({
+                "status": "success",
+                "mensaje": f"Objeto {accion}do con éxito en el slot '{tipo}'.",
+                "bonificadores_actuales": personaje.obtener_bonificadores_equipo(),
+                "stats_totales": personaje.stats_totales,
+                "hp_actual": personaje.hp_actual,
+                "hp_total": personaje.hp_total,
+                "mana_actual": personaje.mana_actual,
+                "mana_total": personaje.mana_total,
+                "slot_modificado": tipo
+            })
+            
+        except json.JSONDecodeError:
+            return JsonResponse({"error": "JSON inválido."}, status=400)
+
+
+class ApiConsumirObjetoView(GmRequiredMixin, View):
+    def post(self, request, pk):
+        personaje = get_object_or_404(Personaje, pk=pk)
+        
+        try:
+            data = json.loads(request.body)
+            objeto_id = data.get('objeto_id')
+            
+            if not objeto_id:
+                return JsonResponse({"error": "Falta el ID del objeto a consumir."}, status=400)
+                
+            objeto = get_object_or_404(Objeto, pk=objeto_id)
+            
+            if not personaje.objetos.filter(pk=objeto_id).exists():
+                return JsonResponse({"error": "El personaje no posee este objeto."}, status=403)
+                
+            if objeto.es_equipable:
+                return JsonResponse({"error": "No puedes consumir un objeto equipable."}, status=400)
+                
+            # Validar y aplicar efectos
+            efectos_aplicados = False
+            if objeto.efectos:
+                attr = personaje.atributos
+                
+                # Validación previa: Si solo cura y ya está al máximo, rechazar
+                solo_cura_hp = len(objeto.efectos) == 1 and 'hp_restore' in objeto.efectos
+                solo_cura_mana = len(objeto.efectos) == 1 and 'mana_restore' in objeto.efectos
+                
+                if solo_cura_hp and personaje.hp_actual >= personaje.hp_total:
+                    return JsonResponse({"error": "Tu salud ya está al máximo. No desperdicies la poción."}, status=400)
+                if solo_cura_mana and personaje.mana_actual >= personaje.mana_total:
+                    return JsonResponse({"error": "Tu maná ya está al máximo. No desperdicies la poción."}, status=400)
+                
+                for stat, amount in objeto.efectos.items():
+                    if stat == 'hp_restore' and personaje.hp_actual < personaje.hp_total:
+                        personaje.hp_actual = min(personaje.hp_total, personaje.hp_actual + amount)
+                        efectos_aplicados = True
+                    elif stat == 'mana_restore' and personaje.mana_actual < personaje.mana_total:
+                        personaje.mana_actual = min(personaje.mana_total, personaje.mana_actual + amount)
+                        efectos_aplicados = True
+                    # Elixires de atributos (cambio permanente)
+                    elif hasattr(attr, stat):
+                        setattr(attr, stat, getattr(attr, stat) + amount)
+                        attr.save()
+                        efectos_aplicados = True
+                        
+                if not efectos_aplicados:
+                    return JsonResponse({"error": "No puedes usar este objeto ahora mismo."}, status=400)
+            
+            # Consumir el objeto (disminuir cantidad de InventarioItem)
+            from ..models.personaje import InventarioItem
+            inv_item = get_object_or_404(InventarioItem, personaje=personaje, objeto=objeto)
+            
+            if inv_item.cantidad > 1:
+                inv_item.cantidad -= 1
+                inv_item.save()
+                cantidad_restante = inv_item.cantidad
+            else:
+                inv_item.delete()
+                cantidad_restante = 0
+                
+            personaje.save()
+            
+            return JsonResponse({
+                "status": "success",
+                "mensaje": f"Has consumido {objeto.nombre}.",
+                "hp_actual": personaje.hp_actual,
+                "hp_total": personaje.hp_total,
+                "mana_actual": personaje.mana_actual,
+                "mana_total": personaje.mana_total,
+                "stats_totales": personaje.stats_totales,
+                "cantidad_restante": cantidad_restante
+            })
+            
+        except json.JSONDecodeError:
+            return JsonResponse({"error": "JSON inválido."}, status=400)
 
 # ==========================================
 # CRUD DE RAZAS
