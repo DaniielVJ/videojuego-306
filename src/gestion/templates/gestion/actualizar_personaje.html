@@ -570,10 +570,18 @@ Modificar {{ personaje.nombre }}
 
                   <div class="item-header-meta">
                     <label for="obj_{{ objeto.pk }}" class="item-name" style="cursor: pointer;">{{ objeto.nombre }}</label>
-                    <span class="item-weight-tag">
-                      <svg viewBox="0 0 24 24"><path d="M12 3a9 9 0 0 0-9 9c0 4.97 4.03 9 9 9s9-4.03 9-9a9 9 0 0 0-9-9zm0 16c-3.86 0-7-3.14-7-7s3.14-7 7-7 7 3.14 7 7-3.14 7-7 7z"/></svg>
-                      <span>Peso: {{ objeto.peso }} kg</span>
-                    </span>
+                    <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+                      <span class="item-weight-tag">
+                        <svg viewBox="0 0 24 24"><path d="M12 3a9 9 0 0 0-9 9c0 4.97 4.03 9 9 9s9-4.03 9-9a9 9 0 0 0-9-9zm0 16c-3.86 0-7-3.14-7-7s3.14-7 7-7 7 3.14 7 7-3.14 7-7 7z"/></svg>
+                        <span>Peso: {{ objeto.peso }} kg</span>
+                      </span>
+                      {% if not objeto.es_equipable %}
+                      <div class="item-qty-selector" style="display: flex; align-items: center; gap: 5px; margin-right: 10px;" title="Cantidad a asignar">
+                        <label for="qty_{{ objeto.pk }}" style="font-size: 0.7rem; color: #a9a9a9;">Cant:</label>
+                        <input type="number" name="cantidad_{{ objeto.pk }}" id="qty_{{ objeto.pk }}" min="1" max="999" value="1" style="width: 45px; padding: 2px; text-align: center; background: rgba(0,0,0,0.5); border: 1px solid #4a4a4a; color: white; border-radius: 3px;" onclick="document.getElementById('obj_{{ objeto.pk }}').checked = true;" />
+                      </div>
+                      {% endif %}
+                    </div>
                   </div>
                 </div>
 
@@ -620,6 +628,20 @@ Modificar {{ personaje.nombre }}
 {% endblock main %}
 
 {% block scripts %}
+<script>
+  // Si hay cantidades preexistentes (modo edición), cargarlas en los inputs
+  {% if cantidades_inventario %}
+  document.addEventListener("DOMContentLoaded", function() {
+      const invQuantities = {{ cantidades_inventario|safe }};
+      for (const [objId, qty] of Object.entries(invQuantities)) {
+          const qtyInput = document.getElementById('qty_' + objId);
+          if (qtyInput) {
+              qtyInput.value = qty;
+          }
+      }
+  });
+  {% endif %}
+</script>
 <!-- Motor Interactivo de Edición de Personaje (Steppers, Barras y Canvas) -->
 <script src="{% static 'js/actualizar_personaje.js' %}?v=2"></script>
 {% endblock scripts %}

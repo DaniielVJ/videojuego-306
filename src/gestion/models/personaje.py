@@ -3,6 +3,20 @@ from django.conf import settings
 from .inventario import Objeto
 
 
+class InventarioItem(models.Model):
+    personaje = models.ForeignKey('Personaje', on_delete=models.CASCADE)
+    objeto = models.ForeignKey(Objeto, on_delete=models.CASCADE)
+    cantidad = models.PositiveIntegerField(default=1)
+
+    class Meta:
+        unique_together = ('personaje', 'objeto')
+        verbose_name = "Item de Inventario"
+        verbose_name_plural = "Items de Inventario"
+
+    def __str__(self):
+        return f"{self.cantidad}x {self.objeto.nombre} ({self.personaje.nombre})"
+
+
 class Personaje(models.Model):
 
     class Estado(models.TextChoices):
@@ -23,10 +37,12 @@ class Personaje(models.Model):
     experiencia = models.PositiveIntegerField(default = 0)
     exp_siguiente_nivel = models.PositiveIntegerField(default = 100)
     hp_base = models.PositiveIntegerField(default = 100)
+    hp_actual = models.IntegerField(default = 100)
     mana_base = models.PositiveIntegerField(default = 50)
+    mana_actual = models.IntegerField(default = 50)
     activo = models.BooleanField(default = True)
     habilidades = models.ManyToManyField('Habilidad', related_name='personajes')
-    objetos = models.ManyToManyField(Objeto, related_name='personajes')
+    objetos = models.ManyToManyField(Objeto, through='InventarioItem', related_name='personajes')
 
     # Slots de Equipamiento
     arma_equipada = models.ForeignKey(Objeto, related_name='equipada_como_arma', on_delete=models.SET_NULL, null=True, blank=True)

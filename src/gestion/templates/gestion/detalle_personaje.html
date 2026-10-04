@@ -151,9 +151,9 @@
               <svg viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
             </div>
             <div class="metric-content">
-              <span class="metric-label">Salud Máxima</span>
+              <span class="metric-label">Salud (Actual/Max)</span>
               <span class="metric-value">
-                {{ personaje.hp_total }} PV
+                {{ personaje.hp_actual }} / {{ personaje.hp_total }} PV
               </span>
             </div>
           </div>
@@ -181,9 +181,9 @@
               <svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm1 15h-2v-6h2zm0-8h-2V7h2z"/></svg>
             </div>
             <div class="metric-content">
-              <span class="metric-label">Poder Arcano / Maná</span>
+              <span class="metric-label">Poder Arcano (Actual/Max)</span>
               <span class="metric-value">
-                {{ personaje.mana_total }} PM
+                {{ personaje.mana_actual }} / {{ personaje.mana_total }} PM
               </span>
             </div>
           </div>
@@ -600,13 +600,15 @@
 
             <!-- INVENTARIO LISTA -->
             <div class="inventory-deck-grid" id="inventoryContainer">
-              {% for objeto in personaje.objetos.all %}
+              {% for inv_item in personaje.inventarioitem_set.all %}
+                {% with objeto=inv_item.objeto %}
                 <article class="item-codex-card" id="inv-item-{{ objeto.id }}" style="{% if objeto in personaje.equipo_actual %}display:none;{% endif %}" data-peso="{{ objeto.peso }}" title="{{ objeto.nombre }}">
                   <div class="item-card-header">
                     <div class="item-thumb-box">
                       {% if objeto.img %}
                       <img src="{{ objeto.img.url }}" alt="{{ objeto.nombre }}" class="item-thumb-img" />
                       {% endif %}
+                      <span class="item-quantity-badge" id="inv-qty-{{ objeto.id }}" style="position: absolute; bottom: -5px; right: -5px; background: #e74c3c; color: white; border-radius: 50%; padding: 2px 6px; font-size: 0.75rem; font-weight: bold; border: 1px solid #c0392b; {% if inv_item.cantidad <= 1 %}display:none;{% endif %}">{{ inv_item.cantidad }}</span>
                     </div>
                     <div class="item-header-meta">
                       <h3 class="item-name">{{ objeto.nombre }}</h3>
@@ -626,8 +628,13 @@
                     <button type="button" class="btn-equip" onclick="equiparObjeto({{ objeto.id }}, '{{ objeto.tipo_equipamiento }}', '{% if objeto.img %}{{ objeto.img.url }}{% endif %}')">
                       EQUIPAR ({{ objeto.get_tipo_equipamiento_display|upper }})
                     </button>
+                  {% else %}
+                    <button type="button" class="btn-equip" style="background-color: #27ae60; border-color: #2ecc71;" onclick="consumirObjeto({{ objeto.id }})">
+                      USAR / CONSUMIR
+                    </button>
                   {% endif %}
                 </article>
+                {% endwith %}
               {% endfor %}
             </div>
           </div>
@@ -709,13 +716,57 @@
 
       // Actualizar top metrics
       const topHealth = document.querySelector('.metric-health .metric-value');
-      if (topHealth && result.hp_total !== undefined) topHealth.textContent = `${result.hp_total} PV`;
+      if (topHealth && result.hp_total !== undefined) topHealth.textContent = `${result.hp_actual !== undefined ? result.hp_actual : '?'} / ${result.hp_total} PV`;
 
       const topCombat = document.querySelector('.metric-combat .metric-value');
       if (topCombat && stats.fuerza !== undefined) topCombat.textContent = `${stats.fuerza} PTS`;
 
       const topMagic = document.querySelector('.metric-magic .metric-value');
-      if (topMagic && result.mana_total !== undefined) topMagic.textContent = `${result.mana_total} PM`;
+      if (topMagic && result.mana_total !== undefined) topMagic.textContent = `${result.mana_actual !== undefined ? result.mana_actual : '?'} / ${result.mana_total} PM`;
+  }
+
+  async function consumirObjeto(objetoId) {
+      if (!confirm("¿Deseas consumir este objeto? Sus efectos se aplicarán permanentemente y desaparecerá de la mochila.")) return;
+      
+      try {
+          const response = await fetch("{% url 'gm:api-consumir' pk=personaje.pk %}", {
+              method: 'POST',
+              headers: {
+                  'Content-Type': 'application/json',
+                  'X-CSRFToken': '{{ csrf_token }}'
+              },
+              body: JSON.stringify({ objeto_id: objetoId })
+          });
+          
+          const result = await response.json();
+          if (response.ok) {
+              // 1. Manejar la UI del objeto (reducir cantidad o eliminar row)
+              if (result.cantidad_restante > 0) {
+                  const badge = document.getElementById('inv-qty-' + objetoId);
+                  if (badge) {
+                      badge.textContent = result.cantidad_restante;
+                      if (result.cantidad_restante > 1) {
+                          badge.style.display = 'block';
+                      } else {
+                          badge.style.display = 'none';
+                      }
+                  }
+              } else {
+                  const itemRow = document.getElementById('inv-item-' + objetoId);
+                  if (itemRow) itemRow.remove();
+              }
+              
+              // 2. Actualizar stats
+              actualizarUIStats(result);
+              
+              // Mostrar mensaje de éxito
+              alert(result.mensaje);
+          } else {
+              alert("Error al consumir: " + result.error);
+          }
+      } catch (err) {
+          console.error(err);
+      }
   }
 
   async function equiparObjeto(objetoId, tipo, imgUrl) {
