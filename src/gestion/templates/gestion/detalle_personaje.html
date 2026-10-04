@@ -619,7 +619,9 @@
                   {% if objeto.efectos %}
                     <div class="item-tags-row" style="margin-top: 5px;">
                       {% for k, v in objeto.efectos.items %}
-                      <span class="item-pill pill-effect" style="font-size:0.7rem;">{{ k|capfirst }}: +{{ v }}</span>
+                        {% if v != 0 %}
+                        <span class="item-pill pill-effect" style="font-size:0.7rem;">{{ k|capfirst }}: +{{ v }}</span>
+                        {% endif %}
                       {% endfor %}
                     </div>
                   {% endif %}

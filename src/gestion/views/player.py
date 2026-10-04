@@ -104,65 +104,27 @@ class ActualizarPersonaje(LoginRequiredMixin, UpdateView):
 class ListarPersonajes(LoginRequiredMixin, ListView):
 
 	model = Personaje
-	template_name = "gestion/PersonajeList.html"
-	context_object_name = "Personajes"
-	paginate_by = 10
+	template_name = "gestion/listar_personajes_player.html"
+	context_object_name = "personajes"
+	
+	# Ya no necesitamos paginación porque el límite es 5
+	# paginate_by = 10 
 
 	def get_queryset(self):
-
-		if not self.request.user.is_gm:
-
-			queryset = Personaje.objects.select_related("raza").filter(activo = True)
-
-		else:
-
-			queryset = Personaje.objects.select_related("raza").filter(activo = True, usuario = self.request.user)
-		
-		query = self.request.GET.get("q", "").strip()
-		raza_id = self.request.GET.get("raza", "").strip()
-		estado = self.request.GET.get("estado", "").strip()
-		nivel = self.request.GET.get("nivel", "").strip()
-
-		if query:
-
-			if query.isdigit():
-
-				queryset = queryset.filter(Q(id = int(query)) | Q(nombre__icontains = query))
-
-			else:
-
-				queryset = queryset.filter(nombre__icontains = query)
-
-		if raza_id:
-
-			queryset = queryset.filter(raza = raza_id)
-
-		if estado:
-
-			queryset = queryset.filter(estado = estado)
-
-		if nivel:
-
-			queryset = queryset.filter(nivel = nivel)
-
-		return queryset.order_by("-id")
+		# El jugador solo ve sus propios personajes activos
+		# Eliminamos los filtros de búsqueda GET porque la lista es pequeña (máx 5)
+		return Personaje.objects.select_related("raza").filter(
+			activo=True, 
+			usuario=self.request.user
+		).order_by("nombre")
 
 	def get_context_data(self, **kwargs):
-		
 		context = super().get_context_data(**kwargs)
-
-		context["razas"] = Raza.objects.filter(activo = True)
-		context["estado"] = Personaje.Estado.choices
-
-		context["filtros"] = {
-
-			"query": self.request.GET.get("q", "").strip(),
-			"raza_id": self.request.GET.get("raza", "").strip(),
-			"estado": self.request.GET.get("estado", "").strip(),
-			"nivel": self.request.GET.get("nivel", "").strip()
-
-
-		}
+		
+		# Estadísticas rápidas para la vista (Vivos, Muertos, Congelados)
+		context['vivos'] = self.object_list.filter(estado=Personaje.Estado.VIVO).count() 
+		context['muertos'] = self.object_list.filter(estado=Personaje.Estado.MUERTO).count()
+		context['congelados'] = self.object_list.filter(estado=Personaje.Estado.CONGELADO).count()
 
 		return context
 
