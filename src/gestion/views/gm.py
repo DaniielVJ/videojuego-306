@@ -3,6 +3,7 @@ from django.urls import reverse, reverse_lazy
 from django.views.generic import ListView, View, DetailView, UpdateView, DeleteView, CreateView
 from django.db.models import Q
 from django.shortcuts import render, redirect, get_object_or_404
+from django.http import JsonResponse
 from django.contrib.auth import get_user_model
 
 
@@ -200,6 +201,65 @@ class EliminarPersonajeView(GmRequiredMixin, DeleteView):
         self.object.activo = not self.object.activo
         self.object.save()
         return redirect('gm:listar-personajes')
+
+# ==========================================
+# API DE EQUIPAMIENTO
+# ==========================================
+class ApiEquiparObjetoView(GmRequiredMixin, View):
+    def post(self, request, pk):
+        personaje = get_object_or_404(Personaje, pk=pk)
+        
+        try:
+            data = json.loads(request.body)
+            objeto_id = data.get('objeto_id')
+            accion = data.get('accion') # 'equipar' o 'desequipar'
+            
+            if not objeto_id or not accion:
+                return JsonResponse({"error": "Faltan parámetros (objeto_id, accion)."}, status=400)
+                
+            objeto = get_object_or_404(Objeto, pk=objeto_id)
+            
+            # Verificamos si el personaje realmente posee este objeto en su inventario
+            if not personaje.objetos.filter(pk=objeto_id).exists():
+                return JsonResponse({"error": "El personaje no posee este objeto en su inventario."}, status=403)
+                
+            tipo = objeto.tipo_equipamiento
+            if not tipo:
+                return JsonResponse({"error": "Este objeto no es equipable o no tiene un tipo definido."}, status=400)
+                
+            # Mapeamos el tipo de equipamiento (de la base de datos) a nuestro Slot (ForeignKey)
+            mapa_slots = {
+                'arma': 'arma_equipada',
+                'casco': 'casco_equipado',
+                'armadura': 'armadura_equipada',
+                'zapatos': 'zapatos_equipados',
+                'collar': 'collar_equipado',
+                'brazalete': 'brazalete_equipado',
+                'escudo': 'escudo_equipado'
+            }
+            
+            campo_slot = mapa_slots.get(tipo)
+            if not campo_slot:
+                return JsonResponse({"error": f"Slot inválido o no reconocido: {tipo}"}, status=500)
+                
+            if accion == 'equipar':
+                setattr(personaje, campo_slot, objeto)
+            elif accion == 'desequipar':
+                setattr(personaje, campo_slot, None)
+            else:
+                return JsonResponse({"error": "Acción inválida. Usa 'equipar' o 'desequipar'."}, status=400)
+                
+            personaje.save()
+            
+            return JsonResponse({
+                "status": "success",
+                "mensaje": f"Objeto {accion}do con éxito en el slot '{tipo}'.",
+                "bonificadores_actuales": personaje.obtener_bonificadores_equipo(),
+                "slot_modificado": tipo
+            })
+            
+        except json.JSONDecodeError:
+            return JsonResponse({"error": "JSON inválido."}, status=400)
 
 # ==========================================
 # CRUD DE RAZAS

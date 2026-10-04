@@ -26,9 +26,40 @@ class Personaje(models.Model):
     habilidades = models.ManyToManyField('Habilidad', related_name='personajes')
     objetos = models.ManyToManyField(Objeto, related_name='personajes')
 
+    # Slots de Equipamiento
+    arma_equipada = models.ForeignKey(Objeto, related_name='equipada_como_arma', on_delete=models.SET_NULL, null=True, blank=True)
+    casco_equipado = models.ForeignKey(Objeto, related_name='equipada_como_casco', on_delete=models.SET_NULL, null=True, blank=True)
+    armadura_equipada = models.ForeignKey(Objeto, related_name='equipada_como_armadura', on_delete=models.SET_NULL, null=True, blank=True)
+    zapatos_equipados = models.ForeignKey(Objeto, related_name='equipada_como_zapatos', on_delete=models.SET_NULL, null=True, blank=True)
+    collar_equipado = models.ForeignKey(Objeto, related_name='equipada_como_collar', on_delete=models.SET_NULL, null=True, blank=True)
+    brazalete_equipado = models.ForeignKey(Objeto, related_name='equipada_como_brazalete', on_delete=models.SET_NULL, null=True, blank=True)
+    escudo_equipado = models.ForeignKey(Objeto, related_name='equipada_como_escudo', on_delete=models.SET_NULL, null=True, blank=True)
 
     def __str__(self):
         return self.nombre
+
+    @property
+    def equipo_actual(self):
+        return [
+            self.arma_equipada,
+            self.casco_equipado,
+            self.armadura_equipada,
+            self.zapatos_equipados,
+            self.collar_equipado,
+            self.brazalete_equipado,
+            self.escudo_equipado
+        ]
+
+    def obtener_bonificadores_equipo(self):
+        # Esto acumula los bonos para atributos del personaje
+        # que otorga cada objeto, permitiendo tener el total de fuerza, int, etc
+        # que da cada objeto.
+        bonos = {}
+        for obj in self.equipo_actual:
+            if obj and obj.efectos:
+                for key, val in obj.efectos.items():
+                    bonos[key] = bonos.get(key, 0) + val
+        return bonos
 
 
 

@@ -465,64 +465,149 @@
           <header class="section-card-header">
             <div class="section-title-wrap">
               <svg viewBox="0 0 24 24"><path d="M20 7h-4V4c0-1.1-.9-2-2-2h-4c-1.1 0-2 .9-2 2v3H4c-1.1 0-2 .9-2 2v11c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V9c0-1.1-.9-2-2-2zm-10-3h4v3h-4V4zm10 16H4V9h16v11z"/></svg>
-              <h2 class="section-title">ARSENAL Y PERTRECHOS</h2>
+              <h2 class="section-title">EQUIPO Y PERTRECHOS</h2>
             </div>
-            <span class="section-badge-counter" id="totalInventoryWeight">0.0 kg Total</span>
+            <span class="section-badge-counter" id="totalInventoryWeight">Sistema Avanzado</span>
           </header>
 
-          <div class="inventory-deck-grid">
-            {% for objeto in personaje.objetos.all %}
-            <article class="item-codex-card" data-peso="{{ objeto.peso }}" title="{{ objeto.nombre }}">
-              <div class="item-card-header">
-                <div class="item-thumb-box">
-                  {% if objeto.img %}
-                  <img src="{{ objeto.img.url }}" alt="{{ objeto.nombre }}" class="item-thumb-img" />
-                  {% else %}
-                  <div class="item-thumb-fallback">
-                    <svg viewBox="0 0 24 24"><path d="M20 7h-4V4c0-1.1-.9-2-2-2h-4c-1.1 0-2 .9-2 2v3H4c-1.1 0-2 .9-2 2v11c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V9c0-1.1-.9-2-2-2z"/></svg>
-                  </div>
-                  {% endif %}
-                </div>
+          <style>
+            /* UI Metin2 Style */
+            .equipment-module {
+              display: flex;
+              gap: 2rem;
+              background: rgba(10, 10, 10, 0.8);
+              border: 1px solid #2a2a2a;
+              padding: 1.5rem;
+              margin-top: 1rem;
+              flex-wrap: wrap;
+            }
+            .equipment-silhouette-box {
+              position: relative;
+              width: 300px;
+              height: 450px;
+              background: url("{% static 'img/silhouette.jpg' %}") center/cover no-repeat;
+              border: 2px solid #5a4a22;
+              box-shadow: inset 0 0 30px #000;
+              flex-shrink: 0;
+              margin: 0 auto;
+            }
+            .equip-slot {
+              position: absolute;
+              width: 48px;
+              height: 48px;
+              background: rgba(0,0,0,0.7);
+              border: 1px solid #5a4a22;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              cursor: pointer;
+              transition: all 0.2s;
+            }
+            .equip-slot:hover { border-color: #ffcc00; box-shadow: 0 0 10px rgba(255, 204, 0, 0.4); }
+            .equip-slot img { width: 90%; height: 90%; object-fit: contain; pointer-events: none; }
+            .equip-slot.empty::after {
+              content: attr(data-slot-name);
+              font-size: 0.6rem;
+              color: #555;
+              font-family: 'MedievalSharp', cursive;
+            }
+            .slot-casco { top: 15px; left: 126px; }
+            .slot-collar { top: 60px; right: 35px; }
+            .slot-arma { top: 160px; left: 20px; }
+            .slot-armadura { top: 150px; left: 126px; }
+            .slot-escudo { top: 160px; right: 20px; }
+            .slot-brazalete { top: 230px; right: 35px; }
+            .slot-zapatos { bottom: 30px; left: 126px; }
+            
+            .inventory-deck-grid { flex-grow: 1; min-width: 300px; }
+            .btn-equip {
+              background: linear-gradient(to bottom, #4a3c1c, #2a2110);
+              border: 1px solid #8c7335; color: #ffcc00; padding: 0.3rem; width: 100%;
+              font-family: 'Bangers', cursive; letter-spacing: 1px; cursor: pointer; margin-top: 5px;
+            }
+            .btn-equip:hover { background: #5a4a22; color: #fff; }
+          </style>
 
-                <div class="item-header-meta">
-                  <h3 class="item-name">{{ objeto.nombre }}</h3>
-                  <span class="item-weight-tag">
-                    <svg viewBox="0 0 24 24"><path d="M12 3a9 9 0 0 0-9 9c0 4.97 4.03 9 9 9s9-4.03 9-9a9 9 0 0 0-9-9zm0 16c-3.86 0-7-3.14-7-7s3.14-7 7-7 7 3.14 7 7-3.14 7-7 7z"/></svg>
-                    <span>Peso: {{ objeto.peso }} kg</span>
-                  </span>
-                </div>
+          <div class="equipment-module">
+            <!-- SILUETA DE EQUIPAMIENTO -->
+            <div class="equipment-silhouette-box" id="equipmentSilhouette">
+              
+              <div class="equip-slot slot-casco {% if not personaje.casco_equipado %}empty{% endif %}" id="slot-casco" data-slot-name="CASCO" {% if personaje.casco_equipado %}data-item-id="{{ personaje.casco_equipado.id }}" onclick="desequiparObjeto(this, 'casco')" title="Desequipar"{% endif %}>
+                {% if personaje.casco_equipado and personaje.casco_equipado.img %}
+                  <img src="{{ personaje.casco_equipado.img.url }}" alt="Casco">
+                {% endif %}
+              </div>
+              
+              <div class="equip-slot slot-collar {% if not personaje.collar_equipado %}empty{% endif %}" id="slot-collar" data-slot-name="COLLAR" {% if personaje.collar_equipado %}data-item-id="{{ personaje.collar_equipado.id }}" onclick="desequiparObjeto(this, 'collar')" title="Desequipar"{% endif %}>
+                {% if personaje.collar_equipado and personaje.collar_equipado.img %}
+                  <img src="{{ personaje.collar_equipado.img.url }}" alt="Collar">
+                {% endif %}
+              </div>
+              
+              <div class="equip-slot slot-arma {% if not personaje.arma_equipada %}empty{% endif %}" id="slot-arma" data-slot-name="ARMA" {% if personaje.arma_equipada %}data-item-id="{{ personaje.arma_equipada.id }}" onclick="desequiparObjeto(this, 'arma')" title="Desequipar"{% endif %}>
+                {% if personaje.arma_equipada and personaje.arma_equipada.img %}
+                  <img src="{{ personaje.arma_equipada.img.url }}" alt="Arma">
+                {% endif %}
+              </div>
+              
+              <div class="equip-slot slot-armadura {% if not personaje.armadura_equipada %}empty{% endif %}" id="slot-armadura" data-slot-name="ARMADURA" {% if personaje.armadura_equipada %}data-item-id="{{ personaje.armadura_equipada.id }}" onclick="desequiparObjeto(this, 'armadura')" title="Desequipar"{% endif %}>
+                {% if personaje.armadura_equipada and personaje.armadura_equipada.img %}
+                  <img src="{{ personaje.armadura_equipada.img.url }}" alt="Armadura">
+                {% endif %}
+              </div>
+              
+              <div class="equip-slot slot-escudo {% if not personaje.escudo_equipado %}empty{% endif %}" id="slot-escudo" data-slot-name="ESCUDO" {% if personaje.escudo_equipado %}data-item-id="{{ personaje.escudo_equipado.id }}" onclick="desequiparObjeto(this, 'escudo')" title="Desequipar"{% endif %}>
+                {% if personaje.escudo_equipado and personaje.escudo_equipado.img %}
+                  <img src="{{ personaje.escudo_equipado.img.url }}" alt="Escudo">
+                {% endif %}
+              </div>
+              
+              <div class="equip-slot slot-brazalete {% if not personaje.brazalete_equipado %}empty{% endif %}" id="slot-brazalete" data-slot-name="BRAZALETE" {% if personaje.brazalete_equipado %}data-item-id="{{ personaje.brazalete_equipado.id }}" onclick="desequiparObjeto(this, 'brazalete')" title="Desequipar"{% endif %}>
+                {% if personaje.brazalete_equipado and personaje.brazalete_equipado.img %}
+                  <img src="{{ personaje.brazalete_equipado.img.url }}" alt="Brazalete">
+                {% endif %}
+              </div>
+              
+              <div class="equip-slot slot-zapatos {% if not personaje.zapatos_equipados %}empty{% endif %}" id="slot-zapatos" data-slot-name="ZAPATOS" {% if personaje.zapatos_equipados %}data-item-id="{{ personaje.zapatos_equipados.id }}" onclick="desequiparObjeto(this, 'zapatos')" title="Desequipar"{% endif %}>
+                {% if personaje.zapatos_equipados and personaje.zapatos_equipados.img %}
+                  <img src="{{ personaje.zapatos_equipados.img.url }}" alt="Zapatos">
+                {% endif %}
               </div>
 
-              <p class="item-desc">{{ objeto.descripcion }}</p>
-
-              <!-- Etiquetas de Equipabilidad y Efectos -->
-              <div class="item-tags-row">
-                {% if objeto.es_equipable %}
-                <span class="item-pill pill-equipable">Equipable</span>
-                {% endif %}
-
-                {% if objeto.kit_inicial %}
-                <span class="item-pill pill-kit">Kit Inicial</span>
-                {% endif %}
-
-                {% if objeto.efectos %}
-                  {% if objeto.efectos.items %}
-                    {% for k, v in objeto.efectos.items %}
-                    <span class="item-pill pill-effect" title="Modificador: {{ k }}">{{ k|capfirst }}: +{{ v }}</span>
-                    {% endfor %}
-                  {% else %}
-                    <span class="item-pill pill-effect">{{ objeto.efectos }}</span>
-                  {% endif %}
-                {% endif %}
-              </div>
-            </article>
-            {% empty %}
-            <div class="empty-codex-state" style="grid-column: 1 / -1;">
-              <svg viewBox="0 0 24 24"><path d="M20 7h-4V4c0-1.1-.9-2-2-2h-4c-1.1 0-2 .9-2 2v3H4c-1.1 0-2 .9-2 2v11c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V9c0-1.1-.9-2-2-2zm-10-3h4v3h-4V4zm10 16H4V9h16v11z"/></svg>
-              <span class="empty-state-title">Bolsa de Pertrechos Vacía</span>
-              <p class="empty-state-text">Este aventurero no carga armamento, pociones o reliquias en su inventario actualmente.</p>
             </div>
-            {% endfor %}
+
+            <!-- INVENTARIO LISTA -->
+            <div class="inventory-deck-grid" id="inventoryContainer">
+              {% for objeto in personaje.objetos.all %}
+                <article class="item-codex-card" id="inv-item-{{ objeto.id }}" style="{% if objeto in personaje.equipo_actual %}display:none;{% endif %}" data-peso="{{ objeto.peso }}" title="{{ objeto.nombre }}">
+                  <div class="item-card-header">
+                    <div class="item-thumb-box">
+                      {% if objeto.img %}
+                      <img src="{{ objeto.img.url }}" alt="{{ objeto.nombre }}" class="item-thumb-img" />
+                      {% endif %}
+                    </div>
+                    <div class="item-header-meta">
+                      <h3 class="item-name">{{ objeto.nombre }}</h3>
+                      <span class="item-weight-tag">Peso: {{ objeto.peso }} kg</span>
+                    </div>
+                  </div>
+                  
+                  {% if objeto.efectos %}
+                    <div class="item-tags-row" style="margin-top: 5px;">
+                      {% for k, v in objeto.efectos.items %}
+                      <span class="item-pill pill-effect" style="font-size:0.7rem;">{{ k|capfirst }}: +{{ v }}</span>
+                      {% endfor %}
+                    </div>
+                  {% endif %}
+
+                  {% if objeto.es_equipable and objeto.tipo_equipamiento %}
+                    <button type="button" class="btn-equip" onclick="equiparObjeto({{ objeto.id }}, '{{ objeto.tipo_equipamiento }}', '{% if objeto.img %}{{ objeto.img.url }}{% endif %}')">
+                      EQUIPAR ({{ objeto.get_tipo_equipamiento_display|upper }})
+                    </button>
+                  {% endif %}
+                </article>
+              {% endfor %}
+            </div>
           </div>
         </section>
 
@@ -560,4 +645,81 @@
 {% block scripts %}
 <!-- Motor Interactivo de Detalle de Personaje (Canvas de Brasas + Cálculos) -->
 <script src="{% static 'js/detalle_personaje.js' %}"></script>
+
+<!-- API JS para Sistema de Equipamiento SPA -->
+<script>
+  async function equiparObjeto(objetoId, tipo, imgUrl) {
+      try {
+          const response = await fetch("{% url 'gm:api-equipar' pk=personaje.pk %}", {
+              method: 'POST',
+              headers: {
+                  'Content-Type': 'application/json',
+                  'X-CSRFToken': '{{ csrf_token }}'
+              },
+              body: JSON.stringify({ objeto_id: objetoId, accion: 'equipar' })
+          });
+          
+          const result = await response.json();
+          if (response.ok) {
+              // 1. Ocultar el objeto que acabamos de equipar de la mochila
+              document.getElementById('inv-item-' + objetoId).style.display = 'none';
+              
+              // 2. Comprobar si había algo en el slot antes
+              const slotElem = document.getElementById('slot-' + tipo);
+              const oldId = slotElem.getAttribute('data-item-id');
+              if (oldId) {
+                  // Devolver el viejo a la mochila
+                  document.getElementById('inv-item-' + oldId).style.display = 'block';
+              }
+              
+              // 3. Renderizar el nuevo objeto en el slot
+              slotElem.innerHTML = `<img src="${imgUrl}" alt="Item">`;
+              slotElem.classList.remove('empty');
+              slotElem.setAttribute('data-item-id', objetoId);
+              slotElem.setAttribute('onclick', `desequiparObjeto(this, '${tipo}')`);
+              slotElem.setAttribute('title', 'Desequipar');
+              
+              // Opcional: mostrar notificación o actualizar stats si tuviéramos un DOM de stats 
+          } else {
+              alert("Error al equipar: " + result.error);
+          }
+      } catch (err) {
+          console.error(err);
+      }
+  }
+
+  async function desequiparObjeto(element, tipo) {
+      const objetoId = element.getAttribute('data-item-id');
+      if (!objetoId) return;
+      
+      try {
+          const response = await fetch("{% url 'gm:api-equipar' pk=personaje.pk %}", {
+              method: 'POST',
+              headers: {
+                  'Content-Type': 'application/json',
+                  'X-CSRFToken': '{{ csrf_token }}'
+              },
+              body: JSON.stringify({ objeto_id: objetoId, accion: 'desequipar' })
+          });
+          
+          const result = await response.json();
+          if (response.ok) {
+              // 1. Vaciar el slot en la UI
+              element.innerHTML = '';
+              element.classList.add('empty');
+              element.removeAttribute('data-item-id');
+              element.removeAttribute('onclick');
+              element.removeAttribute('title');
+              
+              // 2. Mostrar el objeto devuelto en la mochila
+              document.getElementById('inv-item-' + objetoId).style.display = 'block';
+              
+          } else {
+              alert("Error al desequipar: " + result.error);
+          }
+      } catch (err) {
+          console.error(err);
+      }
+  }
+</script>
 {% endblock scripts %}

@@ -3,6 +3,7 @@ from .gm import (
     ListarRazasView, CrearRazaView, DetalleRazaView, ActualizarRazaView, EliminarRazaView,
     ListarHabilidadesView, CrearHabilidadView, DetalleHabilidadView, ActualizarHabilidadView, EliminarHabilidadView,
     ListarObjetosView, CrearObjetoView, DetalleObjetoView, ActualizarObjetoView, EliminarObjetoView,
+    ApiEquiparObjetoView,
     )
 
 # from .player import (
