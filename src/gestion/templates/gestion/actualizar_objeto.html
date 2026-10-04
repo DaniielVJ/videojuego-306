@@ -88,9 +88,17 @@
                 {% if form.kit_inicial.errors %}<div style="color: #ff4444;">{{ form.kit_inicial.errors }}</div>{% endif %}
             </div>
             
+            <div>
+                <label style="color: #ffcc00; font-family: 'Bangers'; font-size: 1.4rem; display: block; margin-bottom: 0.5rem;">{{ form.tipo_equipamiento.label }}</label>
+                {{ form.tipo_equipamiento }}
+                {% if form.kit_inicial.errors %}<div style="color: #ff4444;">{{ form.kit_inicial.errors }}</div>{% endif %}
+            </div>
+
+
+
             <h3 style="grid-column: 1 / -1; color: #ffcc00; font-family: 'Bangers'; margin-top: 1rem; border-bottom: 1px solid #8c7335;">Efectos (Estadísticas al equipar)</h3>
             {% for field in form %}
-                {% if field.name != 'nombre' and field.name != 'descripcion' and field.name != 'peso' and field.name != 'img' and field.name != 'es_equipable' and field.name != 'kit_inicial' %}
+                {% if field.name != 'nombre' and field.name != 'descripcion' and field.name != 'peso' and field.name != 'img' and field.name != 'es_equipable' and field.name != 'kit_inicial'  and field.name != 'tipo_equipamiento' %}
                     <div>
                         <label style="color: #ffcc00; font-family: 'Bangers'; font-size: 1.1rem; display: block; margin-bottom: 0.3rem;">{{ field.label }}</label>
                         {{ field }}

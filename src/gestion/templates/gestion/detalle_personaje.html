@@ -167,7 +167,7 @@
               <span class="metric-label">Poder Físico</span>
               <span class="metric-value">
                 {% if personaje.atributos %}
-                  {{ personaje.atributos.fuerza|default:0 }} PTS
+                  {{ personaje.stats_totales.fuerza|default:0 }} PTS
                 {% else %}
                   -- PTS
                 {% endif %}
@@ -223,8 +223,9 @@
 
           <div class="attributes-list-container">
             {% if personaje.atributos %}
+            {% with bonos=personaje.obtener_bonificadores_equipo %}
               <!-- FUERZA -->
-              <div class="attribute-row-card attr-str" data-val="{{ personaje.atributos.fuerza }}" title="Potencia física, ataque cuerpo a cuerpo y levantamiento">
+              <div class="attribute-row-card attr-str" data-val="{{ personaje.stats_totales.fuerza }}" title="Potencia física, ataque cuerpo a cuerpo y levantamiento">
                 <div class="attr-info-left">
                   <svg class="attr-icon-mini" viewBox="0 0 24 24"><path d="M19.7 3.3a1 1 0 0 0-1.4 0l-4.6 4.6 1.4 1.4 4.6-4.6a1 1 0 0 0 0-1.4zM4.3 3.3a1 1 0 0 0 0 1.4l4.6 4.6 1.4-1.4-4.6-4.6a1 1 0 0 0-1.4 0zm7.7 7.7l-7.7 7.7-1.3-1.3-.7.7 2.7 2.7.7-.7-1.3-1.3 7.7-7.7 7.7 7.7-1.3 1.3.7.7 2.7-2.7-.7-.7-1.3 1.3-7.7-7.7z"/></svg>
                   <div class="attr-name-block">
@@ -235,11 +236,14 @@
                 <div class="attr-meter-track">
                   <div class="attr-meter-fill"></div>
                 </div>
-                <div class="attr-value-badge">{{ personaje.atributos.fuerza }}</div>
+                <div class="attr-value-badge">
+                  {{ personaje.stats_totales.fuerza }}
+                  {% if bonos.fuerza %}<span style="color: #4ade80; font-size: 0.75rem; text-shadow: 0 0 2px #000;">(+{{ bonos.fuerza }})</span>{% endif %}
+                </div>
               </div>
 
               <!-- DESTREZA -->
-              <div class="attribute-row-card attr-dex" data-val="{{ personaje.atributos.destreza }}" title="Velocidad, agilidad motriz, reflejos y puntería con proyectiles">
+              <div class="attribute-row-card attr-dex" data-val="{{ personaje.stats_totales.destreza }}" title="Velocidad, agilidad motriz, reflejos y puntería con proyectiles">
                 <div class="attr-info-left">
                   <svg class="attr-icon-mini" viewBox="0 0 24 24"><path d="M12 2L4.5 20.29l.71.71L12 18l6.79 3 .71-.71z"/></svg>
                   <div class="attr-name-block">
@@ -250,11 +254,14 @@
                 <div class="attr-meter-track">
                   <div class="attr-meter-fill"></div>
                 </div>
-                <div class="attr-value-badge">{{ personaje.atributos.destreza }}</div>
+                <div class="attr-value-badge">
+                  {{ personaje.stats_totales.destreza }}
+                  {% if bonos.destreza %}<span style="color: #4ade80; font-size: 0.75rem; text-shadow: 0 0 2px #000;">(+{{ bonos.destreza }})</span>{% endif %}
+                </div>
               </div>
 
               <!-- VIGOR -->
-              <div class="attribute-row-card attr-vig" data-val="{{ personaje.atributos.vigor }}" title="Resistencia física, vitalidad, reservas de salud y fatiga">
+              <div class="attribute-row-card attr-vig" data-val="{{ personaje.stats_totales.vigor }}" title="Resistencia física, vitalidad, reservas de salud y fatiga">
                 <div class="attr-info-left">
                   <svg class="attr-icon-mini" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
                   <div class="attr-name-block">
@@ -265,11 +272,14 @@
                 <div class="attr-meter-track">
                   <div class="attr-meter-fill"></div>
                 </div>
-                <div class="attr-value-badge">{{ personaje.atributos.vigor }}</div>
+                <div class="attr-value-badge">
+                  {{ personaje.stats_totales.vigor }}
+                  {% if bonos.vigor %}<span style="color: #4ade80; font-size: 0.75rem; text-shadow: 0 0 2px #000;">(+{{ bonos.vigor }})</span>{% endif %}
+                </div>
               </div>
 
               <!-- INTELIGENCIA -->
-              <div class="attribute-row-card attr-int" data-val="{{ personaje.atributos.inteligencia }}" title="Poder arcano, conocimiento de conjuros, lógica y sabiduría">
+              <div class="attribute-row-card attr-int" data-val="{{ personaje.stats_totales.inteligencia }}" title="Poder arcano, conocimiento de conjuros, lógica y sabiduría">
                 <div class="attr-info-left">
                   <svg class="attr-icon-mini" viewBox="0 0 24 24"><path d="M18 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM6 4h5v8l-2.5-1.5L6 12V4z"/></svg>
                   <div class="attr-name-block">
@@ -280,11 +290,14 @@
                 <div class="attr-meter-track">
                   <div class="attr-meter-fill"></div>
                 </div>
-                <div class="attr-value-badge">{{ personaje.atributos.inteligencia }}</div>
+                <div class="attr-value-badge">
+                  {{ personaje.stats_totales.inteligencia }}
+                  {% if bonos.inteligencia %}<span style="color: #4ade80; font-size: 0.75rem; text-shadow: 0 0 2px #000;">(+{{ bonos.inteligencia }})</span>{% endif %}
+                </div>
               </div>
 
               <!-- PERCEPCIÓN -->
-              <div class="attribute-row-card attr-per" data-val="{{ personaje.atributos.percepcion }}" title="Sentidos alertas, detección de peligros ocultos e iniciativa en combate">
+              <div class="attribute-row-card attr-per" data-val="{{ personaje.stats_totales.percepcion }}" title="Sentidos alertas, detección de peligros ocultos e iniciativa en combate">
                 <div class="attr-info-left">
                   <svg class="attr-icon-mini" viewBox="0 0 24 24"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zm0 12.5c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>
                   <div class="attr-name-block">
@@ -295,11 +308,14 @@
                 <div class="attr-meter-track">
                   <div class="attr-meter-fill"></div>
                 </div>
-                <div class="attr-value-badge">{{ personaje.atributos.percepcion }}</div>
+                <div class="attr-value-badge">
+                  {{ personaje.stats_totales.percepcion }}
+                  {% if bonos.percepcion %}<span style="color: #4ade80; font-size: 0.75rem; text-shadow: 0 0 2px #000;">(+{{ bonos.percepcion }})</span>{% endif %}
+                </div>
               </div>
 
               <!-- CARISMA -->
-              <div class="attribute-row-card attr-cha" data-val="{{ personaje.atributos.carisma }}" title="Dotes de liderazgo, persuasión diplomática y presencia imponente">
+              <div class="attribute-row-card attr-cha" data-val="{{ personaje.stats_totales.carisma }}" title="Dotes de liderazgo, persuasión diplomática y presencia imponente">
                 <div class="attr-info-left">
                   <svg class="attr-icon-mini" viewBox="0 0 24 24"><path d="M5 16L3 5l5.5 5L12 4l3.5 6L21 5l-2 11H5zm14 3c0 .6-.4 1-1 1H6c-.6 0-1-.4-1-1v-1h14v1z"/></svg>
                   <div class="attr-name-block">
@@ -310,11 +326,14 @@
                 <div class="attr-meter-track">
                   <div class="attr-meter-fill"></div>
                 </div>
-                <div class="attr-value-badge">{{ personaje.atributos.carisma }}</div>
+                <div class="attr-value-badge">
+                  {{ personaje.stats_totales.carisma }}
+                  {% if bonos.carisma %}<span style="color: #4ade80; font-size: 0.75rem; text-shadow: 0 0 2px #000;">(+{{ bonos.carisma }})</span>{% endif %}
+                </div>
               </div>
 
               <!-- SUERTE -->
-              <div class="attribute-row-card attr-luk" data-val="{{ personaje.atributos.suerte }}" title="Fortuna en tiradas críticas, esquives milagrosos y botín de guerra">
+              <div class="attribute-row-card attr-luk" data-val="{{ personaje.stats_totales.suerte }}" title="Fortuna en tiradas críticas, esquives milagrosos y botín de guerra">
                 <div class="attr-info-left">
                   <svg class="attr-icon-mini" viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 3c.83 0 1.5.67 1.5 1.5S12.83 9 12 9s-1.5-.67-1.5-1.5S11.17 6 12 6zm-4 6c.83 0 1.5.67 1.5 1.5S8.83 15 8 15s-1.5-.67-1.5-1.5S7.17 12 8 12zm8 0c.83 0 1.5.67 1.5 1.5S16.83 15 16 15s-1.5-.67-1.5-1.5.67-1.5 1.5-1.5zm-4 6c.83 0 1.5.67 1.5 1.5S12.83 21 12 21s-1.5-.67-1.5-1.5.67-1.5 1.5-1.5z"/></svg>
                   <div class="attr-name-block">
@@ -325,8 +344,12 @@
                 <div class="attr-meter-track">
                   <div class="attr-meter-fill"></div>
                 </div>
-                <div class="attr-value-badge">{{ personaje.atributos.suerte }}</div>
+                <div class="attr-value-badge">
+                  {{ personaje.stats_totales.suerte }}
+                  {% if bonos.suerte %}<span style="color: #4ade80; font-size: 0.75rem; text-shadow: 0 0 2px #000;">(+{{ bonos.suerte }})</span>{% endif %}
+                </div>
               </div>
+            {% endwith %}
 
             {% else %}
               <!-- Estado sin atributos registrados aún -->
@@ -475,41 +498,48 @@
             }
             .equipment-silhouette-box {
               position: relative;
-              width: 300px;
-              height: 450px;
-              background: url("{% static 'img/silhouette.jpg' %}") center/cover no-repeat;
+              width: 350px;
+              height: 350px;
+              background: url("{% static 'img/metin2_bg.jpg' %}") center/cover no-repeat;
               border: 2px solid #5a4a22;
-              box-shadow: inset 0 0 30px #000;
+              box-shadow: 0 0 20px #000;
               flex-shrink: 0;
               margin: 0 auto;
             }
             .equip-slot {
               position: absolute;
-              width: 48px;
-              height: 48px;
-              background: rgba(0,0,0,0.7);
-              border: 1px solid #5a4a22;
+              width: 16%; 
+              height: 16%;
+              background: rgba(0,0,0,0.8);
+              border: 1px solid #735d29;
               display: flex;
               align-items: center;
               justify-content: center;
               cursor: pointer;
               transition: all 0.2s;
+              border-radius: 6px;
             }
-            .equip-slot:hover { border-color: #ffcc00; box-shadow: 0 0 10px rgba(255, 204, 0, 0.4); }
-            .equip-slot img { width: 90%; height: 90%; object-fit: contain; pointer-events: none; }
+            .equip-slot:hover { border-color: #ffcc00; box-shadow: inset 0 0 15px rgba(255, 204, 0, 0.4), 0 0 10px rgba(255, 204, 0, 0.6); }
+            .equip-slot img { width: 90%; height: 90%; object-fit: contain; pointer-events: none; filter: drop-shadow(0 0 5px rgba(255,255,255,0.2)); }
             .equip-slot.empty::after {
               content: attr(data-slot-name);
-              font-size: 0.6rem;
-              color: #555;
+              font-size: 0.65rem;
+              color: #ffffff;
               font-family: 'MedievalSharp', cursive;
+              text-align: center;
+              text-shadow: 1px 1px 3px #000;
             }
-            .slot-casco { top: 15px; left: 126px; }
-            .slot-collar { top: 60px; right: 35px; }
-            .slot-arma { top: 160px; left: 20px; }
-            .slot-armadura { top: 150px; left: 126px; }
-            .slot-escudo { top: 160px; right: 20px; }
-            .slot-brazalete { top: 230px; right: 35px; }
-            .slot-zapatos { bottom: 30px; left: 126px; }
+            
+            /* Posiciones Clásicas de MMO (7 slots exactos) */
+            .slot-casco { top: 10%; left: 42%; }
+            .slot-arma { top: 40%; left: 10%; }
+            .slot-armadura { top: 40%; left: 42%; }
+            
+            .slot-collar { top: 15%; right: 18%; }
+            .slot-escudo { top: 40%; right: 10%; }
+            .slot-brazalete { top: 65%; right: 18%; }
+            
+            .slot-zapatos { bottom: 10%; left: 42%; }
             
             .inventory-deck-grid { flex-grow: 1; min-width: 300px; }
             .btn-equip {
@@ -638,8 +668,56 @@
 <!-- Motor Interactivo de Detalle de Personaje (Canvas de Brasas + Cálculos) -->
 <script src="{% static 'js/detalle_personaje.js' %}"></script>
 
-<!-- API JS para Sistema de Equipamiento SPA -->
+// API JS para Sistema de Equipamiento SPA
 <script>
+  function actualizarUIStats(result) {
+      if (!result.stats_totales) return;
+      
+      const stats = result.stats_totales;
+      const bonos = result.bonificadores_actuales || {};
+      
+      // Función ayudante para renderizar stat + bonus
+      const renderStat = (statName, val) => {
+          let html = val;
+          if (bonos[statName]) {
+              html += ` <span style="color: #4ade80; font-size: 0.75rem; text-shadow: 0 0 2px #000;">(+${bonos[statName]})</span>`;
+          }
+          return html;
+      };
+
+      // Actualizar atributos de la cuadricula
+      const selStr = document.querySelector('.attr-str .attr-value-badge');
+      if (selStr) selStr.innerHTML = renderStat('fuerza', stats.fuerza);
+      
+      const selDex = document.querySelector('.attr-dex .attr-value-badge');
+      if (selDex) selDex.innerHTML = renderStat('destreza', stats.destreza);
+      
+      const selVig = document.querySelector('.attr-vig .attr-value-badge');
+      if (selVig) selVig.innerHTML = renderStat('vigor', stats.vigor);
+      
+      const selInt = document.querySelector('.attr-int .attr-value-badge');
+      if (selInt) selInt.innerHTML = renderStat('inteligencia', stats.inteligencia);
+      
+      const selPer = document.querySelector('.attr-per .attr-value-badge');
+      if (selPer) selPer.innerHTML = renderStat('percepcion', stats.percepcion);
+      
+      const selCha = document.querySelector('.attr-cha .attr-value-badge');
+      if (selCha) selCha.innerHTML = renderStat('carisma', stats.carisma);
+      
+      const selLuk = document.querySelector('.attr-luk .attr-value-badge');
+      if (selLuk) selLuk.innerHTML = renderStat('suerte', stats.suerte);
+
+      // Actualizar top metrics
+      const topHealth = document.querySelector('.metric-health .metric-value');
+      if (topHealth && result.hp_total !== undefined) topHealth.textContent = `${result.hp_total} PV`;
+
+      const topCombat = document.querySelector('.metric-combat .metric-value');
+      if (topCombat && stats.fuerza !== undefined) topCombat.textContent = `${stats.fuerza} PTS`;
+
+      const topMagic = document.querySelector('.metric-magic .metric-value');
+      if (topMagic && result.mana_total !== undefined) topMagic.textContent = `${result.mana_total} PM`;
+  }
+
   async function equiparObjeto(objetoId, tipo, imgUrl) {
       try {
           const response = await fetch("{% url 'gm:api-equipar' pk=personaje.pk %}", {
@@ -671,7 +749,8 @@
               slotElem.setAttribute('onclick', `desequiparObjeto(this, '${tipo}')`);
               slotElem.setAttribute('title', 'Desequipar');
               
-              // Opcional: mostrar notificación o actualizar stats si tuviéramos un DOM de stats 
+              // 4. Actualizar stats dinámicamente sin recargar la página
+              actualizarUIStats(result);
           } else {
               alert("Error al equipar: " + result.error);
           }
@@ -706,6 +785,8 @@
               // 2. Mostrar el objeto devuelto en la mochila
               document.getElementById('inv-item-' + objetoId).style.display = 'block';
               
+              // 3. Actualizar stats dinámicamente sin recargar la página
+              actualizarUIStats(result);
           } else {
               alert("Error al desequipar: " + result.error);
           }

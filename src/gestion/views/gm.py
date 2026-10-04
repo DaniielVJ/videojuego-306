@@ -255,6 +255,9 @@ class ApiEquiparObjetoView(GmRequiredMixin, View):
                 "status": "success",
                 "mensaje": f"Objeto {accion}do con éxito en el slot '{tipo}'.",
                 "bonificadores_actuales": personaje.obtener_bonificadores_equipo(),
+                "stats_totales": personaje.stats_totales,
+                "hp_total": personaje.hp_total,
+                "mana_total": personaje.mana_total,
                 "slot_modificado": tipo
             })
             

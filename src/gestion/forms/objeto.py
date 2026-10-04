@@ -15,7 +15,7 @@ class ObjetoUpdateCreateForm(forms.ModelForm):
 	class Meta:
 
 		model = Objeto
-		fields = ["nombre", "descripcion", "peso", "img", "es_equipable", "kit_inicial"]
+		fields = ["nombre", "descripcion", "peso", "img", "es_equipable", "kit_inicial", "tipo_equipamiento"]
 
 	def clean_nombre(self):
 		nombre = self.cleaned_data.get('nombre', '').strip()

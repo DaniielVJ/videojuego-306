@@ -40,16 +40,18 @@ class Personaje(models.Model):
     @property
     def hp_total(self):
         try:
-            # Vigor da 10 puntos de salud extra por cada punto
-            return self.hp_base + (self.atributos.vigor * 10)
+            # Vigor total (base + equipo) da 10 puntos de salud extra por cada punto
+            vigor = self.stats_totales.get('vigor', self.atributos.vigor if hasattr(self, 'atributos') else 0)
+            return self.hp_base + (vigor * 10)
         except Exception:
             return self.hp_base
 
     @property
     def mana_total(self):
         try:
-            # Inteligencia da 10 puntos de mana extra por cada punto
-            return self.mana_base + (self.atributos.inteligencia * 10)
+            # Inteligencia total (base + equipo) da 10 puntos de mana extra por cada punto
+            intel = self.stats_totales.get('inteligencia', self.atributos.inteligencia if hasattr(self, 'atributos') else 0)
+            return self.mana_base + (intel * 10)
         except Exception:
             return self.mana_base
 
@@ -78,6 +80,23 @@ class Personaje(models.Model):
                 for key, val in obj.efectos.items():
                     bonos[key] = bonos.get(key, 0) + val
         return bonos
+
+    @property
+    def stats_totales(self):
+        bonos = self.obtener_bonificadores_equipo()
+        try:
+            attr = self.atributos
+            return {
+                'fuerza': attr.fuerza + bonos.get('fuerza', 0),
+                'destreza': attr.destreza + bonos.get('destreza', 0),
+                'vigor': attr.vigor + bonos.get('vigor', 0),
+                'inteligencia': attr.inteligencia + bonos.get('inteligencia', 0),
+                'percepcion': attr.percepcion + bonos.get('percepcion', 0),
+                'carisma': attr.carisma + bonos.get('carisma', 0),
+                'suerte': attr.suerte + bonos.get('suerte', 0),
+            }
+        except Exception:
+            return {}
 
 
 
