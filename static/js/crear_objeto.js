@@ -53,4 +53,29 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   animate();
+  
+  // Logic to handle "es_equipable" checkbox and "tipo_equipamiento" select
+  const esEquipableCheckbox = document.querySelector('input[name="es_equipable"]');
+  const tipoEquipamientoSelect = document.querySelector('select[name="tipo_equipamiento"]');
+  
+  if (esEquipableCheckbox && tipoEquipamientoSelect) {
+    const toggleSelect = () => {
+      if (esEquipableCheckbox.checked) {
+        tipoEquipamientoSelect.disabled = false;
+        tipoEquipamientoSelect.style.opacity = '1';
+        tipoEquipamientoSelect.style.cursor = 'pointer';
+      } else {
+        tipoEquipamientoSelect.disabled = true;
+        tipoEquipamientoSelect.value = ''; // clear value
+        tipoEquipamientoSelect.style.opacity = '0.4';
+        tipoEquipamientoSelect.style.cursor = 'not-allowed';
+      }
+    };
+    
+    // Initial check on load
+    toggleSelect();
+    
+    // Listen for changes
+    esEquipableCheckbox.addEventListener('change', toggleSelect);
+  }
 });

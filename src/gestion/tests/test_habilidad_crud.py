@@ -58,6 +58,8 @@ class HabilidadCRUDTests(TestCase):
         form_data = {
             'nombre': 'Golpe Mortal',
             'descripcion': 'Pega fuerte.',
+            'costo_hp': 5,
+            'costo_mana': 0,
             'v_fuerza': 10,
             'v_destreza': 2,
             'v_vigor': -1,
@@ -78,6 +80,8 @@ class HabilidadCRUDTests(TestCase):
         data = {
             'nombre': 'Rayo de Hielo',
             'descripcion': 'Congela.',
+            'costo_hp': 0,
+            'costo_mana': 10,
             'v_fuerza': 0, 'v_destreza': 0, 'v_vigor': 0,
             'v_inteligencia': 8, 'v_percepcion': 0, 'v_carisma': 0, 'v_suerte': 0
         }
@@ -91,6 +95,8 @@ class HabilidadCRUDTests(TestCase):
         data = {
             'nombre': 'Bola de Fuego Mayor',
             'descripcion': 'Lanza fuego brutal.',
+            'costo_hp': 0,
+            'costo_mana': 20,
             'v_fuerza': 0, 'v_destreza': 0, 'v_vigor': 0,
             'v_inteligencia': 15, 'v_percepcion': 0, 'v_carisma': 0, 'v_suerte': 0
         }

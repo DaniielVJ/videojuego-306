@@ -34,6 +34,19 @@ class ObjetoUpdateCreateForm(forms.ModelForm):
 			raise forms.ValidationError("La imagen no puede pesar más de 10 MB.")
 		return img
 
+	def clean(self):
+		cleaned_data = super().clean()
+		es_equipable = cleaned_data.get("es_equipable")
+		tipo_equipamiento = cleaned_data.get("tipo_equipamiento")
+
+		if es_equipable and not tipo_equipamiento:
+			self.add_error('tipo_equipamiento', "Si el objeto es equipable, debes seleccionar un tipo de equipamiento (Arma, Casco, etc.).")
+		
+		if not es_equipable and tipo_equipamiento:
+			cleaned_data['tipo_equipamiento'] = None
+			
+		return cleaned_data
+
 	def __init__(self, *args, **kwargs):
 
 		super().__init__(*args, **kwargs)
