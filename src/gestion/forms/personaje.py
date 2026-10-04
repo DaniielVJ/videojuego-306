@@ -1,7 +1,7 @@
 from django import forms
 from django.db import transaction
 from django.contrib.auth import get_user_model
-from ..models.personaje import Personaje, Raza, Habilidad, Atributo
+from ..models.personaje import Personaje, Raza, Habilidad, Atributo, InventarioItem
 from ..models import Objeto
 
 User = get_user_model()
@@ -130,7 +130,8 @@ class CrearPersonajeForm(forms.ModelForm):
                 # 3. Asociar objetos de inventario seleccionados
                 objetos = self.cleaned_data.get('objetos')
                 if objetos:
-                    personaje.objetos.add(*objetos)
+                    for obj in objetos:
+                        InventarioItem.objects.create(personaje=personaje, objeto=obj, cantidad=1)
 
         return personaje
 
@@ -170,8 +171,7 @@ class ActualizarPersonajeForm(forms.ModelForm):
         model = Personaje
         fields = [
             'nombre', 'raza', 'usuario', 'estado',
-            'nivel', 'experiencia', 'exp_siguiente_nivel', 'activo',
-            'habilidades', 'objetos'
+            'nivel', 'experiencia', 'exp_siguiente_nivel', 'activo'
         ]
 
     def __init__(self, *args, request_user=None, **kwargs):
@@ -249,6 +249,32 @@ class ActualizarPersonajeForm(forms.ModelForm):
                         percepcion=percepcion,
                         carisma=carisma,
                         suerte=suerte,
+                    )
+
+            # Actualizar Habilidades (many-to-many sin through)
+            habilidades = self.cleaned_data.get('habilidades')
+            if habilidades is not None:
+                personaje.habilidades.set(habilidades)
+
+            # Actualizar Objetos (many-to-many con through InventarioItem)
+            objetos_seleccionados = self.cleaned_data.get('objetos')
+            if objetos_seleccionados is not None:
+                # Eliminar los que ya no están seleccionados
+                InventarioItem.objects.filter(personaje=personaje).exclude(objeto__in=objetos_seleccionados).delete()
+                # Asegurar que los seleccionados existan con cantidad=1 por defecto si son nuevos
+                for obj in objetos_seleccionados:
+                    # Intentar obtener la cantidad enviada en el form, por defecto 1
+                    try:
+                        qty = int(self.data.get(f'cantidad_{obj.pk}', 1))
+                    except (ValueError, TypeError):
+                        qty = 1
+                    if qty < 1:
+                        qty = 1
+                        
+                    InventarioItem.objects.update_or_create(
+                        personaje=personaje, 
+                        objeto=obj, 
+                        defaults={'cantidad': qty}
                     )
 
         return personaje

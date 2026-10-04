@@ -1,6 +1,7 @@
 from django.urls import path
 from ..views import (
     ListarPersonajesView, CrearPersonajeView, DetallePersonajeView, ActualizarPersonajeView, EliminarPersonajeView,
+    ApiEquiparObjetoView, ApiConsumirObjetoView,
     ListarRazasView, CrearRazaView, DetalleRazaView, ActualizarRazaView, EliminarRazaView,
     ListarHabilidadesView, CrearHabilidadView, DetalleHabilidadView, ActualizarHabilidadView, EliminarHabilidadView,
     ListarObjetosView, CrearObjetoView, DetalleObjetoView, ActualizarObjetoView, EliminarObjetoView
@@ -15,6 +16,8 @@ urlpatterns = [
     path('personajes/<int:pk>/detail/', DetallePersonajeView.as_view(), name='detalle-personaje'),
     path('personajes/<int:pk>/update/', ActualizarPersonajeView.as_view(), name='actualizar-personaje'),
     path('personajes/<int:pk>/delete/', EliminarPersonajeView.as_view(), name='eliminar-personaje'),
+    path('personajes/<int:pk>/equipar/', ApiEquiparObjetoView.as_view(), name='api-equipar'),
+    path('personajes/<int:pk>/consumir/', ApiConsumirObjetoView.as_view(), name='api-consumir'),
 
     # CRUD Razas
     path('razas/', ListarRazasView.as_view(), name='listar-razas'),

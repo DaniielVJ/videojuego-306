@@ -151,13 +151,9 @@
               <svg viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
             </div>
             <div class="metric-content">
-              <span class="metric-label">Salud Máxima</span>
+              <span class="metric-label">Salud (Actual/Max)</span>
               <span class="metric-value">
-                {% if personaje.atributos %}
-                  {{ personaje.atributos.vigor|default:10|add:personaje.nivel|add:80 }} PV
-                {% else %}
-                  100 PV
-                {% endif %}
+                {{ personaje.hp_actual }} / {{ personaje.hp_total }} PV
               </span>
             </div>
           </div>
@@ -171,7 +167,7 @@
               <span class="metric-label">Poder Físico</span>
               <span class="metric-value">
                 {% if personaje.atributos %}
-                  {{ personaje.atributos.fuerza|default:0 }} PTS
+                  {{ personaje.stats_totales.fuerza|default:0 }} PTS
                 {% else %}
                   -- PTS
                 {% endif %}
@@ -185,13 +181,9 @@
               <svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm1 15h-2v-6h2zm0-8h-2V7h2z"/></svg>
             </div>
             <div class="metric-content">
-              <span class="metric-label">Afinidad Mágica</span>
+              <span class="metric-label">Poder Arcano (Actual/Max)</span>
               <span class="metric-value">
-                {% if personaje.atributos %}
-                  {{ personaje.atributos.inteligencia|default:0 }} PTS
-                {% else %}
-                  -- PTS
-                {% endif %}
+                {{ personaje.mana_actual }} / {{ personaje.mana_total }} PM
               </span>
             </div>
           </div>
@@ -231,8 +223,9 @@
 
           <div class="attributes-list-container">
             {% if personaje.atributos %}
+            {% with bonos=personaje.obtener_bonificadores_equipo %}
               <!-- FUERZA -->
-              <div class="attribute-row-card attr-str" data-val="{{ personaje.atributos.fuerza }}" title="Potencia física, ataque cuerpo a cuerpo y levantamiento">
+              <div class="attribute-row-card attr-str" data-val="{{ personaje.stats_totales.fuerza }}" title="Potencia física, ataque cuerpo a cuerpo y levantamiento">
                 <div class="attr-info-left">
                   <svg class="attr-icon-mini" viewBox="0 0 24 24"><path d="M19.7 3.3a1 1 0 0 0-1.4 0l-4.6 4.6 1.4 1.4 4.6-4.6a1 1 0 0 0 0-1.4zM4.3 3.3a1 1 0 0 0 0 1.4l4.6 4.6 1.4-1.4-4.6-4.6a1 1 0 0 0-1.4 0zm7.7 7.7l-7.7 7.7-1.3-1.3-.7.7 2.7 2.7.7-.7-1.3-1.3 7.7-7.7 7.7 7.7-1.3 1.3.7.7 2.7-2.7-.7-.7-1.3 1.3-7.7-7.7z"/></svg>
                   <div class="attr-name-block">
@@ -243,11 +236,14 @@
                 <div class="attr-meter-track">
                   <div class="attr-meter-fill"></div>
                 </div>
-                <div class="attr-value-badge">{{ personaje.atributos.fuerza }}</div>
+                <div class="attr-value-badge">
+                  {{ personaje.stats_totales.fuerza }}
+                  {% if bonos.fuerza %}<span style="color: #4ade80; font-size: 0.75rem; text-shadow: 0 0 2px #000;">(+{{ bonos.fuerza }})</span>{% endif %}
+                </div>
               </div>
 
               <!-- DESTREZA -->
-              <div class="attribute-row-card attr-dex" data-val="{{ personaje.atributos.destreza }}" title="Velocidad, agilidad motriz, reflejos y puntería con proyectiles">
+              <div class="attribute-row-card attr-dex" data-val="{{ personaje.stats_totales.destreza }}" title="Velocidad, agilidad motriz, reflejos y puntería con proyectiles">
                 <div class="attr-info-left">
                   <svg class="attr-icon-mini" viewBox="0 0 24 24"><path d="M12 2L4.5 20.29l.71.71L12 18l6.79 3 .71-.71z"/></svg>
                   <div class="attr-name-block">
@@ -258,11 +254,14 @@
                 <div class="attr-meter-track">
                   <div class="attr-meter-fill"></div>
                 </div>
-                <div class="attr-value-badge">{{ personaje.atributos.destreza }}</div>
+                <div class="attr-value-badge">
+                  {{ personaje.stats_totales.destreza }}
+                  {% if bonos.destreza %}<span style="color: #4ade80; font-size: 0.75rem; text-shadow: 0 0 2px #000;">(+{{ bonos.destreza }})</span>{% endif %}
+                </div>
               </div>
 
               <!-- VIGOR -->
-              <div class="attribute-row-card attr-vig" data-val="{{ personaje.atributos.vigor }}" title="Resistencia física, vitalidad, reservas de salud y fatiga">
+              <div class="attribute-row-card attr-vig" data-val="{{ personaje.stats_totales.vigor }}" title="Resistencia física, vitalidad, reservas de salud y fatiga">
                 <div class="attr-info-left">
                   <svg class="attr-icon-mini" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
                   <div class="attr-name-block">
@@ -273,11 +272,14 @@
                 <div class="attr-meter-track">
                   <div class="attr-meter-fill"></div>
                 </div>
-                <div class="attr-value-badge">{{ personaje.atributos.vigor }}</div>
+                <div class="attr-value-badge">
+                  {{ personaje.stats_totales.vigor }}
+                  {% if bonos.vigor %}<span style="color: #4ade80; font-size: 0.75rem; text-shadow: 0 0 2px #000;">(+{{ bonos.vigor }})</span>{% endif %}
+                </div>
               </div>
 
               <!-- INTELIGENCIA -->
-              <div class="attribute-row-card attr-int" data-val="{{ personaje.atributos.inteligencia }}" title="Poder arcano, conocimiento de conjuros, lógica y sabiduría">
+              <div class="attribute-row-card attr-int" data-val="{{ personaje.stats_totales.inteligencia }}" title="Poder arcano, conocimiento de conjuros, lógica y sabiduría">
                 <div class="attr-info-left">
                   <svg class="attr-icon-mini" viewBox="0 0 24 24"><path d="M18 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM6 4h5v8l-2.5-1.5L6 12V4z"/></svg>
                   <div class="attr-name-block">
@@ -288,11 +290,14 @@
                 <div class="attr-meter-track">
                   <div class="attr-meter-fill"></div>
                 </div>
-                <div class="attr-value-badge">{{ personaje.atributos.inteligencia }}</div>
+                <div class="attr-value-badge">
+                  {{ personaje.stats_totales.inteligencia }}
+                  {% if bonos.inteligencia %}<span style="color: #4ade80; font-size: 0.75rem; text-shadow: 0 0 2px #000;">(+{{ bonos.inteligencia }})</span>{% endif %}
+                </div>
               </div>
 
               <!-- PERCEPCIÓN -->
-              <div class="attribute-row-card attr-per" data-val="{{ personaje.atributos.percepcion }}" title="Sentidos alertas, detección de peligros ocultos e iniciativa en combate">
+              <div class="attribute-row-card attr-per" data-val="{{ personaje.stats_totales.percepcion }}" title="Sentidos alertas, detección de peligros ocultos e iniciativa en combate">
                 <div class="attr-info-left">
                   <svg class="attr-icon-mini" viewBox="0 0 24 24"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zm0 12.5c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>
                   <div class="attr-name-block">
@@ -303,11 +308,14 @@
                 <div class="attr-meter-track">
                   <div class="attr-meter-fill"></div>
                 </div>
-                <div class="attr-value-badge">{{ personaje.atributos.percepcion }}</div>
+                <div class="attr-value-badge">
+                  {{ personaje.stats_totales.percepcion }}
+                  {% if bonos.percepcion %}<span style="color: #4ade80; font-size: 0.75rem; text-shadow: 0 0 2px #000;">(+{{ bonos.percepcion }})</span>{% endif %}
+                </div>
               </div>
 
               <!-- CARISMA -->
-              <div class="attribute-row-card attr-cha" data-val="{{ personaje.atributos.carisma }}" title="Dotes de liderazgo, persuasión diplomática y presencia imponente">
+              <div class="attribute-row-card attr-cha" data-val="{{ personaje.stats_totales.carisma }}" title="Dotes de liderazgo, persuasión diplomática y presencia imponente">
                 <div class="attr-info-left">
                   <svg class="attr-icon-mini" viewBox="0 0 24 24"><path d="M5 16L3 5l5.5 5L12 4l3.5 6L21 5l-2 11H5zm14 3c0 .6-.4 1-1 1H6c-.6 0-1-.4-1-1v-1h14v1z"/></svg>
                   <div class="attr-name-block">
@@ -318,11 +326,14 @@
                 <div class="attr-meter-track">
                   <div class="attr-meter-fill"></div>
                 </div>
-                <div class="attr-value-badge">{{ personaje.atributos.carisma }}</div>
+                <div class="attr-value-badge">
+                  {{ personaje.stats_totales.carisma }}
+                  {% if bonos.carisma %}<span style="color: #4ade80; font-size: 0.75rem; text-shadow: 0 0 2px #000;">(+{{ bonos.carisma }})</span>{% endif %}
+                </div>
               </div>
 
               <!-- SUERTE -->
-              <div class="attribute-row-card attr-luk" data-val="{{ personaje.atributos.suerte }}" title="Fortuna en tiradas críticas, esquives milagrosos y botín de guerra">
+              <div class="attribute-row-card attr-luk" data-val="{{ personaje.stats_totales.suerte }}" title="Fortuna en tiradas críticas, esquives milagrosos y botín de guerra">
                 <div class="attr-info-left">
                   <svg class="attr-icon-mini" viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 3c.83 0 1.5.67 1.5 1.5S12.83 9 12 9s-1.5-.67-1.5-1.5S11.17 6 12 6zm-4 6c.83 0 1.5.67 1.5 1.5S8.83 15 8 15s-1.5-.67-1.5-1.5S7.17 12 8 12zm8 0c.83 0 1.5.67 1.5 1.5S16.83 15 16 15s-1.5-.67-1.5-1.5.67-1.5 1.5-1.5zm-4 6c.83 0 1.5.67 1.5 1.5S12.83 21 12 21s-1.5-.67-1.5-1.5.67-1.5 1.5-1.5z"/></svg>
                   <div class="attr-name-block">
@@ -333,8 +344,12 @@
                 <div class="attr-meter-track">
                   <div class="attr-meter-fill"></div>
                 </div>
-                <div class="attr-value-badge">{{ personaje.atributos.suerte }}</div>
+                <div class="attr-value-badge">
+                  {{ personaje.stats_totales.suerte }}
+                  {% if bonos.suerte %}<span style="color: #4ade80; font-size: 0.75rem; text-shadow: 0 0 2px #000;">(+{{ bonos.suerte }})</span>{% endif %}
+                </div>
               </div>
+            {% endwith %}
 
             {% else %}
               <!-- Estado sin atributos registrados aún -->
@@ -465,64 +480,163 @@
           <header class="section-card-header">
             <div class="section-title-wrap">
               <svg viewBox="0 0 24 24"><path d="M20 7h-4V4c0-1.1-.9-2-2-2h-4c-1.1 0-2 .9-2 2v3H4c-1.1 0-2 .9-2 2v11c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V9c0-1.1-.9-2-2-2zm-10-3h4v3h-4V4zm10 16H4V9h16v11z"/></svg>
-              <h2 class="section-title">ARSENAL Y PERTRECHOS</h2>
+              <h2 class="section-title">EQUIPO Y PERTRECHOS</h2>
             </div>
-            <span class="section-badge-counter" id="totalInventoryWeight">0.0 kg Total</span>
+            <span class="section-badge-counter" id="totalInventoryWeight">Sistema Avanzado</span>
           </header>
 
-          <div class="inventory-deck-grid">
-            {% for objeto in personaje.objetos.all %}
-            <article class="item-codex-card" data-peso="{{ objeto.peso }}" title="{{ objeto.nombre }}">
-              <div class="item-card-header">
-                <div class="item-thumb-box">
-                  {% if objeto.img %}
-                  <img src="{{ objeto.img.url }}" alt="{{ objeto.nombre }}" class="item-thumb-img" />
-                  {% else %}
-                  <div class="item-thumb-fallback">
-                    <svg viewBox="0 0 24 24"><path d="M20 7h-4V4c0-1.1-.9-2-2-2h-4c-1.1 0-2 .9-2 2v3H4c-1.1 0-2 .9-2 2v11c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V9c0-1.1-.9-2-2-2z"/></svg>
-                  </div>
-                  {% endif %}
-                </div>
+          <style>
+            /* UI Metin2 Style */
+            .equipment-module {
+              display: flex;
+              gap: 2rem;
+              background: rgba(10, 10, 10, 0.8);
+              border: 1px solid #2a2a2a;
+              padding: 1.5rem;
+              margin-top: 1rem;
+              flex-wrap: wrap;
+            }
+            .equipment-silhouette-box {
+              position: relative;
+              width: 350px;
+              height: 350px;
+              background: url("{% static 'img/metin2_bg.jpg' %}") center/cover no-repeat;
+              border: 2px solid #5a4a22;
+              box-shadow: 0 0 20px #000;
+              flex-shrink: 0;
+              margin: 0 auto;
+            }
+            .equip-slot {
+              position: absolute;
+              width: 16%; 
+              height: 16%;
+              background: rgba(0,0,0,0.8);
+              border: 1px solid #735d29;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              cursor: pointer;
+              transition: all 0.2s;
+              border-radius: 6px;
+            }
+            .equip-slot:hover { border-color: #ffcc00; box-shadow: inset 0 0 15px rgba(255, 204, 0, 0.4), 0 0 10px rgba(255, 204, 0, 0.6); }
+            .equip-slot img { width: 90%; height: 90%; object-fit: contain; pointer-events: none; filter: drop-shadow(0 0 5px rgba(255,255,255,0.2)); }
+            .equip-slot.empty::after {
+              content: attr(data-slot-name);
+              font-size: 0.65rem;
+              color: #ffffff;
+              font-family: 'MedievalSharp', cursive;
+              text-align: center;
+              text-shadow: 1px 1px 3px #000;
+            }
+            
+            /* Posiciones Clásicas de MMO (7 slots exactos) */
+            .slot-casco { top: 10%; left: 42%; }
+            .slot-arma { top: 40%; left: 10%; }
+            .slot-armadura { top: 40%; left: 42%; }
+            
+            .slot-collar { top: 15%; right: 18%; }
+            .slot-escudo { top: 40%; right: 10%; }
+            .slot-brazalete { top: 65%; right: 18%; }
+            
+            .slot-zapatos { bottom: 10%; left: 42%; }
+            
+            .inventory-deck-grid { flex-grow: 1; min-width: 300px; }
+            .btn-equip {
+              background: linear-gradient(to bottom, #4a3c1c, #2a2110);
+              border: 1px solid #8c7335; color: #ffcc00; padding: 0.3rem; width: 100%;
+              font-family: 'Bangers', cursive; letter-spacing: 1px; cursor: pointer; margin-top: 5px;
+            }
+            .btn-equip:hover { background: #5a4a22; color: #fff; }
+          </style>
 
-                <div class="item-header-meta">
-                  <h3 class="item-name">{{ objeto.nombre }}</h3>
-                  <span class="item-weight-tag">
-                    <svg viewBox="0 0 24 24"><path d="M12 3a9 9 0 0 0-9 9c0 4.97 4.03 9 9 9s9-4.03 9-9a9 9 0 0 0-9-9zm0 16c-3.86 0-7-3.14-7-7s3.14-7 7-7 7 3.14 7 7-3.14 7-7 7z"/></svg>
-                    <span>Peso: {{ objeto.peso }} kg</span>
-                  </span>
-                </div>
+          <div class="equipment-module">
+            <!-- SILUETA DE EQUIPAMIENTO -->
+            <div class="equipment-silhouette-box" id="equipmentSilhouette">
+              
+              <div class="equip-slot slot-casco {% if not personaje.casco_equipado %}empty{% endif %}" id="slot-casco" data-slot-name="CASCO" {% if personaje.casco_equipado %}data-item-id="{{ personaje.casco_equipado.id }}" onclick="desequiparObjeto(this, 'casco')" title="Desequipar"{% endif %}>
+                {% if personaje.casco_equipado and personaje.casco_equipado.img %}
+                  <img src="{{ personaje.casco_equipado.img.url }}" alt="Casco">
+                {% endif %}
+              </div>
+              
+              <div class="equip-slot slot-collar {% if not personaje.collar_equipado %}empty{% endif %}" id="slot-collar" data-slot-name="COLLAR" {% if personaje.collar_equipado %}data-item-id="{{ personaje.collar_equipado.id }}" onclick="desequiparObjeto(this, 'collar')" title="Desequipar"{% endif %}>
+                {% if personaje.collar_equipado and personaje.collar_equipado.img %}
+                  <img src="{{ personaje.collar_equipado.img.url }}" alt="Collar">
+                {% endif %}
+              </div>
+              
+              <div class="equip-slot slot-arma {% if not personaje.arma_equipada %}empty{% endif %}" id="slot-arma" data-slot-name="ARMA" {% if personaje.arma_equipada %}data-item-id="{{ personaje.arma_equipada.id }}" onclick="desequiparObjeto(this, 'arma')" title="Desequipar"{% endif %}>
+                {% if personaje.arma_equipada and personaje.arma_equipada.img %}
+                  <img src="{{ personaje.arma_equipada.img.url }}" alt="Arma">
+                {% endif %}
+              </div>
+              
+              <div class="equip-slot slot-armadura {% if not personaje.armadura_equipada %}empty{% endif %}" id="slot-armadura" data-slot-name="ARMADURA" {% if personaje.armadura_equipada %}data-item-id="{{ personaje.armadura_equipada.id }}" onclick="desequiparObjeto(this, 'armadura')" title="Desequipar"{% endif %}>
+                {% if personaje.armadura_equipada and personaje.armadura_equipada.img %}
+                  <img src="{{ personaje.armadura_equipada.img.url }}" alt="Armadura">
+                {% endif %}
+              </div>
+              
+              <div class="equip-slot slot-escudo {% if not personaje.escudo_equipado %}empty{% endif %}" id="slot-escudo" data-slot-name="ESCUDO" {% if personaje.escudo_equipado %}data-item-id="{{ personaje.escudo_equipado.id }}" onclick="desequiparObjeto(this, 'escudo')" title="Desequipar"{% endif %}>
+                {% if personaje.escudo_equipado and personaje.escudo_equipado.img %}
+                  <img src="{{ personaje.escudo_equipado.img.url }}" alt="Escudo">
+                {% endif %}
+              </div>
+              
+              <div class="equip-slot slot-brazalete {% if not personaje.brazalete_equipado %}empty{% endif %}" id="slot-brazalete" data-slot-name="BRAZALETE" {% if personaje.brazalete_equipado %}data-item-id="{{ personaje.brazalete_equipado.id }}" onclick="desequiparObjeto(this, 'brazalete')" title="Desequipar"{% endif %}>
+                {% if personaje.brazalete_equipado and personaje.brazalete_equipado.img %}
+                  <img src="{{ personaje.brazalete_equipado.img.url }}" alt="Brazalete">
+                {% endif %}
+              </div>
+              
+              <div class="equip-slot slot-zapatos {% if not personaje.zapatos_equipados %}empty{% endif %}" id="slot-zapatos" data-slot-name="ZAPATOS" {% if personaje.zapatos_equipados %}data-item-id="{{ personaje.zapatos_equipados.id }}" onclick="desequiparObjeto(this, 'zapatos')" title="Desequipar"{% endif %}>
+                {% if personaje.zapatos_equipados and personaje.zapatos_equipados.img %}
+                  <img src="{{ personaje.zapatos_equipados.img.url }}" alt="Zapatos">
+                {% endif %}
               </div>
 
-              <p class="item-desc">{{ objeto.descripcion }}</p>
-
-              <!-- Etiquetas de Equipabilidad y Efectos -->
-              <div class="item-tags-row">
-                {% if objeto.es_equipable %}
-                <span class="item-pill pill-equipable">Equipable</span>
-                {% endif %}
-
-                {% if objeto.kit_inicial %}
-                <span class="item-pill pill-kit">Kit Inicial</span>
-                {% endif %}
-
-                {% if objeto.efectos %}
-                  {% if objeto.efectos.items %}
-                    {% for k, v in objeto.efectos.items %}
-                    <span class="item-pill pill-effect" title="Modificador: {{ k }}">{{ k|capfirst }}: +{{ v }}</span>
-                    {% endfor %}
-                  {% else %}
-                    <span class="item-pill pill-effect">{{ objeto.efectos }}</span>
-                  {% endif %}
-                {% endif %}
-              </div>
-            </article>
-            {% empty %}
-            <div class="empty-codex-state" style="grid-column: 1 / -1;">
-              <svg viewBox="0 0 24 24"><path d="M20 7h-4V4c0-1.1-.9-2-2-2h-4c-1.1 0-2 .9-2 2v3H4c-1.1 0-2 .9-2 2v11c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V9c0-1.1-.9-2-2-2zm-10-3h4v3h-4V4zm10 16H4V9h16v11z"/></svg>
-              <span class="empty-state-title">Bolsa de Pertrechos Vacía</span>
-              <p class="empty-state-text">Este aventurero no carga armamento, pociones o reliquias en su inventario actualmente.</p>
             </div>
-            {% endfor %}
+
+            <!-- INVENTARIO LISTA -->
+            <div class="inventory-deck-grid" id="inventoryContainer">
+              {% for inv_item in personaje.inventarioitem_set.all %}
+                {% with objeto=inv_item.objeto %}
+                <article class="item-codex-card" id="inv-item-{{ objeto.id }}" style="{% if objeto in personaje.equipo_actual %}display:none;{% endif %}" data-peso="{{ objeto.peso }}" title="{{ objeto.nombre }}">
+                  <div class="item-card-header">
+                    <div class="item-thumb-box">
+                      {% if objeto.img %}
+                      <img src="{{ objeto.img.url }}" alt="{{ objeto.nombre }}" class="item-thumb-img" />
+                      {% endif %}
+                      <span class="item-quantity-badge" id="inv-qty-{{ objeto.id }}" style="position: absolute; bottom: -5px; right: -5px; background: #e74c3c; color: white; border-radius: 50%; padding: 2px 6px; font-size: 0.75rem; font-weight: bold; border: 1px solid #c0392b; {% if inv_item.cantidad <= 1 %}display:none;{% endif %}">{{ inv_item.cantidad }}</span>
+                    </div>
+                    <div class="item-header-meta">
+                      <h3 class="item-name">{{ objeto.nombre }}</h3>
+                      <span class="item-weight-tag">Peso: {{ objeto.peso }} kg</span>
+                    </div>
+                  </div>
+                  
+                  {% if objeto.efectos %}
+                    <div class="item-tags-row" style="margin-top: 5px;">
+                      {% for k, v in objeto.efectos.items %}
+                      <span class="item-pill pill-effect" style="font-size:0.7rem;">{{ k|capfirst }}: +{{ v }}</span>
+                      {% endfor %}
+                    </div>
+                  {% endif %}
+
+                  {% if objeto.es_equipable and objeto.tipo_equipamiento %}
+                    <button type="button" class="btn-equip" onclick="equiparObjeto({{ objeto.id }}, '{{ objeto.tipo_equipamiento }}', '{% if objeto.img %}{{ objeto.img.url }}{% endif %}')">
+                      EQUIPAR ({{ objeto.get_tipo_equipamiento_display|upper }})
+                    </button>
+                  {% else %}
+                    <button type="button" class="btn-equip" style="background-color: #27ae60; border-color: #2ecc71;" onclick="consumirObjeto({{ objeto.id }})">
+                      USAR / CONSUMIR
+                    </button>
+                  {% endif %}
+                </article>
+                {% endwith %}
+              {% endfor %}
+            </div>
           </div>
         </section>
 
@@ -560,4 +674,176 @@
 {% block scripts %}
 <!-- Motor Interactivo de Detalle de Personaje (Canvas de Brasas + Cálculos) -->
 <script src="{% static 'js/detalle_personaje.js' %}"></script>
+
+// API JS para Sistema de Equipamiento SPA
+<script>
+  function actualizarUIStats(result) {
+      if (!result.stats_totales) return;
+      
+      const stats = result.stats_totales;
+      const bonos = result.bonificadores_actuales || {};
+      
+      // Función ayudante para renderizar stat + bonus
+      const renderStat = (statName, val) => {
+          let html = val;
+          if (bonos[statName]) {
+              html += ` <span style="color: #4ade80; font-size: 0.75rem; text-shadow: 0 0 2px #000;">(+${bonos[statName]})</span>`;
+          }
+          return html;
+      };
+
+      // Actualizar atributos de la cuadricula
+      const selStr = document.querySelector('.attr-str .attr-value-badge');
+      if (selStr) selStr.innerHTML = renderStat('fuerza', stats.fuerza);
+      
+      const selDex = document.querySelector('.attr-dex .attr-value-badge');
+      if (selDex) selDex.innerHTML = renderStat('destreza', stats.destreza);
+      
+      const selVig = document.querySelector('.attr-vig .attr-value-badge');
+      if (selVig) selVig.innerHTML = renderStat('vigor', stats.vigor);
+      
+      const selInt = document.querySelector('.attr-int .attr-value-badge');
+      if (selInt) selInt.innerHTML = renderStat('inteligencia', stats.inteligencia);
+      
+      const selPer = document.querySelector('.attr-per .attr-value-badge');
+      if (selPer) selPer.innerHTML = renderStat('percepcion', stats.percepcion);
+      
+      const selCha = document.querySelector('.attr-cha .attr-value-badge');
+      if (selCha) selCha.innerHTML = renderStat('carisma', stats.carisma);
+      
+      const selLuk = document.querySelector('.attr-luk .attr-value-badge');
+      if (selLuk) selLuk.innerHTML = renderStat('suerte', stats.suerte);
+
+      // Actualizar top metrics
+      const topHealth = document.querySelector('.metric-health .metric-value');
+      if (topHealth && result.hp_total !== undefined) topHealth.textContent = `${result.hp_actual !== undefined ? result.hp_actual : '?'} / ${result.hp_total} PV`;
+
+      const topCombat = document.querySelector('.metric-combat .metric-value');
+      if (topCombat && stats.fuerza !== undefined) topCombat.textContent = `${stats.fuerza} PTS`;
+
+      const topMagic = document.querySelector('.metric-magic .metric-value');
+      if (topMagic && result.mana_total !== undefined) topMagic.textContent = `${result.mana_actual !== undefined ? result.mana_actual : '?'} / ${result.mana_total} PM`;
+  }
+
+  async function consumirObjeto(objetoId) {
+      if (!confirm("¿Deseas consumir este objeto? Sus efectos se aplicarán permanentemente y desaparecerá de la mochila.")) return;
+      
+      try {
+          const response = await fetch("{% url 'gm:api-consumir' pk=personaje.pk %}", {
+              method: 'POST',
+              headers: {
+                  'Content-Type': 'application/json',
+                  'X-CSRFToken': '{{ csrf_token }}'
+              },
+              body: JSON.stringify({ objeto_id: objetoId })
+          });
+          
+          const result = await response.json();
+          if (response.ok) {
+              // 1. Manejar la UI del objeto (reducir cantidad o eliminar row)
+              if (result.cantidad_restante > 0) {
+                  const badge = document.getElementById('inv-qty-' + objetoId);
+                  if (badge) {
+                      badge.textContent = result.cantidad_restante;
+                      if (result.cantidad_restante > 1) {
+                          badge.style.display = 'block';
+                      } else {
+                          badge.style.display = 'none';
+                      }
+                  }
+              } else {
+                  const itemRow = document.getElementById('inv-item-' + objetoId);
+                  if (itemRow) itemRow.remove();
+              }
+              
+              // 2. Actualizar stats
+              actualizarUIStats(result);
+              
+              // Mostrar mensaje de éxito
+              alert(result.mensaje);
+          } else {
+              alert("Error al consumir: " + result.error);
+          }
+      } catch (err) {
+          console.error(err);
+      }
+  }
+
+  async function equiparObjeto(objetoId, tipo, imgUrl) {
+      try {
+          const response = await fetch("{% url 'gm:api-equipar' pk=personaje.pk %}", {
+              method: 'POST',
+              headers: {
+                  'Content-Type': 'application/json',
+                  'X-CSRFToken': '{{ csrf_token }}'
+              },
+              body: JSON.stringify({ objeto_id: objetoId, accion: 'equipar' })
+          });
+          
+          const result = await response.json();
+          if (response.ok) {
+              // 1. Ocultar el objeto que acabamos de equipar de la mochila
+              document.getElementById('inv-item-' + objetoId).style.display = 'none';
+              
+              // 2. Comprobar si había algo en el slot antes
+              const slotElem = document.getElementById('slot-' + tipo);
+              const oldId = slotElem.getAttribute('data-item-id');
+              if (oldId) {
+                  // Devolver el viejo a la mochila
+                  document.getElementById('inv-item-' + oldId).style.display = 'block';
+              }
+              
+              // 3. Renderizar el nuevo objeto en el slot
+              slotElem.innerHTML = `<img src="${imgUrl}" alt="Item">`;
+              slotElem.classList.remove('empty');
+              slotElem.setAttribute('data-item-id', objetoId);
+              slotElem.setAttribute('onclick', `desequiparObjeto(this, '${tipo}')`);
+              slotElem.setAttribute('title', 'Desequipar');
+              
+              // 4. Actualizar stats dinámicamente sin recargar la página
+              actualizarUIStats(result);
+          } else {
+              alert("Error al equipar: " + result.error);
+          }
+      } catch (err) {
+          console.error(err);
+      }
+  }
+
+  async function desequiparObjeto(element, tipo) {
+      const objetoId = element.getAttribute('data-item-id');
+      if (!objetoId) return;
+      
+      try {
+          const response = await fetch("{% url 'gm:api-equipar' pk=personaje.pk %}", {
+              method: 'POST',
+              headers: {
+                  'Content-Type': 'application/json',
+                  'X-CSRFToken': '{{ csrf_token }}'
+              },
+              body: JSON.stringify({ objeto_id: objetoId, accion: 'desequipar' })
+          });
+          
+          const result = await response.json();
+          if (response.ok) {
+              // 1. Vaciar el slot en la UI
+              element.innerHTML = '';
+              element.classList.add('empty');
+              element.removeAttribute('data-item-id');
+              element.removeAttribute('onclick');
+              element.removeAttribute('title');
+              
+              // 2. Mostrar el objeto devuelto en la mochila
+              document.getElementById('inv-item-' + objetoId).style.display = 'block';
+              
+              // 3. Actualizar stats dinámicamente sin recargar la página
+              actualizarUIStats(result);
+          } else {
+              alert("Error al desequipar: " + result.error);
+          }
+      } catch (err) {
+          console.error(err);
+      }
+  }
+</script>
 {% endblock scripts %}
