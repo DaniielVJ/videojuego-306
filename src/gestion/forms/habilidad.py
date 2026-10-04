@@ -12,8 +12,10 @@ class HabilidadUpdateCreateForm(forms.ModelForm):
 	v_carisma = forms.IntegerField(initial = 0, label = "Valor carisma (puede ser positivo o negativo)")
 	v_suerte = forms.IntegerField(initial = 0, label = "Valor suerte (puede ser positivo o negativo)")
 
-	class Meta:
+	costo_hp = forms.IntegerField(initial = 0, min_value=0, label = "Costo de HP")
+	costo_mana = forms.IntegerField(initial = 0, min_value=0, label = "Costo de Maná")
 
+	class Meta:
 		model = Habilidad
 		fields = ["nombre", "descripcion", "kit_inicial"]
 
@@ -32,17 +34,21 @@ class HabilidadUpdateCreateForm(forms.ModelForm):
 
 		super().__init__(*args, **kwargs)
 
-		if self.instance and self.instance.pk and self.instance.efectos:
-
-			efectos = self.instance.efectos
-
-			self.fields["v_fuerza"].initial = efectos.get("v_fuerza", 0)
-			self.fields["v_destreza"].initial = efectos.get("v_destreza", 0)
-			self.fields["v_vigor"].initial = efectos.get("v_vigor", 0)
-			self.fields["v_inteligencia"].initial = efectos.get("v_inteligencia", 0)
-			self.fields["v_percepcion"].initial = efectos.get("v_percepcion", 0)
-			self.fields["v_carisma"].initial = efectos.get("v_carisma", 0)
-			self.fields["v_suerte"].initial = efectos.get("v_suerte", 0)
+		if self.instance and self.instance.pk:
+			if self.instance.efectos:
+				efectos = self.instance.efectos
+				self.fields["v_fuerza"].initial = efectos.get("v_fuerza", 0)
+				self.fields["v_destreza"].initial = efectos.get("v_destreza", 0)
+				self.fields["v_vigor"].initial = efectos.get("v_vigor", 0)
+				self.fields["v_inteligencia"].initial = efectos.get("v_inteligencia", 0)
+				self.fields["v_percepcion"].initial = efectos.get("v_percepcion", 0)
+				self.fields["v_carisma"].initial = efectos.get("v_carisma", 0)
+				self.fields["v_suerte"].initial = efectos.get("v_suerte", 0)
+			
+			if self.instance.costo:
+				costo = self.instance.costo
+				self.fields["costo_hp"].initial = costo.get("hp", 0)
+				self.fields["costo_mana"].initial = costo.get("mana", 0)
 
 	def save(self, commit = True):
 
@@ -60,8 +66,12 @@ class HabilidadUpdateCreateForm(forms.ModelForm):
 
 		}
 
-		if commit:
+		instance.costo = {
+			"hp": self.cleaned_data.get("costo_hp", 0),
+			"mana": self.cleaned_data.get("costo_mana", 0)
+		}
 
+		if commit:
 			instance.save()
 
 		return instance
