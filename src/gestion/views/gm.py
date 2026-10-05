@@ -3,6 +3,7 @@ from django.urls import reverse, reverse_lazy
 from django.views.generic import ListView, View, DetailView, UpdateView, DeleteView, CreateView
 from django.db.models import Q
 from django.shortcuts import render, redirect, get_object_or_404
+from django.db import transaction
 from django.http import JsonResponse
 from django.contrib.auth import get_user_model
 
@@ -84,8 +85,7 @@ class CrearPersonajeView(GmRequiredMixin, View):
                 'id': r.id,
                 'nombre': r.nombre,
                 'descripcion': r.descripcion,
-                'bonificadores': r.r_bonificadores or {},
-                'handicap': r.r_handicap or {},
+                'bonificadores': r.r_bonificadores or {}
             }
             for r in razas
         ]
@@ -160,8 +160,13 @@ class ActualizarPersonajeView(GmRequiredMixin, View):
         objetos = list(Objeto.objects.filter(activo=True))
         
         cantidades_inventario = {}
+        bonos = {}
         if personaje.pk:
             cantidades_inventario = {item.objeto_id: item.cantidad for item in personaje.inventarioitem_set.all()}
+            for attr in ['fuerza', 'destreza', 'vigor', 'inteligencia', 'percepcion', 'carisma', 'suerte']:
+                base = getattr(personaje.atributos, attr, 0) if hasattr(personaje, 'atributos') else 0
+                total = personaje.stats_totales.get(attr, base)
+                bonos[attr] = total - base
 
         return {
             'personaje': personaje,
@@ -171,6 +176,7 @@ class ActualizarPersonajeView(GmRequiredMixin, View):
             'usuarios': usuarios,
             'habilidades': habilidades,
             'objetos': objetos,
+            'bonos': bonos,
             'error_message': error_msg,
         }
 
@@ -255,7 +261,6 @@ class ApiEquiparObjetoView(GmRequiredMixin, View):
                 return JsonResponse({"error": "Acción inválida. Usa 'equipar' o 'desequipar'."}, status=400)
                 
             personaje.save()
-            
             return JsonResponse({
                 "status": "success",
                 "mensaje": f"Objeto {accion}do con éxito en el slot '{tipo}'.",
@@ -273,6 +278,7 @@ class ApiEquiparObjetoView(GmRequiredMixin, View):
 
 
 class ApiConsumirObjetoView(GmRequiredMixin, View):
+    @transaction.atomic
     def post(self, request, pk):
         personaje = get_object_or_404(Personaje, pk=pk)
         
@@ -534,5 +540,13 @@ class EliminarObjetoView(GmRequiredMixin, DeleteView):
         if not self.object.activo:
             # Si se deshabilita, quitamos el objeto del inventario de todos los personajes
             self.object.personajes.clear()
+            
+            # Y lo desequipamos por la fuerza de todos los slots donde estuviera equipado
+            from ..models.personaje import Personaje
+            slots = ['arma_equipada', 'casco_equipado', 'armadura_equipada', 
+                     'zapatos_equipados', 'collar_equipado', 'brazalete_equipado', 'escudo_equipado']
+            for slot in slots:
+                Personaje.objects.filter(**{slot: self.object}).update(**{slot: None})
+                
         self.object.save()
         return redirect(self.success_url)

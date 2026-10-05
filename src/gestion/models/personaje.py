@@ -94,22 +94,25 @@ class Personaje(models.Model):
         for obj in self.equipo_actual:
             if obj and obj.efectos:
                 for key, val in obj.efectos.items():
-                    bonos[key] = bonos.get(key, 0) + val
+                    if val != 0:
+                        clean_key = key[2:] if key.startswith('v_') else key
+                        bonos[clean_key] = bonos.get(clean_key, 0) + val
         return bonos
 
     @property
     def stats_totales(self):
         bonos = self.obtener_bonificadores_equipo()
+        bonos_raza = self.raza.r_bonificadores or {}
         try:
             attr = self.atributos
             return {
-                'fuerza': attr.fuerza + bonos.get('fuerza', 0),
-                'destreza': attr.destreza + bonos.get('destreza', 0),
-                'vigor': attr.vigor + bonos.get('vigor', 0),
-                'inteligencia': attr.inteligencia + bonos.get('inteligencia', 0),
-                'percepcion': attr.percepcion + bonos.get('percepcion', 0),
-                'carisma': attr.carisma + bonos.get('carisma', 0),
-                'suerte': attr.suerte + bonos.get('suerte', 0),
+                'fuerza': attr.fuerza + bonos.get('fuerza', 0) + int(bonos_raza.get('fuerza', 0)),
+                'destreza': attr.destreza + bonos.get('destreza', 0) + int(bonos_raza.get('destreza', 0)),
+                'vigor': attr.vigor + bonos.get('vigor', 0) + int(bonos_raza.get('vigor', 0)),
+                'inteligencia': attr.inteligencia + bonos.get('inteligencia', 0) + int(bonos_raza.get('inteligencia', 0)),
+                'percepcion': attr.percepcion + bonos.get('percepcion', 0) + int(bonos_raza.get('percepcion', 0)),
+                'carisma': attr.carisma + bonos.get('carisma', 0) + int(bonos_raza.get('carisma', 0)),
+                'suerte': attr.suerte + bonos.get('suerte', 0) + int(bonos_raza.get('suerte', 0)),
             }
         except Exception:
             return {}
@@ -122,7 +125,7 @@ class Atributo(models.Model):
         verbose_name = "Atributo"
         verbose_name_plural = "Atributos"
 
-    personaje = models.OneToOneField(Personaje, on_delete=models.PROTECT, related_name="atributos")
+    personaje = models.OneToOneField(Personaje, on_delete=models.CASCADE, related_name="atributos")
 
     fuerza = models.PositiveIntegerField(null = False)
     destreza = models.PositiveIntegerField(null = False)
@@ -140,7 +143,6 @@ class Raza(models.Model):
     nombre = models.CharField(max_length = 100, null = False, unique=True)
     descripcion = models.TextField(max_length = 500, null = False)
     r_bonificadores = models.JSONField(blank=True, null=True)
-    r_handicap = models.JSONField(blank=True, null=True)
     activo = models.BooleanField(default = True)
     img_body = models.ImageField(upload_to='razas/body/', null=False, blank=False)
     img_head = models.ImageField(upload_to='razas/head/', null=False, blank=False)

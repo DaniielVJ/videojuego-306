@@ -275,7 +275,11 @@ Modificar {{ personaje.nombre }}
                   <svg class="attr-icon-mini" viewBox="0 0 24 24"><path d="M19.7 3.3a1 1 0 0 0-1.4 0l-4.6 4.6 1.4 1.4 4.6-4.6a1 1 0 0 0 0-1.4zM4.3 3.3a1 1 0 0 0 0 1.4l4.6 4.6 1.4-1.4-4.6-4.6a1 1 0 0 0-1.4 0zm7.7 7.7l-7.7 7.7-1.3-1.3-.7.7 2.7 2.7.7-.7-1.3-1.3 7.7-7.7 7.7 7.7-1.3 1.3.7.7 2.7-2.7-.7-.7-1.3 1.3-7.7-7.7z"/></svg>
                   <div class="attr-name-block">
                     <span class="attr-name">Fuerza</span>
-                    <span class="attr-abbr">FUE / STR</span>
+                    <span class="attr-abbr">FUE / STR
+                      {% if bonos.fuerza > 0 %} <span style="color: #4CAF50; font-weight: bold; font-size: 1.1em; text-shadow: 1px 1px 2px black;">(+{{ bonos.fuerza }})</span>
+                      {% elif bonos.fuerza < 0 %} <span style="color: #F44336; font-weight: bold; font-size: 1.1em; text-shadow: 1px 1px 2px black;">({{ bonos.fuerza }})</span>
+                      {% endif %}
+                    </span>
                   </div>
                 </div>
                 <div class="attr-meter-track">
@@ -284,7 +288,7 @@ Modificar {{ personaje.nombre }}
                 <div class="attr-stepper-wrap">
                   <div class="attr-stepper">
                     <button type="button" class="attr-step-btn" data-action="decrease" data-target="input_fuerza">-</button>
-                    <input type="number" name="fuerza" id="input_fuerza" value="{{ personaje.atributos.fuerza|default:0 }}" min="0" max="100" class="attr-input-field" />
+                    <input type="number" name="fuerza" id="input_fuerza" value="{{ personaje.atributos.fuerza|default:0 }}" min="0" class="attr-input-field" />
                     <button type="button" class="attr-step-btn" data-action="increase" data-target="input_fuerza">+</button>
                   </div>
                 </div>
@@ -296,7 +300,11 @@ Modificar {{ personaje.nombre }}
                   <svg class="attr-icon-mini" viewBox="0 0 24 24"><path d="M12 2L4.5 20.29l.71.71L12 18l6.79 3 .71-.71z"/></svg>
                   <div class="attr-name-block">
                     <span class="attr-name">Destreza</span>
-                    <span class="attr-abbr">DES / DEX</span>
+                    <span class="attr-abbr">DES / DEX
+                      {% if bonos.destreza > 0 %} <span style="color: #4CAF50; font-weight: bold; font-size: 1.1em; text-shadow: 1px 1px 2px black;">(+{{ bonos.destreza }})</span>
+                      {% elif bonos.destreza < 0 %} <span style="color: #F44336; font-weight: bold; font-size: 1.1em; text-shadow: 1px 1px 2px black;">({{ bonos.destreza }})</span>
+                      {% endif %}
+                    </span>
                   </div>
                 </div>
                 <div class="attr-meter-track">
@@ -305,7 +313,7 @@ Modificar {{ personaje.nombre }}
                 <div class="attr-stepper-wrap">
                   <div class="attr-stepper">
                     <button type="button" class="attr-step-btn" data-action="decrease" data-target="input_destreza">-</button>
-                    <input type="number" name="destreza" id="input_destreza" value="{{ personaje.atributos.destreza|default:0 }}" min="0" max="100" class="attr-input-field" />
+                    <input type="number" name="destreza" id="input_destreza" value="{{ personaje.atributos.destreza|default:0 }}" min="0" class="attr-input-field" />
                     <button type="button" class="attr-step-btn" data-action="increase" data-target="input_destreza">+</button>
                   </div>
                 </div>
@@ -317,7 +325,11 @@ Modificar {{ personaje.nombre }}
                   <svg class="attr-icon-mini" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
                   <div class="attr-name-block">
                     <span class="attr-name">Vigor</span>
-                    <span class="attr-abbr">VIG / CON</span>
+                    <span class="attr-abbr">VIG / CON
+                      {% if bonos.vigor > 0 %} <span style="color: #4CAF50; font-weight: bold; font-size: 1.1em; text-shadow: 1px 1px 2px black;">(+{{ bonos.vigor }})</span>
+                      {% elif bonos.vigor < 0 %} <span style="color: #F44336; font-weight: bold; font-size: 1.1em; text-shadow: 1px 1px 2px black;">({{ bonos.vigor }})</span>
+                      {% endif %}
+                    </span>
                   </div>
                 </div>
                 <div class="attr-meter-track">
@@ -326,7 +338,7 @@ Modificar {{ personaje.nombre }}
                 <div class="attr-stepper-wrap">
                   <div class="attr-stepper">
                     <button type="button" class="attr-step-btn" data-action="decrease" data-target="input_vigor">-</button>
-                    <input type="number" name="vigor" id="input_vigor" value="{{ personaje.atributos.vigor|default:0 }}" min="0" max="100" class="attr-input-field" />
+                    <input type="number" name="vigor" id="input_vigor" value="{{ personaje.atributos.vigor|default:0 }}" min="0" class="attr-input-field" />
                     <button type="button" class="attr-step-btn" data-action="increase" data-target="input_vigor">+</button>
                   </div>
                 </div>
@@ -338,7 +350,11 @@ Modificar {{ personaje.nombre }}
                   <svg class="attr-icon-mini" viewBox="0 0 24 24"><path d="M18 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM6 4h5v8l-2.5-1.5L6 12V4z"/></svg>
                   <div class="attr-name-block">
                     <span class="attr-name">Inteligencia</span>
-                    <span class="attr-abbr">INT / MAG</span>
+                    <span class="attr-abbr">INT / MAG
+                      {% if bonos.inteligencia > 0 %} <span style="color: #4CAF50; font-weight: bold; font-size: 1.1em; text-shadow: 1px 1px 2px black;">(+{{ bonos.inteligencia }})</span>
+                      {% elif bonos.inteligencia < 0 %} <span style="color: #F44336; font-weight: bold; font-size: 1.1em; text-shadow: 1px 1px 2px black;">({{ bonos.inteligencia }})</span>
+                      {% endif %}
+                    </span>
                   </div>
                 </div>
                 <div class="attr-meter-track">
@@ -347,7 +363,7 @@ Modificar {{ personaje.nombre }}
                 <div class="attr-stepper-wrap">
                   <div class="attr-stepper">
                     <button type="button" class="attr-step-btn" data-action="decrease" data-target="input_inteligencia">-</button>
-                    <input type="number" name="inteligencia" id="input_inteligencia" value="{{ personaje.atributos.inteligencia|default:0 }}" min="0" max="100" class="attr-input-field" />
+                    <input type="number" name="inteligencia" id="input_inteligencia" value="{{ personaje.atributos.inteligencia|default:0 }}" min="0" class="attr-input-field" />
                     <button type="button" class="attr-step-btn" data-action="increase" data-target="input_inteligencia">+</button>
                   </div>
                 </div>
@@ -359,7 +375,11 @@ Modificar {{ personaje.nombre }}
                   <svg class="attr-icon-mini" viewBox="0 0 24 24"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zm0 12.5c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>
                   <div class="attr-name-block">
                     <span class="attr-name">Percepción</span>
-                    <span class="attr-abbr">PER / WIS</span>
+                    <span class="attr-abbr">PER / WIS
+                      {% if bonos.percepcion > 0 %} <span style="color: #4CAF50; font-weight: bold; font-size: 1.1em; text-shadow: 1px 1px 2px black;">(+{{ bonos.percepcion }})</span>
+                      {% elif bonos.percepcion < 0 %} <span style="color: #F44336; font-weight: bold; font-size: 1.1em; text-shadow: 1px 1px 2px black;">({{ bonos.percepcion }})</span>
+                      {% endif %}
+                    </span>
                   </div>
                 </div>
                 <div class="attr-meter-track">
@@ -368,7 +388,7 @@ Modificar {{ personaje.nombre }}
                 <div class="attr-stepper-wrap">
                   <div class="attr-stepper">
                     <button type="button" class="attr-step-btn" data-action="decrease" data-target="input_percepcion">-</button>
-                    <input type="number" name="percepcion" id="input_percepcion" value="{{ personaje.atributos.percepcion|default:0 }}" min="0" max="100" class="attr-input-field" />
+                    <input type="number" name="percepcion" id="input_percepcion" value="{{ personaje.atributos.percepcion|default:0 }}" min="0" class="attr-input-field" />
                     <button type="button" class="attr-step-btn" data-action="increase" data-target="input_percepcion">+</button>
                   </div>
                 </div>
@@ -380,7 +400,11 @@ Modificar {{ personaje.nombre }}
                   <svg class="attr-icon-mini" viewBox="0 0 24 24"><path d="M5 16L3 5l5.5 5L12 4l3.5 6L21 5l-2 11H5zm14 3c0 .6-.4 1-1 1H6c-.6 0-1-.4-1-1v-1h14v1z"/></svg>
                   <div class="attr-name-block">
                     <span class="attr-name">Carisma</span>
-                    <span class="attr-abbr">CAR / CHA</span>
+                    <span class="attr-abbr">CAR / CHA
+                      {% if bonos.carisma > 0 %} <span style="color: #4CAF50; font-weight: bold; font-size: 1.1em; text-shadow: 1px 1px 2px black;">(+{{ bonos.carisma }})</span>
+                      {% elif bonos.carisma < 0 %} <span style="color: #F44336; font-weight: bold; font-size: 1.1em; text-shadow: 1px 1px 2px black;">({{ bonos.carisma }})</span>
+                      {% endif %}
+                    </span>
                   </div>
                 </div>
                 <div class="attr-meter-track">
@@ -389,7 +413,7 @@ Modificar {{ personaje.nombre }}
                 <div class="attr-stepper-wrap">
                   <div class="attr-stepper">
                     <button type="button" class="attr-step-btn" data-action="decrease" data-target="input_carisma">-</button>
-                    <input type="number" name="carisma" id="input_carisma" value="{{ personaje.atributos.carisma|default:0 }}" min="0" max="100" class="attr-input-field" />
+                    <input type="number" name="carisma" id="input_carisma" value="{{ personaje.atributos.carisma|default:0 }}" min="0" class="attr-input-field" />
                     <button type="button" class="attr-step-btn" data-action="increase" data-target="input_carisma">+</button>
                   </div>
                 </div>
@@ -401,7 +425,11 @@ Modificar {{ personaje.nombre }}
                   <svg class="attr-icon-mini" viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 3c.83 0 1.5.67 1.5 1.5S12.83 9 12 9s-1.5-.67-1.5-1.5S11.17 6 12 6zm-4 6c.83 0 1.5.67 1.5 1.5S8.83 15 8 15s-1.5-.67-1.5-1.5S7.17 12 8 12zm8 0c.83 0 1.5.67 1.5 1.5S16.83 15 16 15s-1.5-.67-1.5-1.5.67-1.5 1.5-1.5zm-4 6c.83 0 1.5.67 1.5 1.5S12.83 21 12 21s-1.5-.67-1.5-1.5.67-1.5 1.5-1.5z"/></svg>
                   <div class="attr-name-block">
                     <span class="attr-name">Suerte</span>
-                    <span class="attr-abbr">SUE / LUK</span>
+                    <span class="attr-abbr">SUE / LUK
+                      {% if bonos.suerte > 0 %} <span style="color: #4CAF50; font-weight: bold; font-size: 1.1em; text-shadow: 1px 1px 2px black;">(+{{ bonos.suerte }})</span>
+                      {% elif bonos.suerte < 0 %} <span style="color: #F44336; font-weight: bold; font-size: 1.1em; text-shadow: 1px 1px 2px black;">({{ bonos.suerte }})</span>
+                      {% endif %}
+                    </span>
                   </div>
                 </div>
                 <div class="attr-meter-track">
@@ -410,7 +438,7 @@ Modificar {{ personaje.nombre }}
                 <div class="attr-stepper-wrap">
                   <div class="attr-stepper">
                     <button type="button" class="attr-step-btn" data-action="decrease" data-target="input_suerte">-</button>
-                    <input type="number" name="suerte" id="input_suerte" value="{{ personaje.atributos.suerte|default:0 }}" min="0" max="100" class="attr-input-field" />
+                    <input type="number" name="suerte" id="input_suerte" value="{{ personaje.atributos.suerte|default:0 }}" min="0" class="attr-input-field" />
                     <button type="button" class="attr-step-btn" data-action="increase" data-target="input_suerte">+</button>
                   </div>
                 </div>
