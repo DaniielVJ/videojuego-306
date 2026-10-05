@@ -17,7 +17,7 @@ class HabilidadCRUDTests(TestCase):
         self.habilidad = Habilidad.objects.create(
             nombre='Bola de Fuego',
             descripcion='Lanza fuego.',
-            efectos={'v_inteligencia': 5},
+            efectos={'inteligencia': 5},
             activo=True
         )
 
@@ -60,19 +60,19 @@ class HabilidadCRUDTests(TestCase):
             'descripcion': 'Pega fuerte.',
             'costo_hp': 5,
             'costo_mana': 0,
-            'v_fuerza': 10,
-            'v_destreza': 2,
-            'v_vigor': -1,
-            'v_inteligencia': 0,
-            'v_percepcion': 0,
-            'v_carisma': 0,
-            'v_suerte': 5
+            'fuerza': 10,
+            'destreza': 2,
+            'vigor': -1,
+            'inteligencia': 0,
+            'percepcion': 0,
+            'carisma': 0,
+            'suerte': 5
         }
         form = HabilidadUpdateCreateForm(data=form_data)
         self.assertTrue(form.is_valid(), form.errors)
         hab = form.save()
-        self.assertEqual(hab.efectos['v_fuerza'], 10)
-        self.assertEqual(hab.efectos['v_vigor'], -1)
+        self.assertEqual(hab.efectos['fuerza'], 10)
+        self.assertEqual(hab.efectos['vigor'], -1)
 
     def test_creacion_habilidad_view(self):
         """Prueba la creación desde la vista."""
@@ -82,8 +82,8 @@ class HabilidadCRUDTests(TestCase):
             'descripcion': 'Congela.',
             'costo_hp': 0,
             'costo_mana': 10,
-            'v_fuerza': 0, 'v_destreza': 0, 'v_vigor': 0,
-            'v_inteligencia': 8, 'v_percepcion': 0, 'v_carisma': 0, 'v_suerte': 0
+            'fuerza': 0, 'destreza': 0, 'vigor': 0,
+            'inteligencia': 8, 'percepcion': 0, 'carisma': 0, 'suerte': 0
         }
         response = self.client.post(url, data)
         self.assertEqual(response.status_code, 302)
@@ -97,14 +97,14 @@ class HabilidadCRUDTests(TestCase):
             'descripcion': 'Lanza fuego brutal.',
             'costo_hp': 0,
             'costo_mana': 20,
-            'v_fuerza': 0, 'v_destreza': 0, 'v_vigor': 0,
-            'v_inteligencia': 15, 'v_percepcion': 0, 'v_carisma': 0, 'v_suerte': 0
+            'fuerza': 0, 'destreza': 0, 'vigor': 0,
+            'inteligencia': 15, 'percepcion': 0, 'carisma': 0, 'suerte': 0
         }
         response = self.client.post(url, data)
         self.assertEqual(response.status_code, 302)
         self.habilidad.refresh_from_db()
         self.assertEqual(self.habilidad.nombre, 'Bola de Fuego Mayor')
-        self.assertEqual(self.habilidad.efectos['v_inteligencia'], 15)
+        self.assertEqual(self.habilidad.efectos['inteligencia'], 15)
 
     def test_eliminar_habilidad_toggle_y_clear(self):
         """Verifica que el Toggle funcione y que se elimine la habilidad de los personajes."""

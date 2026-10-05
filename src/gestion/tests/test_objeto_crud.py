@@ -32,7 +32,7 @@ class ObjetoCRUDTests(TestCase):
             nombre='Espada Larga',
             descripcion='Espada a dos manos.',
             peso=5.50,
-            efectos={'v_fuerza': 5},
+            efectos={'fuerza': 5},
             activo=True,
             img=self.img_file,
             es_equipable=True,
@@ -84,19 +84,19 @@ class ObjetoCRUDTests(TestCase):
             'es_equipable': True,
             'tipo_equipamiento': 'escudo',
             'kit_inicial': False,
-            'v_fuerza': 0,
-            'v_destreza': 0,
-            'v_vigor': 15,
-            'v_inteligencia': 0,
-            'v_percepcion': 0,
-            'v_carisma': 0,
-            'v_suerte': 0
+            'fuerza': 0,
+            'destreza': 0,
+            'vigor': 15,
+            'inteligencia': 0,
+            'percepcion': 0,
+            'carisma': 0,
+            'suerte': 0
         }
         file_data = {'img': dummy_img}
         form = ObjetoUpdateCreateForm(data=form_data, files=file_data)
         self.assertTrue(form.is_valid(), form.errors)
         obj = form.save()
-        self.assertEqual(obj.efectos['v_vigor'], 15)
+        self.assertEqual(obj.efectos['vigor'], 15)
 
     def test_creacion_objeto_view(self):
         url = reverse('gm:crear-objeto')
@@ -109,8 +109,8 @@ class ObjetoCRUDTests(TestCase):
             'es_equipable': True,
             'tipo_equipamiento': 'collar',
             'kit_inicial': False,
-            'v_fuerza': 1, 'v_destreza': 1, 'v_vigor': 1,
-            'v_inteligencia': 1, 'v_percepcion': 1, 'v_carisma': 1, 'v_suerte': 1
+            'fuerza': 1, 'destreza': 1, 'vigor': 1,
+            'inteligencia': 1, 'percepcion': 1, 'carisma': 1, 'suerte': 1
         }
         response = self.client.post(url, data)
         self.assertEqual(response.status_code, 302)
@@ -125,14 +125,14 @@ class ObjetoCRUDTests(TestCase):
             'es_equipable': True,
             'tipo_equipamiento': 'arma',
             'kit_inicial': False,
-            'v_fuerza': 20, 'v_destreza': 0, 'v_vigor': 0,
-            'v_inteligencia': 0, 'v_percepcion': 0, 'v_carisma': 0, 'v_suerte': 0
+            'fuerza': 20, 'destreza': 0, 'vigor': 0,
+            'inteligencia': 0, 'percepcion': 0, 'carisma': 0, 'suerte': 0
         }
         response = self.client.post(url, data)
         self.assertEqual(response.status_code, 302)
         self.objeto.refresh_from_db()
         self.assertEqual(self.objeto.nombre, 'Espada Larga Legendaria')
-        self.assertEqual(self.objeto.efectos['v_fuerza'], 20)
+        self.assertEqual(self.objeto.efectos['fuerza'], 20)
 
     def test_eliminar_objeto_toggle_y_clear(self):
         raza = Raza.objects.create(nombre="TestRazaObj", descripcion="x", activo=True)

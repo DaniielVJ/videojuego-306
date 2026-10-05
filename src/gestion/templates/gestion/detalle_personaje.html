@@ -238,7 +238,8 @@
                 </div>
                 <div class="attr-value-badge">
                   {{ personaje.stats_totales.fuerza }}
-                  {% if bonos.fuerza %}<span style="color: #4ade80; font-size: 0.75rem; text-shadow: 0 0 2px #000;">(+{{ bonos.fuerza }})</span>{% endif %}
+                  {% if bonos.fuerza > 0 %}<span style="color: #4ade80; font-size: 0.75rem; text-shadow: 0 0 2px #000;">(+{{ bonos.fuerza }})</span>
+                  {% elif bonos.fuerza < 0 %}<span style="color: #ef4444; font-size: 0.75rem; text-shadow: 0 0 2px #000;">({{ bonos.fuerza }})</span>{% endif %}
                 </div>
               </div>
 
@@ -256,7 +257,8 @@
                 </div>
                 <div class="attr-value-badge">
                   {{ personaje.stats_totales.destreza }}
-                  {% if bonos.destreza %}<span style="color: #4ade80; font-size: 0.75rem; text-shadow: 0 0 2px #000;">(+{{ bonos.destreza }})</span>{% endif %}
+                  {% if bonos.destreza > 0 %}<span style="color: #4ade80; font-size: 0.75rem; text-shadow: 0 0 2px #000;">(+{{ bonos.destreza }})</span>
+                  {% elif bonos.destreza < 0 %}<span style="color: #ef4444; font-size: 0.75rem; text-shadow: 0 0 2px #000;">({{ bonos.destreza }})</span>{% endif %}
                 </div>
               </div>
 
@@ -274,7 +276,8 @@
                 </div>
                 <div class="attr-value-badge">
                   {{ personaje.stats_totales.vigor }}
-                  {% if bonos.vigor %}<span style="color: #4ade80; font-size: 0.75rem; text-shadow: 0 0 2px #000;">(+{{ bonos.vigor }})</span>{% endif %}
+                  {% if bonos.vigor > 0 %}<span style="color: #4ade80; font-size: 0.75rem; text-shadow: 0 0 2px #000;">(+{{ bonos.vigor }})</span>
+                  {% elif bonos.vigor < 0 %}<span style="color: #ef4444; font-size: 0.75rem; text-shadow: 0 0 2px #000;">({{ bonos.vigor }})</span>{% endif %}
                 </div>
               </div>
 
@@ -292,7 +295,8 @@
                 </div>
                 <div class="attr-value-badge">
                   {{ personaje.stats_totales.inteligencia }}
-                  {% if bonos.inteligencia %}<span style="color: #4ade80; font-size: 0.75rem; text-shadow: 0 0 2px #000;">(+{{ bonos.inteligencia }})</span>{% endif %}
+                  {% if bonos.inteligencia > 0 %}<span style="color: #4ade80; font-size: 0.75rem; text-shadow: 0 0 2px #000;">(+{{ bonos.inteligencia }})</span>
+                  {% elif bonos.inteligencia < 0 %}<span style="color: #ef4444; font-size: 0.75rem; text-shadow: 0 0 2px #000;">({{ bonos.inteligencia }})</span>{% endif %}
                 </div>
               </div>
 
@@ -310,7 +314,8 @@
                 </div>
                 <div class="attr-value-badge">
                   {{ personaje.stats_totales.percepcion }}
-                  {% if bonos.percepcion %}<span style="color: #4ade80; font-size: 0.75rem; text-shadow: 0 0 2px #000;">(+{{ bonos.percepcion }})</span>{% endif %}
+                  {% if bonos.percepcion > 0 %}<span style="color: #4ade80; font-size: 0.75rem; text-shadow: 0 0 2px #000;">(+{{ bonos.percepcion }})</span>
+                  {% elif bonos.percepcion < 0 %}<span style="color: #ef4444; font-size: 0.75rem; text-shadow: 0 0 2px #000;">({{ bonos.percepcion }})</span>{% endif %}
                 </div>
               </div>
 
@@ -328,7 +333,8 @@
                 </div>
                 <div class="attr-value-badge">
                   {{ personaje.stats_totales.carisma }}
-                  {% if bonos.carisma %}<span style="color: #4ade80; font-size: 0.75rem; text-shadow: 0 0 2px #000;">(+{{ bonos.carisma }})</span>{% endif %}
+                  {% if bonos.carisma > 0 %}<span style="color: #4ade80; font-size: 0.75rem; text-shadow: 0 0 2px #000;">(+{{ bonos.carisma }})</span>
+                  {% elif bonos.carisma < 0 %}<span style="color: #ef4444; font-size: 0.75rem; text-shadow: 0 0 2px #000;">({{ bonos.carisma }})</span>{% endif %}
                 </div>
               </div>
 
@@ -346,7 +352,8 @@
                 </div>
                 <div class="attr-value-badge">
                   {{ personaje.stats_totales.suerte }}
-                  {% if bonos.suerte %}<span style="color: #4ade80; font-size: 0.75rem; text-shadow: 0 0 2px #000;">(+{{ bonos.suerte }})</span>{% endif %}
+                  {% if bonos.suerte > 0 %}<span style="color: #4ade80; font-size: 0.75rem; text-shadow: 0 0 2px #000;">(+{{ bonos.suerte }})</span>
+                  {% elif bonos.suerte < 0 %}<span style="color: #ef4444; font-size: 0.75rem; text-shadow: 0 0 2px #000;">({{ bonos.suerte }})</span>{% endif %}
                 </div>
               </div>
             {% endwith %}
@@ -619,7 +626,9 @@
                   {% if objeto.efectos %}
                     <div class="item-tags-row" style="margin-top: 5px;">
                       {% for k, v in objeto.efectos.items %}
-                      <span class="item-pill pill-effect" style="font-size:0.7rem;">{{ k|capfirst }}: +{{ v }}</span>
+                        {% if v != 0 %}
+                        <span class="item-pill pill-effect" style="font-size:0.7rem;">{{ k|capfirst }}: +{{ v }}</span>
+                        {% endif %}
                       {% endfor %}
                     </div>
                   {% endif %}
@@ -686,8 +695,10 @@
       // Función ayudante para renderizar stat + bonus
       const renderStat = (statName, val) => {
           let html = val;
-          if (bonos[statName]) {
+          if (bonos[statName] > 0) {
               html += ` <span style="color: #4ade80; font-size: 0.75rem; text-shadow: 0 0 2px #000;">(+${bonos[statName]})</span>`;
+          } else if (bonos[statName] < 0) {
+              html += ` <span style="color: #ef4444; font-size: 0.75rem; text-shadow: 0 0 2px #000;">(${bonos[statName]})</span>`;
           }
           return html;
       };
