@@ -4,16 +4,16 @@ from src.gestion.models.inventario import Objeto
 
 class ObjetoUpdateCreateForm(forms.ModelForm):
 
-	fuerza = forms.IntegerField(initial = 0, label = "Valor fuerza (puede ser positivo o negativo)", widget=forms.NumberInput(attrs={'type': 'range', 'min': '-100', 'max': '1000', 'class': 'stat-slider', 'oninput': 'this.nextElementSibling.innerText = this.value'}))
-	destreza = forms.IntegerField(initial = 0, label = "Valor destreza (puede ser positivo o negativo)", widget=forms.NumberInput(attrs={'type': 'range', 'min': '-100', 'max': '1000', 'class': 'stat-slider', 'oninput': 'this.nextElementSibling.innerText = this.value'}))
-	vigor = forms.IntegerField(initial = 0, label = "Valor vigor (puede ser positivo o negativo)", widget=forms.NumberInput(attrs={'type': 'range', 'min': '-100', 'max': '1000', 'class': 'stat-slider', 'oninput': 'this.nextElementSibling.innerText = this.value'}))
-	inteligencia = forms.IntegerField(initial = 0, label = "Valor inteligencia (puede ser positivo o negativo)", widget=forms.NumberInput(attrs={'type': 'range', 'min': '-100', 'max': '1000', 'class': 'stat-slider', 'oninput': 'this.nextElementSibling.innerText = this.value'}))
-	percepcion = forms.IntegerField(initial = 0, label = "Valor percepcion (puede ser positivo o negativo)", widget=forms.NumberInput(attrs={'type': 'range', 'min': '-100', 'max': '1000', 'class': 'stat-slider', 'oninput': 'this.nextElementSibling.innerText = this.value'}))
-	carisma = forms.IntegerField(initial = 0, label = "Valor carisma (puede ser positivo o negativo)", widget=forms.NumberInput(attrs={'type': 'range', 'min': '-100', 'max': '1000', 'class': 'stat-slider', 'oninput': 'this.nextElementSibling.innerText = this.value'}))
-	suerte = forms.IntegerField(initial = 0, label = "Valor suerte (puede ser positivo o negativo)", widget=forms.NumberInput(attrs={'type': 'range', 'min': '-100', 'max': '1000', 'class': 'stat-slider', 'oninput': 'this.nextElementSibling.innerText = this.value'}))
+	fuerza = forms.IntegerField(initial = 0, min_value=0, label = "Fuerza (+)", widget=forms.NumberInput(attrs={'type': 'range', 'min': '0', 'max': '100', 'class': 'stat-slider', 'oninput': 'this.nextElementSibling.innerText = this.value'}))
+	destreza = forms.IntegerField(initial = 0, min_value=0, label = "Destreza (+)", widget=forms.NumberInput(attrs={'type': 'range', 'min': '0', 'max': '100', 'class': 'stat-slider', 'oninput': 'this.nextElementSibling.innerText = this.value'}))
+	vigor = forms.IntegerField(initial = 0, min_value=0, label = "Vigor (+)", widget=forms.NumberInput(attrs={'type': 'range', 'min': '0', 'max': '100', 'class': 'stat-slider', 'oninput': 'this.nextElementSibling.innerText = this.value'}))
+	inteligencia = forms.IntegerField(initial = 0, min_value=0, label = "Inteligencia (+)", widget=forms.NumberInput(attrs={'type': 'range', 'min': '0', 'max': '100', 'class': 'stat-slider', 'oninput': 'this.nextElementSibling.innerText = this.value'}))
+	percepcion = forms.IntegerField(initial = 0, min_value=0, label = "Percepcion (+)", widget=forms.NumberInput(attrs={'type': 'range', 'min': '0', 'max': '100', 'class': 'stat-slider', 'oninput': 'this.nextElementSibling.innerText = this.value'}))
+	carisma = forms.IntegerField(initial = 0, min_value=0, label = "Carisma (+)", widget=forms.NumberInput(attrs={'type': 'range', 'min': '0', 'max': '100', 'class': 'stat-slider', 'oninput': 'this.nextElementSibling.innerText = this.value'}))
+	suerte = forms.IntegerField(initial = 0, min_value=0, label = "Suerte (+)", widget=forms.NumberInput(attrs={'type': 'range', 'min': '0', 'max': '100', 'class': 'stat-slider', 'oninput': 'this.nextElementSibling.innerText = this.value'}))
 	
-	hp_restore = forms.IntegerField(initial=0, min_value=0, label="Restaurar HP (Consumibles)", widget=forms.NumberInput(attrs={'type': 'range', 'min': '-100', 'max': '1000', 'class': 'stat-slider', 'oninput': 'this.nextElementSibling.innerText = this.value'}))
-	mana_restore = forms.IntegerField(initial=0, min_value=0, label="Restaurar Maná (Consumibles)", widget=forms.NumberInput(attrs={'type': 'range', 'min': '-100', 'max': '1000', 'class': 'stat-slider', 'oninput': 'this.nextElementSibling.innerText = this.value'}))
+	hp_restore = forms.IntegerField(initial=0, min_value=0, label="Restaurar HP (Consumibles)", widget=forms.NumberInput(attrs={'type': 'range', 'min': '0', 'max': '1000', 'class': 'stat-slider', 'oninput': 'this.nextElementSibling.innerText = this.value'}))
+	mana_restore = forms.IntegerField(initial=0, min_value=0, label="Restaurar Maná (Consumibles)", widget=forms.NumberInput(attrs={'type': 'range', 'min': '0', 'max': '1000', 'class': 'stat-slider', 'oninput': 'this.nextElementSibling.innerText = this.value'}))
 
 	class Meta:
 
