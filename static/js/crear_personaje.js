@@ -165,17 +165,17 @@ function initRaceStage() {
           for (let [stat, val] of Object.entries(currentRaza.bonificadores)) {
             hasBonuses = true;
             const pill = document.createElement('span');
-            pill.className = 'bonus-pill bonus-positive';
-            pill.textContent = `+${val} ${stat.toUpperCase()}`;
-            bonusesRow.appendChild(pill);
-          }
-        }
-        if (currentRaza.handicap && typeof currentRaza.handicap === 'object') {
-          for (let [stat, val] of Object.entries(currentRaza.handicap)) {
-            hasBonuses = true;
-            const pill = document.createElement('span');
-            pill.className = 'bonus-pill bonus-negative';
-            pill.textContent = `${val} ${stat.toUpperCase()}`;
+            
+            if (val > 0) {
+              pill.className = 'bonus-pill bonus-positive';
+              pill.textContent = `+${val} ${stat.toUpperCase()}`;
+            } else if (val < 0) {
+              pill.className = 'bonus-pill bonus-negative';
+              pill.textContent = `${val} ${stat.toUpperCase()}`;
+            } else {
+              continue;
+            }
+            
             bonusesRow.appendChild(pill);
           }
         }
@@ -283,14 +283,6 @@ function initAttributeSystem() {
         }
       }
     }
-    if (raza.handicap && typeof raza.handicap === 'object') {
-      for (let [k, v] of Object.entries(raza.handicap)) {
-        const keyLower = k.toLowerCase();
-        if (state.racialBonus.hasOwnProperty(keyLower)) {
-          state.racialBonus[keyLower] += parseInt(v, 10) || 0;
-        }
-      }
-    }
     renderAllAttributes();
   };
 
@@ -298,8 +290,9 @@ function initAttributeSystem() {
     if (poolValEl) poolValEl.textContent = state.availablePoints;
 
     // Cálculo dinámico de HP (Vigor x 20) y SP (Inteligencia x 15)
-    const currentVigor = BASE_STAT + (state.allocated['vigor'] || 0) + (state.racialBonus['vigor'] || 0);
-    const currentInt = BASE_STAT + (state.allocated['inteligencia'] || 0) + (state.racialBonus['inteligencia'] || 0);
+    // Utilizamos el allocated para visualizar la salud base, sin sumar raciales aquí
+    const currentVigor = BASE_STAT + (state.allocated['vigor'] || 0);
+    const currentInt = BASE_STAT + (state.allocated['inteligencia'] || 0);
 
     const calculatedHp = currentVigor * 20;
     const calculatedSp = currentInt * 15;
@@ -319,16 +312,16 @@ function initAttributeSystem() {
       const row = document.querySelector(`.attr-row.attr-${attr}`);
       if (!row) return;
 
-      const bonus = state.racialBonus[attr] || 0;
       const allocated = state.allocated[attr] || 0;
-      const total = BASE_STAT + allocated + bonus;
+      const total = BASE_STAT + allocated; // No sumamos el bonus racial aquí visualmente
 
       const numEl = row.querySelector('.attr-num');
       if (numEl) numEl.textContent = total;
 
       const fillEl = row.querySelector('.attr-fill');
       if (fillEl) {
-        const pct = Math.min(100, Math.max(8, (total / MAX_STAT_SCALE) * 100));
+        // Ahora el máximo visual es 20 (los puntos a asignar) para que la barra se llene lógicamente
+        const pct = Math.min(100, Math.max(0, (total / 20) * 100));
         fillEl.style.width = `${pct}%`;
       }
 
@@ -339,7 +332,7 @@ function initAttributeSystem() {
       if (btnInc) btnInc.disabled = state.availablePoints <= 0;
 
       const hiddenInput = document.getElementById(`input_${attr}`);
-      if (hiddenInput) hiddenInput.value = total;
+      if (hiddenInput) hiddenInput.value = allocated; // Enviar SOLO los puntos asignados al backend
     });
   }
 

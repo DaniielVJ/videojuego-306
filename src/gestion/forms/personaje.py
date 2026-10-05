@@ -15,13 +15,13 @@ class CrearPersonajeForm(forms.ModelForm):
     """
 
     # 7 Atributos numéricos para el modelo Atributo
-    fuerza = forms.IntegerField(min_value=0, max_value=100, initial=0, required=True)
-    destreza = forms.IntegerField(min_value=0, max_value=100, initial=0, required=True)
-    vigor = forms.IntegerField(min_value=0, max_value=100, initial=0, required=True)
-    inteligencia = forms.IntegerField(min_value=0, max_value=100, initial=0, required=True)
-    percepcion = forms.IntegerField(min_value=0, max_value=100, initial=0, required=True)
-    carisma = forms.IntegerField(min_value=0, max_value=100, initial=0, required=True)
-    suerte = forms.IntegerField(min_value=0, max_value=100, initial=0, required=True)
+    fuerza = forms.IntegerField(min_value=0, max_value=1000, initial=0, required=True)
+    destreza = forms.IntegerField(min_value=0, max_value=1000, initial=0, required=True)
+    vigor = forms.IntegerField(min_value=0, max_value=1000, initial=0, required=True)
+    inteligencia = forms.IntegerField(min_value=0, max_value=1000, initial=0, required=True)
+    percepcion = forms.IntegerField(min_value=0, max_value=1000, initial=0, required=True)
+    carisma = forms.IntegerField(min_value=0, max_value=1000, initial=0, required=True)
+    suerte = forms.IntegerField(min_value=0, max_value=1000, initial=0, required=True)
 
     # Habilidades seleccionadas mediante Drag & Drop (máximo 2)
     habilidades = forms.ModelMultipleChoiceField(
@@ -63,14 +63,14 @@ class CrearPersonajeForm(forms.ModelForm):
     def clean_habilidades(self):
         habilidades = self.cleaned_data.get('habilidades')
         if habilidades.count() != 2:
-            raise forms.ValidationError("Debes seleccionar al menos 2 habilidades")
+            raise forms.ValidationError("Debes seleccionar exactamente 2 habilidades")
         return habilidades
 
 
     def clean_objetos(self):
         objetos = self.cleaned_data.get('objetos')
         if objetos.count() != 2:
-            raise forms.ValidationError("Debes seleccionar al menos 2 objetos")
+            raise forms.ValidationError("Debes seleccionar exactamente 2 objetos")
         return objetos
     
 
@@ -82,7 +82,7 @@ class CrearPersonajeForm(forms.ModelForm):
 
     
         # La suma de los atributos no pueden dar un valor diferente a 20 ya que debe asignar todos los atributos ni mas ni menos.
-        if puntos_base != sum(atributos):
+        if puntos_base != sum(atributo for atributo in atributos if atributo != None):
             raise forms.ValidationError("Debes otorgar todos los puntos que se te dio")
         return cleaned_data
 
@@ -113,13 +113,13 @@ class CrearPersonajeForm(forms.ModelForm):
                 # 1. Crear el registro OneToOne de Atributo
                 Atributo.objects.create(
                     personaje=personaje,
-                    fuerza=self.cleaned_data['fuerza'],
-                    destreza=self.cleaned_data['destreza'],
-                    vigor=self.cleaned_data['vigor'],
-                    inteligencia=self.cleaned_data['inteligencia'],
-                    percepcion=self.cleaned_data['percepcion'],
-                    carisma=self.cleaned_data['carisma'],
-                    suerte=self.cleaned_data['suerte'],
+                    fuerza=self.cleaned_data.get('fuerza', 0),
+                    destreza=self.cleaned_data.get('destreza', 0),
+                    vigor=self.cleaned_data.get('vigor', 0),
+                    inteligencia=self.cleaned_data.get('inteligencia', 0),
+                    percepcion=self.cleaned_data.get('percepcion', 0),
+                    carisma=self.cleaned_data.get('carisma', 0),
+                    suerte=self.cleaned_data.get('suerte', 0),
                 )
 
                 # 2. Asociar habilidades Many-to-Many mediante .add()
@@ -145,13 +145,13 @@ class ActualizarPersonajeForm(forms.ModelForm):
     """
 
     # 7 Atributos numéricos para el modelo Atributo
-    fuerza = forms.IntegerField(min_value=0, max_value=100, required=True)
-    destreza = forms.IntegerField(min_value=0, max_value=100, required=True)
-    vigor = forms.IntegerField(min_value=0, max_value=100, required=True)
-    inteligencia = forms.IntegerField(min_value=0, max_value=100, required=True)
-    percepcion = forms.IntegerField(min_value=0, max_value=100, required=True)
-    carisma = forms.IntegerField(min_value=0, max_value=100, required=True)
-    suerte = forms.IntegerField(min_value=0, max_value=100, required=True)
+    fuerza = forms.IntegerField(min_value=0, required=True)
+    destreza = forms.IntegerField(min_value=0, required=True)
+    vigor = forms.IntegerField(min_value=0, required=True)
+    inteligencia = forms.IntegerField(min_value=0, required=True)
+    percepcion = forms.IntegerField(min_value=0, required=True)
+    carisma = forms.IntegerField(min_value=0, required=True)
+    suerte = forms.IntegerField(min_value=0, required=True)
 
     # Habilidades seleccionables mediante checkboxes
     habilidades = forms.ModelMultipleChoiceField(
@@ -259,8 +259,23 @@ class ActualizarPersonajeForm(forms.ModelForm):
             # Actualizar Objetos (many-to-many con through InventarioItem)
             objetos_seleccionados = self.cleaned_data.get('objetos')
             if objetos_seleccionados is not None:
-                # Eliminar los que ya no están seleccionados
-                InventarioItem.objects.filter(personaje=personaje).exclude(objeto__in=objetos_seleccionados).delete()
+                # Eliminar los que ya no están seleccionados y desequiparlos si estaban puestos
+                items_a_eliminar = InventarioItem.objects.filter(personaje=personaje).exclude(objeto__in=objetos_seleccionados)
+                objetos_a_eliminar = [item.objeto for item in items_a_eliminar]
+                
+                slots = ['arma_equipada', 'casco_equipado', 'armadura_equipada', 
+                         'zapatos_equipados', 'collar_equipado', 'brazalete_equipado', 'escudo_equipado']
+                personaje_modificado = False
+                for obj in objetos_a_eliminar:
+                    for slot in slots:
+                        if getattr(personaje, slot) == obj:
+                            setattr(personaje, slot, None)
+                            personaje_modificado = True
+                            
+                if personaje_modificado and commit:
+                    personaje.save()
+                
+                items_a_eliminar.delete()
                 # Asegurar que los seleccionados existan con cantidad=1 por defecto si son nuevos
                 for obj in objetos_seleccionados:
                     # Intentar obtener la cantidad enviada en el form, por defecto 1
