@@ -120,7 +120,9 @@ class CrearPersonajeView(GmRequiredMixin, View):
         return render(request, self.template_name, self.get_context_data(request, form=form, error_msg=error_msg))
 
 
-class DetallePersonajeView(DetailView):
+from django.contrib.auth.mixins import LoginRequiredMixin
+
+class DetallePersonajeView(LoginRequiredMixin, DetailView):
     template_name="gestion/detalle_personaje.html"
     model=Personaje
     context_object_name='personaje'
@@ -323,7 +325,9 @@ class ApiConsumirObjetoView(GmRequiredMixin, View):
                             efectos_aplicados = True
                     # Elixires de atributos (cambio permanente)
                     elif hasattr(attr, stat):
-                        setattr(attr, stat, getattr(attr, stat) + amount)
+                        nuevo_valor = getattr(attr, stat) + amount
+                        nuevo_valor = min(nuevo_valor, 999)  # Cap máximo por atributo
+                        setattr(attr, stat, nuevo_valor)
                         attr.save()
                         efectos_aplicados = True
                         
@@ -369,6 +373,7 @@ class ListarRazasView(GmRequiredMixin, ListView):
     model = Raza
     template_name = "gestion/listar_razas.html"
     context_object_name = "razas"
+    paginate_by = 12
 
     def get_queryset(self):
         qs = Raza.objects.all().order_by('nombre')

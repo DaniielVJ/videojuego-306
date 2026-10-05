@@ -1,6 +1,7 @@
 from django import forms
 from django.db import transaction
 from django.contrib.auth import get_user_model
+from django.db.models import Q
 from ..models.personaje import Personaje, Raza, Habilidad, Atributo, InventarioItem
 from ..models import Objeto
 
@@ -46,7 +47,7 @@ class CrearPersonajeForm(forms.ModelForm):
 
         # Filtrar solo razas, habilidades y objetos activos en el reino
         self.fields['raza'].queryset = Raza.objects.filter(activo=True)
-        self.fields['habilidades'].queryset = Habilidad.objects.filter(activo=True)
+        self.fields['habilidades'].queryset = Habilidad.objects.filter(activo=True, kit_inicial=True)
 
         # Configurar usuarios activos para asignación del GM
         self.fields['usuario'].queryset = User.objects.filter(is_active=True).order_by('username')
@@ -179,7 +180,11 @@ class ActualizarPersonajeForm(forms.ModelForm):
         self.request_user = request_user
 
         # Filtrar solo razas, habilidades y objetos activos en el reino
-        self.fields['raza'].queryset = Raza.objects.filter(activo=True)
+        if self.instance and self.instance.pk and self.instance.raza and not self.instance.raza.activo:
+            self.fields['raza'].queryset = Raza.objects.filter(Q(activo=True) | Q(pk=self.instance.raza.pk))
+        else:
+            self.fields['raza'].queryset = Raza.objects.filter(activo=True)
+            
         self.fields['habilidades'].queryset = Habilidad.objects.filter(activo=True)
         self.fields['objetos'].queryset = Objeto.objects.filter(activo=True)
 

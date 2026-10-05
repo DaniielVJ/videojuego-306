@@ -58,17 +58,22 @@ class ObjetoUpdateCreateForm(forms.ModelForm):
 
 			efectos = self.instance.efectos
 
-			self.fields["fuerza"].initial = efectos.get("fuerza", efectos.get("fuerza", 0))
-			self.fields["destreza"].initial = efectos.get("destreza", efectos.get("destreza", 0))
-			self.fields["vigor"].initial = efectos.get("vigor", efectos.get("vigor", 0))
-			self.fields["inteligencia"].initial = efectos.get("inteligencia", efectos.get("inteligencia", 0))
-			self.fields["percepcion"].initial = efectos.get("percepcion", efectos.get("percepcion", 0))
-			self.fields["carisma"].initial = efectos.get("carisma", efectos.get("carisma", 0))
-			self.fields["suerte"].initial = efectos.get("suerte", efectos.get("suerte", 0))
+			self.fields["fuerza"].initial = efectos.get("fuerza", 0)
+			self.fields["destreza"].initial = efectos.get("destreza", 0)
+			self.fields["vigor"].initial = efectos.get("vigor", 0)
+			self.fields["inteligencia"].initial = efectos.get("inteligencia", 0)
+			self.fields["percepcion"].initial = efectos.get("percepcion", 0)
+			self.fields["carisma"].initial = efectos.get("carisma", 0)
+			self.fields["suerte"].initial = efectos.get("suerte", 0)
 			self.fields["hp_restore"].initial = efectos.get("hp_restore", 0)
 			self.fields["mana_restore"].initial = efectos.get("mana_restore", 0)
 
 	def save(self, commit = True):
+		# Verificar si es una actualización y hubo cambios críticos en el equipamiento
+		cambios_equipamiento = False
+		if self.instance and self.instance.pk:
+			if 'es_equipable' in self.changed_data or 'tipo_equipamiento' in self.changed_data:
+				cambios_equipamiento = True
 
 		instance = super().save(commit = False)
 
@@ -80,7 +85,14 @@ class ObjetoUpdateCreateForm(forms.ModelForm):
 		instance.efectos = efectos
 
 		if commit:
-
 			instance.save()
+			
+			# Desequipar forzosamente si el tipo de objeto cambió para evitar Permalocks
+			if cambios_equipamiento:
+				from src.gestion.models.personaje import Personaje
+				slots = ['arma_equipada', 'casco_equipado', 'armadura_equipada', 
+						 'zapatos_equipados', 'collar_equipado', 'brazalete_equipado', 'escudo_equipado']
+				for slot in slots:
+					Personaje.objects.filter(**{slot: instance}).update(**{slot: None})
 
 		return instance

@@ -95,8 +95,7 @@ class Personaje(models.Model):
             if obj and obj.efectos:
                 for key, val in obj.efectos.items():
                     if val != 0:
-                        clean_key = key[2:] if key.startswith('v_') else key
-                        bonos[clean_key] = bonos.get(clean_key, 0) + val
+                        bonos[key] = bonos.get(key, 0) + val
         return bonos
 
     @property
@@ -133,7 +132,7 @@ class Atributo(models.Model):
     inteligencia = models.PositiveIntegerField(null = False)
     percepcion = models.PositiveIntegerField(null = False)
     carisma = models.PositiveIntegerField(null = False)
-    suerte = models.IntegerField(null = False)
+    suerte = models.PositiveIntegerField(null = False)
 
     def __str__(self):
         return self.personaje.nombre
