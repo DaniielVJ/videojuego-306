@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Desterrar a {{ personaje.nombre }}{% endblock title %}
+
+{% block styles %}
+<link rel="stylesheet" href="{% static 'css/eliminar_personaje.css' %}">
+{% endblock styles %}
+
+{% block main %}
+<div class="scene">
+  <!-- Lienzo de Brasas y Cenizas de Fondo -->
+  <canvas id="bgCanvas" class="bg-canvas"></canvas>
+
+  {% include "includes/navbar2.html" %}
+
+  <main class="delete-container">
+    <div class="warcraft-panel">
+      <h1 class="warcraft-title" style="color: #ff4444; border-bottom: 2px solid #8a0303; padding-bottom: 10px;">DESTERRAR HÉROE (BORRADO DEFINITIVO)</h1>
+      <p class="warcraft-text" style="margin-top: 20px;">
+        ¿Estás seguro de que deseas sacrificar a <strong>{{ personaje.nombre }}</strong> en las llamas del olvido?<br>
+        <span style="font-size: 1rem; color: #fca5a5; margin-top: 15px; display: block; font-weight: bold;">
+          (¡ADVERTENCIA! Esta acción no se puede deshacer. Su existencia, atributos e inventario serán borrados de la base de datos de los Dioses para siempre).
+        </span>
+      </p>
+      
+      <form method="POST" action="">
+        {% csrf_token %}
+        <div class="action-buttons">
+          <a href="{% url 'player:detalle_personaje' pk=personaje.pk %}" class="btn-alliance">RETROCEDER Y CANCELAR</a>
+          <button type="submit" class="btn-horde">SÍ, BORRAR DEFINITIVAMENTE</button>
+        </div>
+      </form>
+    </div>
+  </main>
+</div>
+{% endblock main %}
+
+{% block scripts %}
+<!-- Motor de partículas de destrucción para esta vista -->
+<script src="{% static 'js/eliminar_personaje.js' %}"></script>
+{% endblock scripts %}
