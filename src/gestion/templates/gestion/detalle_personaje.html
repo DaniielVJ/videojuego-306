@@ -37,6 +37,22 @@
       </div>
 
       <div class="action-bar-right" style="display: flex; gap: 1rem;">
+        <!-- BOTÓN DE TRABAJAR / CIUDAD -->
+        {% if not request.user.is_gm %}
+        <a href="{% url 'gameplay:trabajar' personaje_id=personaje.pk %}" class="btn-hero-nav" style="color: #2980b9; border-color: #3498db;" title="Ir a la Ciudad">
+          <svg class="rpg-icon" viewBox="0 0 24 24"><path fill="currentColor" d="M12 3L2 12h3v8h6v-6h2v6h6v-8h3L12 3zm5 15h-2v-6H9v6H7v-7.81l5-4.5 5 4.5V18z"/></svg>
+          <span>TRABAJAR (CIUDAD)</span>
+        </a>
+        {% endif %}
+
+        <!-- BOTÓN DE TIENDA: NAVEGA AL MERCADO -->
+        {% if not request.user.is_gm %}
+        <a href="{% url 'gameplay:tienda' personaje_id=personaje.pk %}" class="btn-hero-nav btn-shop" style="color: #f1c40f; border-color: #f39c12;" title="Visitar al Mercader">
+          <svg class="rpg-icon" viewBox="0 0 24 24"><path fill="currentColor" d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12.9-1.63h7.45c.75 0 1.41-.41 1.75-1.03l3.58-6.49A1.003 1.003 0 0 0 20 4H5.21l-.94-2H1zm16 16c-1.1 0-1.99.9-1.99 2s.89 2 1.99 2 2-.9 2-2-.9-2-2-2z"/></svg>
+          <span>MERCADER ({{ personaje.oro }} 💰)</span>
+        </a>
+        {% endif %}
+
         <!-- BOTÓN DE EDICIÓN: NAVEGA A LA FORJA DE MODIFICACIÓN -->
         {% if not edit_mode %}
         <a href="{% if request.user.is_gm %}{% url 'gm:actualizar-personaje' pk=personaje.pk %}{% else %}{% url 'player:actualizar_personaje' pk=personaje.pk %}{% endif %}" class="btn-hero-nav btn-edit-hero" id="btnEditarHeroe" data-id="{{ personaje.pk }}" data-name="{{ personaje.nombre }}" title="{% if request.user.is_gm %}Modificar Atributos y Pertrechos de {{ personaje.nombre }}{% else %}Renombrar a {{ personaje.nombre }}{% endif %}">

@@ -20,6 +20,13 @@
    BARRA DE SCROLL GLOBAL TEMÁTICA
    =================================================== */
 
+body {
+    margin: 0;
+    padding: 0;
+    background-color: var(--warcraft-stone-dark);
+    color: var(--warcraft-text);
+}
+
 /* Estándar CSS W3C (Firefox y navegadores modernos) */
 * {
   scrollbar-width: thin;

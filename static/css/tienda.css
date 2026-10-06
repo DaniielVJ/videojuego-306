@@ -1,0 +1,252 @@
+/* ESTILOS DE LA TIENDA (DARK FANTASY RPG) */
+
+.scene {
+    position: relative;
+    min-height: 100vh;
+    background-color: #0b0c10;
+}
+
+.shop-background {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    /* Un fondo oscuro tipo taberna/mercado */
+    background: radial-gradient(circle at center, #2c1e16 0%, #0a0806 80%);
+    z-index: 0;
+    opacity: 0.9;
+}
+
+.shop-container {
+    position: relative;
+    z-index: 10;
+    max-width: 1000px;
+    margin: 40px auto;
+    padding: 20px;
+    background: rgba(20, 15, 10, 0.85);
+    border: 2px solid #5a4022;
+    border-radius: 8px;
+    box-shadow: 0 0 30px rgba(0,0,0,0.8), inset 0 0 20px rgba(0,0,0,0.5);
+    backdrop-filter: blur(5px);
+}
+
+/* HEADER DEL MERCADER */
+.shop-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 2px solid #5a4022;
+    padding-bottom: 20px;
+    margin-bottom: 30px;
+}
+
+.merchant-info {
+    flex: 1;
+}
+
+.player-wallet {
+    text-align: right;
+    background: rgba(0,0,0,0.5);
+    padding: 15px 25px;
+    border: 1px solid #c4ab7c;
+    border-radius: 5px;
+    box-shadow: inset 0 0 10px rgba(241, 196, 15, 0.2);
+}
+
+.wallet-label {
+    color: #c4ab7c;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 5px;
+}
+
+.wallet-amount {
+    font-size: 2rem;
+    color: #f1c40f;
+    font-family: 'Cinzel', serif;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.gold-icon-fallback {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    background: #f1c40f;
+    border-radius: 50%;
+    box-shadow: 0 0 5px #f1c40f;
+}
+
+.btn-back-codice {
+    display: inline-block;
+    padding: 5px 15px;
+    background: transparent;
+    border: 1px solid #7289da;
+    color: #7289da;
+    text-decoration: none;
+    font-size: 0.85rem;
+    border-radius: 3px;
+    transition: 0.3s;
+}
+
+.btn-back-codice:hover {
+    background: #7289da;
+    color: #fff;
+    box-shadow: 0 0 10px rgba(114, 137, 218, 0.5);
+}
+
+/* MENSAJES */
+.messages-container {
+    margin-bottom: 20px;
+}
+
+.alert {
+    padding: 10px 15px;
+    border-radius: 4px;
+    margin-bottom: 10px;
+    font-weight: bold;
+}
+.alert-success { background: rgba(46, 204, 113, 0.2); border: 1px solid #2ecc71; color: #2ecc71; }
+.alert-error { background: rgba(231, 76, 60, 0.2); border: 1px solid #e74c3c; color: #e74c3c; }
+
+
+/* CATALOGO */
+.shop-catalog {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+}
+
+.shop-item-card {
+    background: linear-gradient(180deg, rgba(30,25,20,0.9) 0%, rgba(15,10,5,0.95) 100%);
+    border: 1px solid #4a3520;
+    border-radius: 6px;
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.shop-item-card:hover {
+    transform: translateY(-5px);
+    border-color: #f1c40f;
+    box-shadow: 0 5px 15px rgba(241, 196, 15, 0.15);
+}
+
+.item-img-container {
+    height: 120px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 15px;
+    background: radial-gradient(circle, rgba(60,50,40,0.5) 0%, rgba(0,0,0,0.2) 100%);
+    border-radius: 4px;
+    border: 1px solid #332211;
+}
+
+.item-img {
+    max-height: 100px;
+    max-width: 100%;
+    object-fit: contain;
+    filter: drop-shadow(0 0 5px rgba(0,0,0,0.8));
+    transition: 0.3s;
+}
+
+.shop-item-card:hover .item-img {
+    transform: scale(1.1);
+}
+
+.item-details {
+    flex: 1;
+    text-align: center;
+}
+
+.item-name {
+    color: #e0d0b0;
+    font-family: 'Cinzel', serif;
+    font-size: 1.2rem;
+    margin-bottom: 5px;
+    text-shadow: 1px 1px 2px black;
+}
+
+.item-desc {
+    color: #8c7a65;
+    font-size: 0.85rem;
+    margin-bottom: 10px;
+    line-height: 1.3;
+}
+
+.item-stats {
+    margin-bottom: 15px;
+}
+
+.stat-badge {
+    display: inline-block;
+    padding: 3px 8px;
+    border-radius: 3px;
+    font-size: 0.75rem;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+.equipable { background: rgba(52, 152, 219, 0.2); color: #3498db; border: 1px solid #3498db; }
+.consumable { background: rgba(155, 89, 182, 0.2); color: #9b59b6; border: 1px solid #9b59b6; }
+
+/* ACTIONS / PRECIOS */
+.item-actions {
+    border-top: 1px solid #4a3520;
+    padding-top: 15px;
+    margin-top: auto;
+}
+
+.price-tag {
+    font-size: 0.9rem;
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+.buy-price { color: #e74c3c; } /* Rojo porque pierdes oro */
+.sell-price { color: #2ecc71; } /* Verde porque ganas oro */
+
+.trade-buttons {
+    display: flex;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.trade-buttons button {
+    flex: 1;
+    padding: 8px 0;
+    border: none;
+    border-radius: 3px;
+    font-family: 'Cinzel', serif;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.2s;
+    font-size: 0.9rem;
+}
+
+.btn-buy {
+    background: linear-gradient(to bottom, #d32f2f, #b71c1c);
+    color: #fff;
+    border: 1px solid #f44336;
+}
+.btn-buy:hover:not([disabled]) { background: #f44336; box-shadow: 0 0 10px rgba(244, 67, 54, 0.5); }
+.btn-buy[disabled] { filter: grayscale(1); opacity: 0.5; cursor: not-allowed; }
+
+.btn-sell {
+    background: linear-gradient(to bottom, #2e7d32, #1b5e20);
+    color: #fff;
+    border: 1px solid #4caf50;
+}
+.btn-sell:hover { background: #4caf50; box-shadow: 0 0 10px rgba(76, 175, 80, 0.5); }
