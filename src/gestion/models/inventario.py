@@ -15,6 +15,8 @@ class Objeto(models.Model):
 	nombre = models.CharField(max_length = 100, null = False, unique=True)
 	descripcion = models.TextField(max_length = 500, null = False)
 	peso = models.DecimalField(max_digits=5, decimal_places=2, default=0.0, blank=False, null=False)
+	precio_compra = models.PositiveIntegerField(default=10)
+	precio_venta = models.PositiveIntegerField(default=5)
 	efectos = models.JSONField(blank=True, null=True)
 	activo = models.BooleanField(default = True)
 	img = models.ImageField(upload_to='objetos/', null=False, blank=False)

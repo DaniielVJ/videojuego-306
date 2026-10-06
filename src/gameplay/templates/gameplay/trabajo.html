@@ -1,0 +1,198 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Tablón de Tareas - {{ personaje.nombre }}{% endblock title %}
+
+{% block styles %}
+<style>
+.work-scene {
+    min-height: 100vh;
+    background: radial-gradient(circle at center, #1a1a2e 0%, #0f0f1a 100%);
+    color: #e0e0e0;
+}
+.work-container {
+    max-width: 900px;
+    margin: 40px auto;
+    padding: 30px;
+    background: rgba(15, 20, 30, 0.9);
+    border: 2px solid #2980b9;
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(41, 128, 185, 0.4);
+}
+
+/* Status Header */
+.status-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #34495e;
+    padding-bottom: 20px;
+    margin-bottom: 30px;
+}
+.status-stats {
+    display: flex;
+    gap: 20px;
+}
+.stat-box {
+    background: #111;
+    padding: 10px 20px;
+    border-radius: 5px;
+    border: 1px solid #444;
+    text-align: center;
+    font-weight: bold;
+}
+.stat-box.hp { color: #e74c3c; border-color: #c0392b; }
+.stat-box.mana { color: #3498db; border-color: #2980b9; }
+.stat-box.gold { color: #f1c40f; border-color: #f39c12; }
+.stat-box.xp { color: #2ecc71; border-color: #27ae60; }
+
+.jobs-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+}
+
+.job-card {
+    background: #1a1a1a;
+    border: 1px solid #333;
+    border-radius: 8px;
+    padding: 20px;
+    text-align: center;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+.job-card:hover {
+    transform: translateY(-5px);
+}
+
+.job-icon {
+    font-size: 3rem;
+    margin-bottom: 10px;
+}
+.job-title {
+    font-family: 'Cinzel', serif;
+    color: #fff;
+    margin-bottom: 10px;
+}
+.job-desc {
+    font-size: 0.9rem;
+    color: #aaa;
+    margin-bottom: 20px;
+    min-height: 40px;
+}
+
+.job-costs {
+    font-size: 0.85rem;
+    margin-bottom: 15px;
+    padding: 10px;
+    background: rgba(0,0,0,0.5);
+    border-radius: 5px;
+}
+.cost-red { color: #e74c3c; }
+.cost-blue { color: #3498db; }
+.cost-gold { color: #f1c40f; }
+
+.btn-work {
+    width: 100%;
+    padding: 12px;
+    border: none;
+    border-radius: 5px;
+    font-family: 'Cinzel', serif;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s;
+    font-size: 1rem;
+}
+.btn-mina { background: #8e44ad; color: #fff; }
+.btn-mina:hover { background: #9b59b6; box-shadow: 0 0 10px #8e44ad; }
+.btn-biblio { background: #2980b9; color: #fff; }
+.btn-biblio:hover { background: #3498db; box-shadow: 0 0 10px #2980b9; }
+.btn-posada { background: #27ae60; color: #fff; }
+.btn-posada:hover { background: #2ecc71; box-shadow: 0 0 10px #27ae60; }
+</style>
+{% endblock styles %}
+
+{% block main %}
+<div class="work-scene">
+  <div style="position: relative; z-index: 9999;">
+    {% include "includes/navbar2.html" %}
+  </div>
+
+  <main class="work-container">
+    
+    <header class="status-header">
+      <div>
+        <a href="{% url 'player:detalle_personaje' pk=personaje.pk %}" style="margin-bottom: 15px; display: inline-flex; align-items: center; gap: 5px; padding: 5px 15px; background: transparent; border: 1px solid #7289da; color: #7289da; text-decoration: none; font-size: 0.85rem; border-radius: 3px; transition: 0.3s;">
+          <svg class="rpg-icon" viewBox="0 0 24 24"><path fill="currentColor" d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>
+          Volver al Códice
+        </a>
+        <h1 class="warcraft-title" style="color: #2980b9;">CIUDAD CAPITAL</h1>
+        <p>Busca tareas, gana oro y experiencia para sobrevivir.</p>
+      </div>
+      
+      <div class="status-stats">
+        <div class="stat-box hp">❤ {{ personaje.hp_actual }} / {{ personaje.hp_base }}</div>
+        <div class="stat-box mana">🔮 {{ personaje.mana_actual }} / {{ personaje.mana_base }}</div>
+        <div class="stat-box gold">💰 {{ personaje.oro }}</div>
+        <div class="stat-box xp">⭐ {{ personaje.experiencia }} XP</div>
+      </div>
+    </header>
+
+    {% if messages %}
+      <div style="margin-bottom: 20px;">
+      {% for message in messages %}
+        <div style="padding: 15px; border-radius: 5px; font-weight: bold; text-align: center; {% if message.tags == 'success' %}background: rgba(46, 204, 113, 0.2); color: #2ecc71; border: 1px solid #2ecc71;{% else %}background: rgba(231, 76, 60, 0.2); color: #e74c3c; border: 1px solid #e74c3c;{% endif %}">
+          {{ message }}
+        </div>
+      {% endfor %}
+      </div>
+    {% endif %}
+
+    <div class="jobs-grid">
+      <!-- MINA -->
+      <div class="job-card" style="border-color: #8e44ad;">
+        <div class="job-icon">⛏️</div>
+        <h3 class="job-title">Las Minas de Hierro</h3>
+        <p class="job-desc">Trabajo duro y físico. Rompe rocas para encontrar oro escondido.</p>
+        <div class="job-costs">
+          Costo: <span class="cost-red">-20 HP</span><br>
+          Recompensa: Mucho Oro, poca XP.
+        </div>
+        <form method="POST">
+          {% csrf_token %}
+          <button type="submit" name="accion" value="mina" class="btn-work btn-mina">PICAR PIEDRA</button>
+        </form>
+      </div>
+
+      <!-- BIBLIOTECA -->
+      <div class="job-card" style="border-color: #2980b9;">
+        <div class="job-icon">📜</div>
+        <h3 class="job-title">La Gran Biblioteca</h3>
+        <p class="job-desc">Traduce pergaminos arcanos. Requiere mucha concentración mental.</p>
+        <div class="job-costs">
+          Costo: <span class="cost-blue">-20 Maná</span><br>
+          Recompensa: Poca Oro, mucha XP.
+        </div>
+        <form method="POST">
+          {% csrf_token %}
+          <button type="submit" name="accion" value="biblioteca" class="btn-work btn-biblio">ESTUDIAR</button>
+        </form>
+      </div>
+
+      <!-- POSADA -->
+      <div class="job-card" style="border-color: #27ae60;">
+        <div class="job-icon">🍺</div>
+        <h3 class="job-title">Posada "El Jabalí"</h3>
+        <p class="job-desc">Descansa en una cama caliente y recupera tu vitalidad y energía.</p>
+        <div class="job-costs">
+          Costo: <span class="cost-gold">-10 Oro 💰</span><br>
+          Recompensa: <span style="color: #2ecc71;">+50 HP / +50 Maná</span>
+        </div>
+        <form method="POST">
+          {% csrf_token %}
+          <button type="submit" name="accion" value="posada" class="btn-work btn-posada">DESCANSAR</button>
+        </form>
+      </div>
+    </div>
+  </main>
+</div>
+{% endblock main %}
