@@ -373,7 +373,7 @@ class ListarRazasView(GmRequiredMixin, ListView):
     model = Raza
     template_name = "gestion/listar_razas.html"
     context_object_name = "razas"
-    paginate_by = 12
+    paginate_by = 6
 
     def get_queryset(self):
         qs = Raza.objects.all().order_by('nombre')
@@ -433,7 +433,7 @@ class ListarHabilidadesView(GmRequiredMixin, ListView):
     model = Habilidad
     template_name = "gestion/listar_habilidades.html"
     context_object_name = "habilidades"
-    paginate_by = 12
+    paginate_by = 6
 
     def get_queryset(self):
         qs = Habilidad.objects.all().order_by('nombre')
@@ -496,7 +496,7 @@ class ListarObjetosView(GmRequiredMixin, ListView):
     model = Objeto
     template_name = "gestion/listar_objetos.html"
     context_object_name = "objetos"
-    paginate_by = 12
+    paginate_by = 6
 
     def get_queryset(self):
         qs = Objeto.objects.all().order_by('nombre')
