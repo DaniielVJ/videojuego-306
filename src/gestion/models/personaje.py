@@ -35,6 +35,7 @@ class Personaje(models.Model):
     estado = models.CharField(max_length = 50, choices=Estado.choices, default=Estado.VIVO, null = False)
     nivel = models.PositiveIntegerField(default = 1)
     experiencia = models.PositiveIntegerField(default = 0)
+    oro = models.PositiveIntegerField(default = 0)
     exp_siguiente_nivel = models.PositiveIntegerField(default = 100)
     hp_base = models.PositiveIntegerField(default = 100)
     hp_actual = models.IntegerField(default = 100)
