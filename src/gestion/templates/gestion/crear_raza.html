@@ -156,8 +156,8 @@
                 {% if form.img_head.errors %}<div style="color: #ff4444; font-weight: bold;">{{ form.img_head.errors }}</div>{% endif %}
             </div>
 
-            <h3 style="grid-column: 1 / -1; color: #ffcc00; font-family: 'Bangers'; margin-top: 1rem; border-bottom: 1px solid #8c7335; padding-bottom: 5px;">Bonificadores y Handicaps</h3>
-            <p style="grid-column: 1 / -1; color: #ffeed1; font-family: 'MedievalSharp'; margin-top: -10px;">Valores positivos otorgan bonificador, valores negativos aplican handicap a la raza.</p>
+            <h3 style="grid-column: 1 / -1; color: #ffcc00; font-family: 'Bangers'; margin-top: 1rem; border-bottom: 1px solid #8c7335; padding-bottom: 5px;">Bonificadores Raciales</h3>
+            <p style="grid-column: 1 / -1; color: #ffeed1; font-family: 'MedievalSharp'; margin-top: -10px;">Ajusta los bonificadores que esta raza otorgará a los atributos de sus personajes.</p>
             
             {% for field in form %}
                 {% if field.name != 'nombre' and field.name != 'descripcion' and field.name != 'img_body' and field.name != 'img_head' %}
