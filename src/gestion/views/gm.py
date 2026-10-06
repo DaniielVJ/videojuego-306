@@ -120,7 +120,9 @@ class CrearPersonajeView(GmRequiredMixin, View):
         return render(request, self.template_name, self.get_context_data(request, form=form, error_msg=error_msg))
 
 
-class DetallePersonajeView(DetailView):
+from django.contrib.auth.mixins import LoginRequiredMixin
+
+class DetallePersonajeView(LoginRequiredMixin, DetailView):
     template_name="gestion/detalle_personaje.html"
     model=Personaje
     context_object_name='personaje'
@@ -249,9 +251,17 @@ class ApiEquiparObjetoView(GmRequiredMixin, View):
                 'escudo': 'escudo_equipado'
             }
             
-            campo_slot = mapa_slots.get(tipo)
+            # Normalizamos el tipo a minúsculas y quitamos la 's' final si existe (ej. armas -> arma) para ser más tolerantes
+            tipo_normalizado = tipo.lower().strip()
+            if tipo_normalizado.endswith('s') and tipo_normalizado != 'zapatos':
+                tipo_normalizado = tipo_normalizado[:-1]
+                
+            campo_slot = mapa_slots.get(tipo_normalizado)
             if not campo_slot:
-                return JsonResponse({"error": f"Slot inválido o no reconocido: {tipo}"}, status=500)
+                # Fallback si aún no coincide
+                campo_slot = mapa_slots.get(tipo.lower().strip())
+                if not campo_slot:
+                    return JsonResponse({"error": f"Slot inválido o no reconocido: {tipo}"}, status=500)
                 
             if accion == 'equipar':
                 setattr(personaje, campo_slot, objeto)
@@ -302,29 +312,29 @@ class ApiConsumirObjetoView(GmRequiredMixin, View):
             if objeto.efectos:
                 attr = personaje.atributos
                 
-                # Validación previa: Si solo cura y ya está al máximo, rechazar
-                solo_cura_hp = len(objeto.efectos) == 1 and 'hp_restore' in objeto.efectos
-                solo_cura_mana = len(objeto.efectos) == 1 and 'mana_restore' in objeto.efectos
-                
-                if solo_cura_hp and personaje.hp_actual >= personaje.hp_total:
-                    return JsonResponse({"error": "Tu salud ya está al máximo. No desperdicies la poción."}, status=400)
-                if solo_cura_mana and personaje.mana_actual >= personaje.mana_total:
-                    return JsonResponse({"error": "Tu maná ya está al máximo. No desperdicies la poción."}, status=400)
+                # Validación previa eliminada para simplificar. Siempre intenta consumir y aplicar.
                 
                 for stat, amount in objeto.efectos.items():
-                    if stat == 'hp_restore' and personaje.hp_actual < personaje.hp_total:
-                        personaje.hp_actual = min(personaje.hp_total, personaje.hp_actual + amount)
-                        efectos_aplicados = True
-                    elif stat == 'mana_restore' and personaje.mana_actual < personaje.mana_total:
-                        personaje.mana_actual = min(personaje.mana_total, personaje.mana_actual + amount)
-                        efectos_aplicados = True
+                    if stat == 'hp_restore':
+                        if personaje.hp_actual < personaje.hp_total:
+                            personaje.hp_actual = min(personaje.hp_total, personaje.hp_actual + amount)
+                            efectos_aplicados = True
+                    elif stat == 'mana_restore':
+                        if personaje.mana_actual < personaje.mana_total:
+                            personaje.mana_actual = min(personaje.mana_total, personaje.mana_actual + amount)
+                            efectos_aplicados = True
                     # Elixires de atributos (cambio permanente)
                     elif hasattr(attr, stat):
-                        setattr(attr, stat, getattr(attr, stat) + amount)
+                        nuevo_valor = getattr(attr, stat) + amount
+                        nuevo_valor = min(nuevo_valor, 999)  # Cap máximo por atributo
+                        setattr(attr, stat, nuevo_valor)
                         attr.save()
                         efectos_aplicados = True
                         
                 if not efectos_aplicados:
+                    # Si no aplicó efectos de stats puros ni restauró porque estaba full, pero es poción, la consume igual o rechaza amigable
+                    if 'hp_restore' in objeto.efectos or 'mana_restore' in objeto.efectos:
+                        return JsonResponse({"error": "Ya tienes tu vitalidad/maná al máximo."}, status=400)
                     return JsonResponse({"error": "No puedes usar este objeto ahora mismo."}, status=400)
             
             # Consumir el objeto (disminuir cantidad de InventarioItem)
@@ -363,6 +373,7 @@ class ListarRazasView(GmRequiredMixin, ListView):
     model = Raza
     template_name = "gestion/listar_razas.html"
     context_object_name = "razas"
+    paginate_by = 12
 
     def get_queryset(self):
         qs = Raza.objects.all().order_by('nombre')

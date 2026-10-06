@@ -27,13 +27,13 @@ class RazaForm(forms.ModelForm):
             raise forms.ValidationError("La imagen no puede pesar más de 10 MB.")
         return img
 
-    b_fuerza = forms.IntegerField(initial = 0, label = "Bonificador/Handicap Fuerza (+/-)", widget=forms.NumberInput(attrs={'type': 'range', 'min': '-100', 'max': '1000', 'class': 'stat-slider', 'oninput': 'this.nextElementSibling.innerText = this.value'}))
-    b_destreza = forms.IntegerField(initial = 0, label = "Bonificador/Handicap Destreza (+/-)", widget=forms.NumberInput(attrs={'type': 'range', 'min': '-100', 'max': '1000', 'class': 'stat-slider', 'oninput': 'this.nextElementSibling.innerText = this.value'}))
-    b_vigor = forms.IntegerField(initial = 0, label = "Bonificador/Handicap Vigor (+/-)", widget=forms.NumberInput(attrs={'type': 'range', 'min': '-100', 'max': '1000', 'class': 'stat-slider', 'oninput': 'this.nextElementSibling.innerText = this.value'}))
-    b_inteligencia = forms.IntegerField(initial = 0, label = "Bonificador/Handicap Inteligencia (+/-)", widget=forms.NumberInput(attrs={'type': 'range', 'min': '-100', 'max': '1000', 'class': 'stat-slider', 'oninput': 'this.nextElementSibling.innerText = this.value'}))
-    b_percepcion = forms.IntegerField(initial = 0, label = "Bonificador/Handicap Percepcion (+/-)", widget=forms.NumberInput(attrs={'type': 'range', 'min': '-100', 'max': '1000', 'class': 'stat-slider', 'oninput': 'this.nextElementSibling.innerText = this.value'}))
-    b_carisma = forms.IntegerField(initial = 0, label = "Bonificador/Handicap Carisma (+/-)", widget=forms.NumberInput(attrs={'type': 'range', 'min': '-100', 'max': '1000', 'class': 'stat-slider', 'oninput': 'this.nextElementSibling.innerText = this.value'}))
-    b_suerte = forms.IntegerField(initial = 0, label = "Bonificador/Handicap Suerte (+/-)", widget=forms.NumberInput(attrs={'type': 'range', 'min': '-100', 'max': '1000', 'class': 'stat-slider', 'oninput': 'this.nextElementSibling.innerText = this.value'}))
+    b_fuerza = forms.IntegerField(initial = 0, min_value=0, label = "Bonificador Fuerza (+)", widget=forms.NumberInput(attrs={'type': 'range', 'min': '0', 'max': '100', 'class': 'stat-slider', 'oninput': 'this.nextElementSibling.innerText = this.value'}))
+    b_destreza = forms.IntegerField(initial = 0, min_value=0, label = "Bonificador Destreza (+)", widget=forms.NumberInput(attrs={'type': 'range', 'min': '0', 'max': '100', 'class': 'stat-slider', 'oninput': 'this.nextElementSibling.innerText = this.value'}))
+    b_vigor = forms.IntegerField(initial = 0, min_value=0, label = "Bonificador Vigor (+)", widget=forms.NumberInput(attrs={'type': 'range', 'min': '0', 'max': '100', 'class': 'stat-slider', 'oninput': 'this.nextElementSibling.innerText = this.value'}))
+    b_inteligencia = forms.IntegerField(initial = 0, min_value=0, label = "Bonificador Inteligencia (+)", widget=forms.NumberInput(attrs={'type': 'range', 'min': '0', 'max': '100', 'class': 'stat-slider', 'oninput': 'this.nextElementSibling.innerText = this.value'}))
+    b_percepcion = forms.IntegerField(initial = 0, min_value=0, label = "Bonificador Percepcion (+)", widget=forms.NumberInput(attrs={'type': 'range', 'min': '0', 'max': '100', 'class': 'stat-slider', 'oninput': 'this.nextElementSibling.innerText = this.value'}))
+    b_carisma = forms.IntegerField(initial = 0, min_value=0, label = "Bonificador Carisma (+)", widget=forms.NumberInput(attrs={'type': 'range', 'min': '0', 'max': '100', 'class': 'stat-slider', 'oninput': 'this.nextElementSibling.innerText = this.value'}))
+    b_suerte = forms.IntegerField(initial = 0, min_value=0, label = "Bonificador Suerte (+)", widget=forms.NumberInput(attrs={'type': 'range', 'min': '0', 'max': '100', 'class': 'stat-slider', 'oninput': 'this.nextElementSibling.innerText = this.value'}))
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

@@ -4,16 +4,16 @@ from src.gestion.models.inventario import Objeto
 
 class ObjetoUpdateCreateForm(forms.ModelForm):
 
-	fuerza = forms.IntegerField(initial = 0, label = "Valor fuerza (puede ser positivo o negativo)", widget=forms.NumberInput(attrs={'type': 'range', 'min': '-100', 'max': '1000', 'class': 'stat-slider', 'oninput': 'this.nextElementSibling.innerText = this.value'}))
-	destreza = forms.IntegerField(initial = 0, label = "Valor destreza (puede ser positivo o negativo)", widget=forms.NumberInput(attrs={'type': 'range', 'min': '-100', 'max': '1000', 'class': 'stat-slider', 'oninput': 'this.nextElementSibling.innerText = this.value'}))
-	vigor = forms.IntegerField(initial = 0, label = "Valor vigor (puede ser positivo o negativo)", widget=forms.NumberInput(attrs={'type': 'range', 'min': '-100', 'max': '1000', 'class': 'stat-slider', 'oninput': 'this.nextElementSibling.innerText = this.value'}))
-	inteligencia = forms.IntegerField(initial = 0, label = "Valor inteligencia (puede ser positivo o negativo)", widget=forms.NumberInput(attrs={'type': 'range', 'min': '-100', 'max': '1000', 'class': 'stat-slider', 'oninput': 'this.nextElementSibling.innerText = this.value'}))
-	percepcion = forms.IntegerField(initial = 0, label = "Valor percepcion (puede ser positivo o negativo)", widget=forms.NumberInput(attrs={'type': 'range', 'min': '-100', 'max': '1000', 'class': 'stat-slider', 'oninput': 'this.nextElementSibling.innerText = this.value'}))
-	carisma = forms.IntegerField(initial = 0, label = "Valor carisma (puede ser positivo o negativo)", widget=forms.NumberInput(attrs={'type': 'range', 'min': '-100', 'max': '1000', 'class': 'stat-slider', 'oninput': 'this.nextElementSibling.innerText = this.value'}))
-	suerte = forms.IntegerField(initial = 0, label = "Valor suerte (puede ser positivo o negativo)", widget=forms.NumberInput(attrs={'type': 'range', 'min': '-100', 'max': '1000', 'class': 'stat-slider', 'oninput': 'this.nextElementSibling.innerText = this.value'}))
+	fuerza = forms.IntegerField(initial = 0, min_value=0, label = "Fuerza (+)", widget=forms.NumberInput(attrs={'type': 'range', 'min': '0', 'max': '100', 'class': 'stat-slider', 'oninput': 'this.nextElementSibling.innerText = this.value'}))
+	destreza = forms.IntegerField(initial = 0, min_value=0, label = "Destreza (+)", widget=forms.NumberInput(attrs={'type': 'range', 'min': '0', 'max': '100', 'class': 'stat-slider', 'oninput': 'this.nextElementSibling.innerText = this.value'}))
+	vigor = forms.IntegerField(initial = 0, min_value=0, label = "Vigor (+)", widget=forms.NumberInput(attrs={'type': 'range', 'min': '0', 'max': '100', 'class': 'stat-slider', 'oninput': 'this.nextElementSibling.innerText = this.value'}))
+	inteligencia = forms.IntegerField(initial = 0, min_value=0, label = "Inteligencia (+)", widget=forms.NumberInput(attrs={'type': 'range', 'min': '0', 'max': '100', 'class': 'stat-slider', 'oninput': 'this.nextElementSibling.innerText = this.value'}))
+	percepcion = forms.IntegerField(initial = 0, min_value=0, label = "Percepcion (+)", widget=forms.NumberInput(attrs={'type': 'range', 'min': '0', 'max': '100', 'class': 'stat-slider', 'oninput': 'this.nextElementSibling.innerText = this.value'}))
+	carisma = forms.IntegerField(initial = 0, min_value=0, label = "Carisma (+)", widget=forms.NumberInput(attrs={'type': 'range', 'min': '0', 'max': '100', 'class': 'stat-slider', 'oninput': 'this.nextElementSibling.innerText = this.value'}))
+	suerte = forms.IntegerField(initial = 0, min_value=0, label = "Suerte (+)", widget=forms.NumberInput(attrs={'type': 'range', 'min': '0', 'max': '100', 'class': 'stat-slider', 'oninput': 'this.nextElementSibling.innerText = this.value'}))
 	
-	hp_restore = forms.IntegerField(initial=0, min_value=0, label="Restaurar HP (Consumibles)", widget=forms.NumberInput(attrs={'type': 'range', 'min': '-100', 'max': '1000', 'class': 'stat-slider', 'oninput': 'this.nextElementSibling.innerText = this.value'}))
-	mana_restore = forms.IntegerField(initial=0, min_value=0, label="Restaurar Maná (Consumibles)", widget=forms.NumberInput(attrs={'type': 'range', 'min': '-100', 'max': '1000', 'class': 'stat-slider', 'oninput': 'this.nextElementSibling.innerText = this.value'}))
+	hp_restore = forms.IntegerField(initial=0, min_value=0, label="Restaurar HP (Consumibles)", widget=forms.NumberInput(attrs={'type': 'range', 'min': '0', 'max': '1000', 'class': 'stat-slider', 'oninput': 'this.nextElementSibling.innerText = this.value'}))
+	mana_restore = forms.IntegerField(initial=0, min_value=0, label="Restaurar Maná (Consumibles)", widget=forms.NumberInput(attrs={'type': 'range', 'min': '0', 'max': '1000', 'class': 'stat-slider', 'oninput': 'this.nextElementSibling.innerText = this.value'}))
 
 	class Meta:
 
@@ -58,17 +58,22 @@ class ObjetoUpdateCreateForm(forms.ModelForm):
 
 			efectos = self.instance.efectos
 
-			self.fields["fuerza"].initial = efectos.get("fuerza", efectos.get("fuerza", 0))
-			self.fields["destreza"].initial = efectos.get("destreza", efectos.get("destreza", 0))
-			self.fields["vigor"].initial = efectos.get("vigor", efectos.get("vigor", 0))
-			self.fields["inteligencia"].initial = efectos.get("inteligencia", efectos.get("inteligencia", 0))
-			self.fields["percepcion"].initial = efectos.get("percepcion", efectos.get("percepcion", 0))
-			self.fields["carisma"].initial = efectos.get("carisma", efectos.get("carisma", 0))
-			self.fields["suerte"].initial = efectos.get("suerte", efectos.get("suerte", 0))
+			self.fields["fuerza"].initial = efectos.get("fuerza", 0)
+			self.fields["destreza"].initial = efectos.get("destreza", 0)
+			self.fields["vigor"].initial = efectos.get("vigor", 0)
+			self.fields["inteligencia"].initial = efectos.get("inteligencia", 0)
+			self.fields["percepcion"].initial = efectos.get("percepcion", 0)
+			self.fields["carisma"].initial = efectos.get("carisma", 0)
+			self.fields["suerte"].initial = efectos.get("suerte", 0)
 			self.fields["hp_restore"].initial = efectos.get("hp_restore", 0)
 			self.fields["mana_restore"].initial = efectos.get("mana_restore", 0)
 
 	def save(self, commit = True):
+		# Verificar si es una actualización y hubo cambios críticos en el equipamiento
+		cambios_equipamiento = False
+		if self.instance and self.instance.pk:
+			if 'es_equipable' in self.changed_data or 'tipo_equipamiento' in self.changed_data:
+				cambios_equipamiento = True
 
 		instance = super().save(commit = False)
 
@@ -80,7 +85,14 @@ class ObjetoUpdateCreateForm(forms.ModelForm):
 		instance.efectos = efectos
 
 		if commit:
-
 			instance.save()
+			
+			# Desequipar forzosamente si el tipo de objeto cambió para evitar Permalocks
+			if cambios_equipamiento:
+				from src.gestion.models.personaje import Personaje
+				slots = ['arma_equipada', 'casco_equipado', 'armadura_equipada', 
+						 'zapatos_equipados', 'collar_equipado', 'brazalete_equipado', 'escudo_equipado']
+				for slot in slots:
+					Personaje.objects.filter(**{slot: instance}).update(**{slot: None})
 
 		return instance

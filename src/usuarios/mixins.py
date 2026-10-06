@@ -2,7 +2,8 @@ from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 
 
 class PlayerRequiredMixin(LoginRequiredMixin, UserPassesTestMixin):
-    pass
+    def test_func(self):
+        return not self.request.user.is_gm
 
 
 class GmRequiredMixin(LoginRequiredMixin, UserPassesTestMixin):
