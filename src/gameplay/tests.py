@@ -1,7 +1,8 @@
 from django.test import TestCase, Client
 from django.contrib.auth import get_user_model
-User = get_user_model()
 from src.gestion.models import Personaje, Raza, Objeto, InventarioItem
+
+User = get_user_model()
 
 class GameplayTests(TestCase):
     def setUp(self):
@@ -26,7 +27,8 @@ class GameplayTests(TestCase):
             peso=5.0,
             precio_compra=20,
             precio_venta=10,
-            activo=True
+            activo=True,
+            img='objetos/espada.png'
         )
 
     def test_tienda_view_get(self):

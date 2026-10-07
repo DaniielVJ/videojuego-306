@@ -535,7 +535,10 @@ function initFormValidation() {
 
     if (!nameVal || nameVal.length < 3) {
       e.preventDefault();
-      alert('⚠️ Por favor ingresa un nombre para el héroe de al menos 3 caracteres.');
+      Swal.fire({
+        toast: true, position: 'top-end', showConfirmButton: false, timer: 3000,
+        icon: 'warning', title: 'Ingresa un nombre de al menos 3 caracteres.', background: '#1a1a1a', color: '#f1c40f'
+      });
       if (inputName) inputName.focus();
       return;
     }

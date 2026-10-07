@@ -15,6 +15,7 @@ class TiendaView(LoginRequiredMixin, View):
         personaje = get_object_or_404(Personaje, pk=personaje_id, usuario=request.user)
         
         # Obtener objetos activos (Catálogo de la Tienda)
+        # Excluimos los objetos del 'kit_inicial' porque esos solo se otorgan al crear el personaje
         objetos_venta = Objeto.objects.filter(activo=True).order_by('precio_compra')
         
         # Obtener los objetos que posee el personaje en su inventario para poder venderlos
@@ -125,10 +126,10 @@ class TrabajoView(LoginRequiredMixin, View):
                         personaje.oro -= 10
                         # Curar HP
                         personaje.hp_actual += 50
-                        if personaje.hp_actual > personaje.hp_base: personaje.hp_actual = personaje.hp_base
+                        if personaje.hp_actual > personaje.hp_total: personaje.hp_actual = personaje.hp_total
                         # Curar Mana
                         personaje.mana_actual += 50
-                        if personaje.mana_actual > personaje.mana_base: personaje.mana_actual = personaje.mana_base
+                        if personaje.mana_actual > personaje.mana_total: personaje.mana_actual = personaje.mana_total
                         
                         personaje.save()
                         messages.success(request, "Descansaste en la posada por 10 💰. Has recuperado salud y maná.")
