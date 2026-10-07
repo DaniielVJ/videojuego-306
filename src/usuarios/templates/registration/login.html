@@ -32,18 +32,12 @@ Login
       <form id="loginForm" class="login-form" novalidate action="" method="POST">
         {% csrf_token %}
 
-        {% if messages %}
-        {% for message in messages %}
-        <div id="login-error" class="login-error">
-          <span>{{message}}</span>
-        </div>
-        {% endfor %}
-        {% endif %}
+
 
         {{form.as_div}}
 
         <button type="submit" id="submitBtn" class="btn-form-login">INICIAR SESIÓN</button>
-        <a href="{% url 'usuarios:registro' %}" id="registerLink" class="register-link">CREAR NUEVO HÉROE</a>
+        <a href="{% url 'usuarios:registro' %}" id="registerLink" class="register-link">CREAR UNA CUENTA</a>
       </form>
     </div>
 

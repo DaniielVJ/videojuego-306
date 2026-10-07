@@ -20,6 +20,9 @@
 
     <!-- Estilos Base Globales (Variables y Scrollbar Temático) -->
     <link rel="stylesheet" href="{% static 'css/base.css' %}" />
+    
+    <!-- SweetAlert2 para Alertas Modernas -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     {% block styles %}
         
@@ -29,6 +32,23 @@
 <body>
     <!-- Reproductor de Audio Global y Botón de Silencio -->
     {% include "includes/audio_player.html" %}
+
+    <!-- Contenedor Global de Mensajes (Django Messages) -->
+    {% if messages %}
+    <div id="global-messages" style="position: fixed; top: 20px; right: 20px; z-index: 99999; display: flex; flex-direction: column; gap: 10px; max-width: 350px;">
+        {% for message in messages %}
+        <div class="message {{ message.tags }}" style="background: rgba(10,10,10,0.95); border: 2px solid {% if message.tags == 'error' %}#e74c3c{% else %}#f1c40f{% endif %}; color: {% if message.tags == 'error' %}#e74c3c{% else %}#f1c40f{% endif %}; padding: 15px; border-radius: 4px; font-family: 'MedievalSharp', cursive; box-shadow: 0 4px 6px rgba(0,0,0,0.5); font-size: 1.1rem; line-height: 1.4;">
+            {{ message }}
+        </div>
+        {% endfor %}
+    </div>
+    <script>
+        setTimeout(() => {
+            const msgs = document.getElementById('global-messages');
+            if (msgs) { msgs.style.transition = 'opacity 1s'; msgs.style.opacity = '0'; setTimeout(() => msgs.remove(), 1000); }
+        }, 5000);
+    </script>
+    {% endif %}
 
     {% block main %}
         

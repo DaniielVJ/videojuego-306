@@ -17,6 +17,17 @@
       <h1 class="roster-title">Razas del Reino</h1>
       <a href="{% url 'gm:crear-raza' %}" class="btn-create-hero">NUEVA RAZA</a>
     </div>
+    <div class="search-bar" style="margin-bottom: 2rem; display: flex; gap: 1rem;">
+      <form method="GET" action="" style="display: flex; gap: 1rem; width: 100%; max-width: 800px;">
+        <input type="text" name="q" value="{{ q }}" placeholder="Buscar raza por nombre..." style="flex: 1; padding: 10px; background: rgba(0,0,0,0.6); border: 1px solid #8c7335; color: #ffeed1; font-family: 'MedievalSharp', cursive; border-radius: 4px;">
+        <select name="estado" style="padding: 10px; background: rgba(0,0,0,0.6); border: 1px solid #8c7335; color: #ffeed1; font-family: 'MedievalSharp', cursive; border-radius: 4px;">
+          <option value="todos" {% if estado == 'todos' %}selected{% endif %}>Todos los Estados</option>
+          <option value="activos" {% if estado == 'activos' %}selected{% endif %}>Solo Activas</option>
+          <option value="deshabilitados" {% if estado == 'deshabilitados' %}selected{% endif %}>Solo Deshabilitadas</option>
+        </select>
+        <button type="submit" class="btn-create-hero" style="padding: 10px 20px; font-size: 1rem;">BUSCAR</button>
+      </form>
+    </div>
     <div class="roster-grid">
       {% for raza in razas %}
       <a href="{% url 'gm:detalle-raza' pk=raza.pk %}" class="roster-card">
@@ -41,6 +52,28 @@
       </a>
       {% endfor %}
     </div>
+
+    <!-- CONTROLES DE PAGINACIÓN -->
+    {% if is_paginated %}
+    <div class="pagination-wrapper" style="text-align: center; margin-top: 30px;">
+      <div class="step-links">
+        {% if page_obj.has_previous %}
+        <a href="?page=1{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}" data-page="1" class="page-btn pagination-action">&laquo; Primera</a>
+        <a href="?page={{ page_obj.previous_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}" data-page="{{ page_obj.previous_page_number }}" class="page-btn pagination-action">&lsaquo; Anterior</a>
+        {% endif %}
+
+        <span class="page-current" style="color: #c4ab7c; margin: 0 15px;">
+          Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}
+        </span>
+
+        {% if page_obj.has_next %}
+        <a href="?page={{ page_obj.next_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}" data-page="{{ page_obj.next_page_number }}" class="page-btn pagination-action">Siguiente &rsaquo;</a>
+        <a href="?page={{ page_obj.paginator.num_pages }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}" data-page="{{ page_obj.paginator.num_pages }}" class="page-btn pagination-action">Última &raquo;</a>
+        {% endif %}
+      </div>
+    </div>
+    {% endif %}
+
   </main>
 </div>
 {% endblock %}

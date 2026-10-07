@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Detalle Objeto: {{ objeto.nombre }}{% endblock %}
+{% block styles %}
+<link rel="stylesheet" href="{% static 'css/detalle_objeto.css' %}">
+{% endblock %}
+{% block main %}
+<div class="scene">
+  <canvas id="bgCanvas" class="bg-canvas"></canvas>
+  {% include "includes/navbar2.html" %}
+  <div class="content-wrapper">
+    <div class="hero-action-bar">
+      <a href="{% url 'gm:listar-objetos' %}" class="btn-hero-nav btn-back">VOLVER AL INVENTARIO</a>
+      <div class="action-bar-right">
+        <a href="{% url 'gm:actualizar-objeto' pk=objeto.pk %}" class="btn-hero-nav btn-edit-hero">MODIFICAR OBJETO</a>
+        {% if objeto.activo %}
+        <a href="{% url 'gm:eliminar-objeto' pk=objeto.pk %}" class="btn-hero-nav" style="color:#ff4444; border-color:#8a0303;">DESHABILITAR</a>
+        {% else %}
+        <a href="{% url 'gm:eliminar-objeto' pk=objeto.pk %}" class="btn-hero-nav" style="color:#10b981; border-color:#059669;">HABILITAR</a>
+        {% endif %}
+      </div>
+    </div>
+    
+    <div class="hero-dossier-card" style="grid-template-columns: auto 1fr;">
+      <div class="hero-image-column" style="display: flex; justify-content: center; align-items: start; padding-top: 2rem;">
+         {% if objeto.img %}
+            <img src="{{ objeto.img.url }}" alt="{{ objeto.nombre }}" style="max-width: 250px; border: 2px solid #8c7335; border-radius: 8px;">
+         {% endif %}
+      </div>
+      <div class="hero-details-column">
+        <div class="hero-title-row">
+            <h1 class="hero-name">{{ objeto.nombre }}</h1>
+            <div style="color: #c4ab7c; font-family: 'Bangers'; font-size: 1.5rem; letter-spacing: 1px;">
+                PESO: {{ objeto.peso }}
+                {% if objeto.es_equipable %} <span style="color: #10b981;">[Equipable]</span>{% endif %}
+                {% if objeto.kit_inicial %} <span style="color: #3b82f6;">[Kit Inicial]</span>{% endif %}
+            </div>
+        </div>
+        <div class="race-lore-box">
+            <p class="race-lore-text" style="font-size: 1.2rem;">{{ objeto.descripcion }}</p>
+        </div>
+        
+        <div style="margin-top: 2rem; background: rgba(0,0,0,0.5); padding: 1.5rem; border-radius: 4px; border: 1px solid #5a4520;">
+            <h3 style="color: #c4ab7c; font-family: 'Bangers'; font-size: 1.8rem; margin-bottom: 1rem; border-bottom: 1px solid #5a4520; padding-bottom: 0.5rem;">Efectos del Objeto</h3>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 1rem;">
+                {% for stat, val in objeto.efectos.items %}
+                    <div style="background: rgba(20,20,20,0.8); padding: 10px; border: 1px solid #8c7335; text-align: center; border-radius: 4px;">
+                        <div style="color: #9d8c6b; font-size: 0.8rem; text-transform: uppercase;">{{ stat }}</div>
+                        <div style="color: {% if val > 0 %}#10b981{% elif val < 0 %}#ff4444{% else %}#ffeed1{% endif %}; font-family: 'Bangers'; font-size: 1.5rem;">
+                            {% if val > 0 %}+{% endif %}{{ val }}
+                        </div>
+                    </div>
+                {% empty %}
+                    <div style="color: #9d8c6b;">Ningún efecto de atributo configurado.</div>
+                {% endfor %}
+            </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+{% block scripts %}
+<script src="{% static 'js/detalle_objeto.js' %}"></script>
+{% endblock %}

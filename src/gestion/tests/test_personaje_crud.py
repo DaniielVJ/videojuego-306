@@ -16,15 +16,17 @@ class PersonajeCRUDTests(TestCase):
         self.raza = Raza.objects.create(
             nombre='Orco',
             descripcion='Guerrero temible de Durotar',
-            activo=True
+            activo=True,
+            img_body='razas/body/dummy.jpg',
+            img_head='razas/head/dummy.jpg'
         )
 
         # 3. Crear habilidades y objetos minimos para pasar las validaciones del form (2 de cada uno)
-        self.hab1 = Habilidad.objects.create(nombre='Hab1', descripcion='d', activo=True)
-        self.hab2 = Habilidad.objects.create(nombre='Hab2', descripcion='d', activo=True)
+        self.hab1 = Habilidad.objects.create(nombre='Hab1', descripcion='d', activo=True, kit_inicial=True)
+        self.hab2 = Habilidad.objects.create(nombre='Hab2', descripcion='d', activo=True, kit_inicial=True)
         
-        self.obj1 = Objeto.objects.create(nombre='Obj1', descripcion='d', peso=1.0, activo=True, kit_inicial=True)
-        self.obj2 = Objeto.objects.create(nombre='Obj2', descripcion='d', peso=1.0, activo=True, kit_inicial=True)
+        self.obj1 = Objeto.objects.create(nombre='Obj1', descripcion='d', peso=1.0, activo=True, kit_inicial=True, img='objetos/dummy.png')
+        self.obj2 = Objeto.objects.create(nombre='Obj2', descripcion='d', peso=1.0, activo=True, kit_inicial=True, img='objetos/dummy.png')
 
         # 4. Crear el personaje a testear
         self.personaje = Personaje.objects.create(

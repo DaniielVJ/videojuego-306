@@ -23,6 +23,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'src.gestion',
     'src.usuarios',
+    'src.gameplay',
 ]
 
 MIDDLEWARE = [

@@ -130,13 +130,15 @@
       const metricMagic = document.getElementById('metricMagicVal');
 
       if (metricHealth) {
-        metricHealth.textContent = (vigor + nivel + 80) + ' PV';
+        // Base de 100 HP + (Vigor * 10)
+        metricHealth.textContent = (100 + vigor * 10) + ' PV';
       }
       if (metricCombat) {
         metricCombat.textContent = fuerza + ' PTS';
       }
       if (metricMagic) {
-        metricMagic.textContent = intel + ' PTS';
+        // Base de 50 Mana + (Intel * 10)
+        metricMagic.textContent = (50 + intel * 10) + ' PM';
       }
     }
 
@@ -301,6 +303,39 @@
       });
     });
     updateSkillsSelection();
+
+    /* 2.9 Buscadores Rápidos (Filtros en tiempo real) */
+    const searchHabilidades = document.getElementById('searchHabilidades');
+    if (searchHabilidades) {
+      searchHabilidades.addEventListener('keydown', function(e) { if (e.key === 'Enter') e.preventDefault(); });
+      searchHabilidades.addEventListener('input', function(e) {
+        const text = e.target.value.toLowerCase();
+        skillCards.forEach(card => {
+          const name = card.querySelector('.skill-name').textContent.toLowerCase();
+          if (name.includes(text)) {
+            card.style.display = '';
+          } else {
+            card.style.display = 'none';
+          }
+        });
+      });
+    }
+
+    const searchObjetos = document.getElementById('searchObjetos');
+    if (searchObjetos) {
+      searchObjetos.addEventListener('keydown', function(e) { if (e.key === 'Enter') e.preventDefault(); });
+      searchObjetos.addEventListener('input', function(e) {
+        const text = e.target.value.toLowerCase();
+        itemCards.forEach(card => {
+          const name = card.querySelector('.item-name').textContent.toLowerCase();
+          if (name.includes(text)) {
+            card.style.display = '';
+          } else {
+            card.style.display = 'none';
+          }
+        });
+      });
+    }
 
     // Inicialización general de métricas
     recalculateTacticalMetrics();

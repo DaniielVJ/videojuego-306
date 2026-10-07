@@ -13,7 +13,7 @@
   <!-- Canvas de partículas de brasas al fondo (60 FPS) -->
   <canvas id="bgCanvas"></canvas>
 
-  <form id="formCrearPersonaje" method="POST" action="{% url 'gm:crear-personaje' %}" class="creation-studio-form">
+  <form id="formCrearPersonaje" method="POST" action="" class="creation-studio-form">
     {% csrf_token %}
 
     <!-- Input Oculto de la Raza Seleccionada -->
@@ -46,7 +46,7 @@
     <!-- 1. BARRA SUPERIOR COMPACTA (HEADER DEL ESTUDIO) -->
     <header class="creation-top-bar">
       <div class="top-bar-left">
-        <a href="{% url 'gm:listar-personajes' %}" type="button" class="btn-top-back" id="btnCancelCreation" onclick="if(window.history.length > 1){history.back();}else{window.location.href='{% url 'gm:listar-personajes' %}';}" title="Regresar a la lista de personajes">
+        <a href="{% if request.user.is_gm %}{% url 'gm:listar-personajes' %}{% else %}{% url 'player:listar_personajes' %}{% endif %}" type="button" class="btn-top-back" id="btnCancelCreation" onclick="if(window.history.length > 1){history.back();}else{window.location.href='{% if request.user.is_gm %}{% url 'gm:listar-personajes' %}{% else %}{% url 'player:listar_personajes' %}{% endif %}';}" title="Regresar a la lista de personajes">
           <svg class="rpg-icon" viewBox="0 0 24 24"><path fill="currentColor" d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>
           <span>CANCELAR</span>
         </a>

@@ -35,11 +35,3 @@ class CreacionUsuarioForm(UserCreationForm):
             raise forms.ValidationError("Este correo ya está asociado a otro jugador.")
         return email
 
-
-class CambiarPasswordView(PasswordChangeView):
-    template_name = 'usuarios/cambiar_password.html'
-    success_url = reverse_lazy('usuarios:inicio_usuario')
-
-    def form_valid(self, form):
-        messages.success(self.request, "Tu contraseña ha sido actualizada correctamente.")
-        return super().form_valid(form)
