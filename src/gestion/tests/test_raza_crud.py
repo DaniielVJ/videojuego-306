@@ -41,7 +41,7 @@ class RazaCRUDTests(TestCase):
         form_data = {
             'nombre': 'Tauren',
             'descripcion': 'Seres pacíficos y fuertes.',
-            'b_fuerza': 5, 'b_destreza': -2, 'b_vigor': 5,
+            'b_fuerza': 5, 'b_destreza': 2, 'b_vigor': 5,
             'b_inteligencia': 0, 'b_percepcion': 0, 'b_carisma': 0, 'b_suerte': 0
         }
         file_data = {
@@ -61,7 +61,7 @@ class RazaCRUDTests(TestCase):
             'nombre': 'Trol',
             'descripcion': '¡Por los Lanza Negra!',
             'b_fuerza': 2, 'b_destreza': 5, 'b_vigor': 2,
-            'b_inteligencia': -2, 'b_percepcion': 0, 'b_carisma': 0, 'b_suerte': 0,
+            'b_inteligencia': 2, 'b_percepcion': 0, 'b_carisma': 0, 'b_suerte': 0,
             'img_body': dummy_img1,
             'img_head': dummy_img2
         }
@@ -92,7 +92,7 @@ class RazaCRUDTests(TestCase):
         data = {
             'nombre': 'Sindorei (Elfos)',
             'descripcion': 'Renombrados en honor a los caídos.',
-            'b_fuerza': -2, 'b_destreza': 0, 'b_vigor': -2,
+            'b_fuerza': 2, 'b_destreza': 0, 'b_vigor': 2,
             'b_inteligencia': 5, 'b_percepcion': 5, 'b_carisma': 2, 'b_suerte': 0,
             'img_body': dummy_img1,
             'img_head': dummy_img2
