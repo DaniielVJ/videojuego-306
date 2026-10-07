@@ -27,7 +27,8 @@ class CrearPersonajeForm(forms.ModelForm):
     # Habilidades seleccionadas mediante Drag & Drop (máximo 2)
     habilidades = forms.ModelMultipleChoiceField(
         queryset=Habilidad.objects.none(),
-        required=True
+        required=True,
+        error_messages={'required': 'Debes seleccionar exactamente 2 habilidades.'}
     )
 
     # Objetos de equipamiento seleccionables con checkboxes
@@ -63,15 +64,15 @@ class CrearPersonajeForm(forms.ModelForm):
 
     def clean_habilidades(self):
         habilidades = self.cleaned_data.get('habilidades')
-        if habilidades.count() != 2:
-            raise forms.ValidationError("Debes seleccionar exactamente 2 habilidades")
+        if habilidades and habilidades.count() != 2:
+            raise forms.ValidationError("Debes seleccionar exactamente 2 habilidades.")
         return habilidades
 
 
     def clean_objetos(self):
         objetos = self.cleaned_data.get('objetos')
-        if objetos.count() != 2:
-            raise forms.ValidationError("Debes seleccionar exactamente 2 objetos")
+        if not objetos or objetos.count() != 2:
+            raise forms.ValidationError("Debes seleccionar exactamente 2 objetos.")
         return objetos
     
 
@@ -316,7 +317,8 @@ class CrearPersonajePlayerForm(forms.ModelForm):
     # Habilidades seleccionadas mediante Drag & Drop (máximo 2)
     habilidades = forms.ModelMultipleChoiceField(
         queryset=Habilidad.objects.none(),
-        required=True
+        required=True,
+        error_messages={'required': 'Debes seleccionar exactamente 2 habilidades.'}
     )
 
     # Objetos de equipamiento seleccionables con checkboxes
@@ -350,15 +352,15 @@ class CrearPersonajePlayerForm(forms.ModelForm):
 
     def clean_habilidades(self):
         habilidades = self.cleaned_data.get('habilidades')
-        if habilidades.count() != 2:
-            raise forms.ValidationError("Debes seleccionar exactamente 2 habilidades")
+        if habilidades and habilidades.count() != 2:
+            raise forms.ValidationError("Debes seleccionar exactamente 2 habilidades.")
         return habilidades
 
 
     def clean_objetos(self):
         objetos = self.cleaned_data.get('objetos')
-        if objetos.count() != 2:
-            raise forms.ValidationError("Debes seleccionar exactamente 2 objetos")
+        if not objetos or objetos.count() != 2:
+            raise forms.ValidationError("Debes seleccionar exactamente 2 objetos.")
         return objetos
     
 

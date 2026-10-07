@@ -218,8 +218,16 @@ function initRaceStage() {
     if (e.key === 'ArrowRight') updateStage(currentRaceIndex + 1);
   });
 
-  // Iniciar en la primera raza
-  updateStage(0);
+  // Iniciar en la raza persistida o en la primera
+  let startIndex = 0;
+  if (selectedRazaInput && selectedRazaInput.value) {
+    const val = selectedRazaInput.value.toString();
+    const foundIndex = raceData.findIndex(r => r.id && r.id.toString() === val);
+    if (foundIndex !== -1) {
+      startIndex = foundIndex;
+    }
+  }
+  updateStage(startIndex);
 }
 
 /* ===================================================
