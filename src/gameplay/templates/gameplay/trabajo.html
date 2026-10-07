@@ -130,22 +130,14 @@
       </div>
       
       <div class="status-stats">
-        <div class="stat-box hp">❤ {{ personaje.hp_actual }} / {{ personaje.hp_base }}</div>
-        <div class="stat-box mana">🔮 {{ personaje.mana_actual }} / {{ personaje.mana_base }}</div>
+        <div class="stat-box hp">❤ {{ personaje.hp_actual }} / {{ personaje.hp_total }}</div>
+        <div class="stat-box mana">🔮 {{ personaje.mana_actual }} / {{ personaje.mana_total }}</div>
         <div class="stat-box gold">💰 {{ personaje.oro }}</div>
         <div class="stat-box xp">⭐ {{ personaje.experiencia }} XP</div>
       </div>
     </header>
 
-    {% if messages %}
-      <div style="margin-bottom: 20px;">
-      {% for message in messages %}
-        <div style="padding: 15px; border-radius: 5px; font-weight: bold; text-align: center; {% if message.tags == 'success' %}background: rgba(46, 204, 113, 0.2); color: #2ecc71; border: 1px solid #2ecc71;{% else %}background: rgba(231, 76, 60, 0.2); color: #e74c3c; border: 1px solid #e74c3c;{% endif %}">
-          {{ message }}
-        </div>
-      {% endfor %}
-      </div>
-    {% endif %}
+
 
     <div class="jobs-grid">
       <!-- MINA -->

@@ -105,7 +105,7 @@ class ConsumoObjetosTestCase(TestCase):
         data = response.json()
         
         # Validar el mensaje de error
-        self.assertIn("No desperdicies la poción", data['error'])
+        self.assertIn("Ya tienes tu vitalidad/maná al máximo.", data['error'])
         
         # Validar que la cantidad sigue siendo 2
         self.inv_item.refresh_from_db()

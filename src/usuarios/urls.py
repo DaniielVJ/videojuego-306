@@ -13,6 +13,8 @@ urlpatterns = [
     # dependiendo si es GM o Jugador
     path('inicio/', views.RedireccionInicioView.as_view(), name='inicio_usuario'),
     path('register/', views.RegistroUsuariosView.as_view(), name='registro'),
-    path('changePassword/', views.CambiarPasswordView.as_view(), name='modificar-password')
+    path('changePassword/', views.CambiarPasswordView.as_view(), name='modificar-password'),
+    path('perfil/', views.PerfilUsuarioView.as_view(), name='mi_perfil'),
+    path('perfil/editar/', views.ActualizarPerfilView.as_view(), name='editar_perfil'),
 ]
 

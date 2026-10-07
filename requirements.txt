@@ -1,6 +1,17 @@
 asgiref==3.12.1
+astroid==4.3.3
+dill==0.4.1
 Django==6.1
+django-extensions==4.1
+isort==9.0.2
+mccabe==0.7.0
+mypy_extensions==1.1.0
 pillow==12.3.0
+platformdirs==4.12.3
+pydot==4.0.1
+pylint==4.1.2
+pyparsing==3.3.3
 python-dotenv==1.2.3
 sqlparse==0.6.0
+tomlkit==0.15.1
 tzdata==2026.3

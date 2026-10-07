@@ -4,16 +4,16 @@ from src.gestion.models.personaje import Habilidad
 
 class HabilidadUpdateCreateForm(forms.ModelForm):
 
-	fuerza = forms.IntegerField(initial = 0, min_value=0, label = "Fuerza (+)", widget=forms.NumberInput(attrs={'type': 'range', 'min': '0', 'max': '100', 'class': 'stat-slider', 'oninput': 'this.nextElementSibling.innerText = this.value'}))
-	destreza = forms.IntegerField(initial = 0, min_value=0, label = "Destreza (+)", widget=forms.NumberInput(attrs={'type': 'range', 'min': '0', 'max': '100', 'class': 'stat-slider', 'oninput': 'this.nextElementSibling.innerText = this.value'}))
-	vigor = forms.IntegerField(initial = 0, min_value=0, label = "Vigor (+)", widget=forms.NumberInput(attrs={'type': 'range', 'min': '0', 'max': '100', 'class': 'stat-slider', 'oninput': 'this.nextElementSibling.innerText = this.value'}))
-	inteligencia = forms.IntegerField(initial = 0, min_value=0, label = "Inteligencia (+)", widget=forms.NumberInput(attrs={'type': 'range', 'min': '0', 'max': '100', 'class': 'stat-slider', 'oninput': 'this.nextElementSibling.innerText = this.value'}))
-	percepcion = forms.IntegerField(initial = 0, min_value=0, label = "Percepcion (+)", widget=forms.NumberInput(attrs={'type': 'range', 'min': '0', 'max': '100', 'class': 'stat-slider', 'oninput': 'this.nextElementSibling.innerText = this.value'}))
-	carisma = forms.IntegerField(initial = 0, min_value=0, label = "Carisma (+)", widget=forms.NumberInput(attrs={'type': 'range', 'min': '0', 'max': '100', 'class': 'stat-slider', 'oninput': 'this.nextElementSibling.innerText = this.value'}))
-	suerte = forms.IntegerField(initial = 0, min_value=0, label = "Suerte (+)", widget=forms.NumberInput(attrs={'type': 'range', 'min': '0', 'max': '100', 'class': 'stat-slider', 'oninput': 'this.nextElementSibling.innerText = this.value'}))
+	fuerza = forms.IntegerField(required=False, initial=0, min_value=0, label="Fuerza (+)", widget=forms.NumberInput(attrs={'type': 'range', 'min': '0', 'max': '100', 'class': 'stat-slider', 'oninput': 'this.nextElementSibling.innerText = this.value'}))
+	destreza = forms.IntegerField(required=False, initial=0, min_value=0, label="Destreza (+)", widget=forms.NumberInput(attrs={'type': 'range', 'min': '0', 'max': '100', 'class': 'stat-slider', 'oninput': 'this.nextElementSibling.innerText = this.value'}))
+	vigor = forms.IntegerField(required=False, initial=0, min_value=0, label="Vigor (+)", widget=forms.NumberInput(attrs={'type': 'range', 'min': '0', 'max': '100', 'class': 'stat-slider', 'oninput': 'this.nextElementSibling.innerText = this.value'}))
+	inteligencia = forms.IntegerField(required=False, initial=0, min_value=0, label="Inteligencia (+)", widget=forms.NumberInput(attrs={'type': 'range', 'min': '0', 'max': '100', 'class': 'stat-slider', 'oninput': 'this.nextElementSibling.innerText = this.value'}))
+	percepcion = forms.IntegerField(required=False, initial=0, min_value=0, label="Percepcion (+)", widget=forms.NumberInput(attrs={'type': 'range', 'min': '0', 'max': '100', 'class': 'stat-slider', 'oninput': 'this.nextElementSibling.innerText = this.value'}))
+	carisma = forms.IntegerField(required=False, initial=0, min_value=0, label="Carisma (+)", widget=forms.NumberInput(attrs={'type': 'range', 'min': '0', 'max': '100', 'class': 'stat-slider', 'oninput': 'this.nextElementSibling.innerText = this.value'}))
+	suerte = forms.IntegerField(required=False, initial=0, min_value=0, label="Suerte (+)", widget=forms.NumberInput(attrs={'type': 'range', 'min': '0', 'max': '100', 'class': 'stat-slider', 'oninput': 'this.nextElementSibling.innerText = this.value'}))
 
-	costo_hp = forms.IntegerField(initial = 0, min_value=0, label = "Costo de HP", widget=forms.NumberInput(attrs={'type': 'range', 'min': '0', 'max': '1000', 'class': 'stat-slider', 'oninput': 'this.nextElementSibling.innerText = this.value'}))
-	costo_mana = forms.IntegerField(initial = 0, min_value=0, label = "Costo de Maná", widget=forms.NumberInput(attrs={'type': 'range', 'min': '0', 'max': '1000', 'class': 'stat-slider', 'oninput': 'this.nextElementSibling.innerText = this.value'}))
+	costo_hp = forms.IntegerField(required=False, initial=0, min_value=0, label="Costo de HP", widget=forms.NumberInput(attrs={'type': 'range', 'min': '0', 'max': '1000', 'class': 'stat-slider', 'oninput': 'this.nextElementSibling.innerText = this.value'}))
+	costo_mana = forms.IntegerField(required=False, initial=0, min_value=0, label="Costo de Maná", widget=forms.NumberInput(attrs={'type': 'range', 'min': '0', 'max': '1000', 'class': 'stat-slider', 'oninput': 'this.nextElementSibling.innerText = this.value'}))
 
 	class Meta:
 		model = Habilidad

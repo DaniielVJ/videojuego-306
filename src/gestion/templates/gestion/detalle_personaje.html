@@ -781,7 +781,19 @@
   }
 
   async function consumirObjeto(objetoId) {
-      if (!confirm("¿Deseas consumir este objeto? Sus efectos se aplicarán permanentemente y desaparecerá de la mochila.")) return;
+      const { isConfirmed } = await Swal.fire({
+        title: '¿Consumir objeto?',
+        text: "Sus efectos se aplicarán permanentemente y desaparecerá de la mochila.",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: 'Consumir',
+        cancelButtonText: 'Cancelar',
+        background: '#1a1a1a',
+        color: '#f1c40f'
+      });
+      if (!isConfirmed) return;
       
       try {
           const response = await fetch("{% if request.user.is_gm %}{% url 'gm:api-consumir' pk=personaje.pk %}{% else %}{% url 'player:api_consumir' pk=personaje.pk %}{% endif %}", {
@@ -815,9 +827,15 @@
               actualizarUIStats(result);
               
               // Mostrar mensaje de éxito
-              alert(result.mensaje);
+              Swal.fire({
+                toast: true, position: 'top-end', showConfirmButton: false, timer: 3000,
+                icon: 'success', title: result.mensaje, background: '#1a1a1a', color: '#f1c40f'
+              });
           } else {
-              alert("Error al consumir: " + result.error);
+              Swal.fire({
+                toast: true, position: 'top-end', showConfirmButton: false, timer: 3000,
+                icon: 'error', title: "Error: " + result.error, background: '#1a1a1a', color: '#e74c3c'
+              });
           }
       } catch (err) {
           console.error(err);
@@ -858,7 +876,10 @@
               // 4. Actualizar stats dinámicamente sin recargar la página
               actualizarUIStats(result);
           } else {
-              alert("Error al equipar: " + result.error);
+              Swal.fire({
+                toast: true, position: 'top-end', showConfirmButton: false, timer: 3000,
+                icon: 'error', title: "Error: " + result.error, background: '#1a1a1a', color: '#e74c3c'
+              });
           }
       } catch (err) {
           console.error(err);
@@ -894,7 +915,10 @@
               // 3. Actualizar stats dinámicamente sin recargar la página
               actualizarUIStats(result);
           } else {
-              alert("Error al desequipar: " + result.error);
+              Swal.fire({
+                toast: true, position: 'top-end', showConfirmButton: false, timer: 3000,
+                icon: 'error', title: "Error: " + result.error, background: '#1a1a1a', color: '#e74c3c'
+              });
           }
       } catch (err) {
           console.error(err);

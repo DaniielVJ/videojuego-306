@@ -62,7 +62,7 @@ class HabilidadCRUDTests(TestCase):
             'costo_mana': 0,
             'fuerza': 10,
             'destreza': 2,
-            'vigor': -1,
+            'vigor': 1,
             'inteligencia': 0,
             'percepcion': 0,
             'carisma': 0,
@@ -72,7 +72,7 @@ class HabilidadCRUDTests(TestCase):
         self.assertTrue(form.is_valid(), form.errors)
         hab = form.save()
         self.assertEqual(hab.efectos['fuerza'], 10)
-        self.assertEqual(hab.efectos['vigor'], -1)
+        self.assertEqual(hab.efectos['vigor'], 1)
 
     def test_creacion_habilidad_view(self):
         """Prueba la creación desde la vista."""

@@ -17,7 +17,7 @@
     {% csrf_token %}
 
     <!-- Input Oculto de la Raza Seleccionada -->
-    <input type="hidden" name="raza" id="selectedRazaInput" value="{{ razas.0.id|default:'' }}">
+    <input type="hidden" name="raza" id="selectedRazaInput" value="{{ form.raza.value|default:razas.0.id|default:'' }}">
 
     <!-- Inputs Ocultos de los 7 Atributos del Modelo Atributo -->
     <input type="hidden" name="fuerza" id="input_fuerza" value="{{form.fuerza.value}}">
@@ -64,10 +64,18 @@
       </div>
     </header>
 
-    {% if error_message %}
+    {% if form.errors or error_message %}
     <div class="creation-error-banner">
       <svg class="rpg-icon" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm1 15h-2v-2h2zm0-4h-2V7h2z"/></svg>
-      <span>{{ error_message }}</span>
+      <span>
+        {% if error_message %}
+          {{ error_message }}
+        {% elif form.non_field_errors %}
+          {{ form.non_field_errors.0 }}
+        {% else %}
+          Revisa los campos marcados en rojo: faltan datos o no cumplen los requisitos.
+        {% endif %}
+      </span>
     </div>
     {% endif %}
 
@@ -88,7 +96,10 @@
             </div>
 
             <div class="input-hero-group">
-              <input type="text" name="nombre" id="inputHeroName" class="input-hero-name" placeholder="Nombre del héroe (Ej. Lothar, Sylvanna)" required maxlength="50" autocomplete="off" value="{{ form.nombre.value|default:'' }}">
+              <input type="text" name="nombre" id="inputHeroName" class="input-hero-name" placeholder="Nombre del héroe (Ej. Lothar, Sylvanna)" required maxlength="50" autocomplete="off" value="{{ form.nombre.value|default:'' }}" {% if form.nombre.errors %}style="border: 2px solid #ff4444;"{% endif %}>
+              {% if form.nombre.errors %}
+                <div style="color: #ff4444; font-size: 0.85rem; margin-top: 5px; font-weight: bold;">{{ form.nombre.errors.0 }}</div>
+              {% endif %}
             </div>
 
             {% if request.user.is_gm and usuarios %}
@@ -301,7 +312,7 @@
       <aside class="studio-panel panel-skills-manager">
 
         <!-- CUADRANTE 1: HABILIDADES ASIGNADAS (MÁXIMO 2) -->
-        <div class="skills-quadrant quadrant-assigned">
+        <div class="skills-quadrant quadrant-assigned {% if form.habilidades.errors %}has-error{% endif %}" {% if form.habilidades.errors %}style="border-color: #ff4444;"{% endif %}>
           <div class="quadrant-header">
             <div class="quadrant-title-group">
               <svg class="rpg-icon" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
@@ -310,13 +321,38 @@
             <span class="assigned-counter-badge" id="assignedCounterBadge">0 / 2</span>
           </div>
 
-          <div class="quadrant-help-text">
-            Arrastra aquí hasta 2 habilidades para tu nuevo héroe:
+          <div class="quadrant-help-text" {% if form.habilidades.errors %}style="color: #ff4444;"{% endif %}>
+            Arrastra aquí <b>exactamente 2</b> habilidades para tu nuevo héroe:
+            {% if form.habilidades.errors %}
+              <div style="font-weight: bold; margin-top: 5px;">{{ form.habilidades.errors.0 }}</div>
+            {% endif %}
           </div>
 
           <!-- ZONA DE SOLTADO (TARGET DROPZONE) PARA SORTABLEJS -->
           <div class="skills-slots-container" id="assignedSkills">
-            <!-- Rellenado mediante Drag & Drop (SortableJS) -->
+            {% for hab in habilidades %}
+              {% if form.habilidades.value %}
+                {% for val in form.habilidades.value %}
+                  {% if val|slugify == hab.id|slugify %}
+                    <div class="skill-card" data-skill-id="{{ hab.id }}" data-skill-name="{{ hab.nombre }}">
+                      <div class="skill-drag-grip" title="Arrastrar habilidad">
+                        <svg viewBox="0 0 24 24" class="grip-icon"><path fill="currentColor" d="M9 3H11V5H9V3ZM13 3H15V5H13V3ZM9 7H11V9H9V7ZM13 7H15V9H13V7ZM9 11H11V13H9V11ZM13 11H15V13H13V11ZM9 15H11V17H9V15ZM13 15H15V17H13V15ZM9 19H11V21H9V19ZM13 19H15V21H13V19Z"/></svg>
+                      </div>
+                      <div class="skill-card-body">
+                        <div class="skill-card-top-row">
+                          <span class="skill-card-name">{{ hab.nombre }}</span>
+                          <span class="skill-cost-pill">
+                            {% if hab.costo and hab.costo.mana %}{{ hab.costo.mana }} MP{% elif hab.costo and hab.costo.energia %}{{ hab.costo.energia }} EN{% else %}Básica{% endif %}
+                          </span>
+                        </div>
+                        <p class="skill-card-desc">{{ hab.descripcion|default:"Habilidad marcial de combate ancestral."|truncatechars:85 }}</p>
+                      </div>
+                      <button type="button" class="btn-card-toggle" title="Asignar o desasignar habilidad"><span class="toggle-symbol">-</span></button>
+                    </div>
+                  {% endif %}
+                {% endfor %}
+              {% endif %}
+            {% endfor %}
           </div>
 
           <!-- Placeholder visual cuando no hay 2 habilidades asignadas -->
@@ -345,31 +381,35 @@
           <!-- LISTA FUENTE DE HABILIDADES PARA SORTABLEJS -->
           <div class="skills-available-list" id="availableSkills">
             {% for hab in habilidades %}
-            <div class="skill-card" data-skill-id="{{ hab.id }}" data-skill-name="{{ hab.nombre }}">
-              <div class="skill-drag-grip" title="Arrastrar habilidad">
-                <svg viewBox="0 0 24 24" class="grip-icon"><path fill="currentColor" d="M9 3H11V5H9V3ZM13 3H15V5H13V3ZM9 7H11V9H9V7ZM13 7H15V9H13V7ZM9 11H11V13H9V11ZM13 11H15V13H13V11ZM9 15H11V17H9V15ZM13 15H15V17H13V15ZM9 19H11V21H9V19ZM13 19H15V21H13V19Z"/></svg>
-              </div>
+              {% with id_str=hab.id|stringformat:"s" %}
+                {% if not form.habilidades.value or id_str not in form.habilidades.value %}
+                  <div class="skill-card" data-skill-id="{{ hab.id }}" data-skill-name="{{ hab.nombre }}">
+                    <div class="skill-drag-grip" title="Arrastrar habilidad">
+                      <svg viewBox="0 0 24 24" class="grip-icon"><path fill="currentColor" d="M9 3H11V5H9V3ZM13 3H15V5H13V3ZM9 7H11V9H9V7ZM13 7H15V9H13V7ZM9 11H11V13H9V11ZM13 11H15V13H13V11ZM9 15H11V17H9V15ZM13 15H15V17H13V15ZM9 19H11V21H9V19ZM13 19H15V21H13V19Z"/></svg>
+                    </div>
 
-              <div class="skill-card-body">
-                <div class="skill-card-top-row">
-                  <span class="skill-card-name">{{ hab.nombre }}</span>
-                  <span class="skill-cost-pill">
-                    {% if hab.costo and hab.costo.mana %}
-                      {{ hab.costo.mana }} MP
-                    {% elif hab.costo and hab.costo.energia %}
-                      {{ hab.costo.energia }} EN
-                    {% else %}
-                      Básica
-                    {% endif %}
-                  </span>
-                </div>
-                <p class="skill-card-desc">{{ hab.descripcion|default:"Habilidad marcial de combate ancestral."|truncatechars:85 }}</p>
-              </div>
+                    <div class="skill-card-body">
+                      <div class="skill-card-top-row">
+                        <span class="skill-card-name">{{ hab.nombre }}</span>
+                        <span class="skill-cost-pill">
+                          {% if hab.costo and hab.costo.mana %}
+                            {{ hab.costo.mana }} MP
+                          {% elif hab.costo and hab.costo.energia %}
+                            {{ hab.costo.energia }} EN
+                          {% else %}
+                            Básica
+                          {% endif %}
+                        </span>
+                      </div>
+                      <p class="skill-card-desc">{{ hab.descripcion|default:"Habilidad marcial de combate ancestral."|truncatechars:85 }}</p>
+                    </div>
 
-              <button type="button" class="btn-card-toggle" title="Asignar o desasignar habilidad">
-                <span class="toggle-symbol">+</span>
-              </button>
-            </div>
+                    <button type="button" class="btn-card-toggle" title="Asignar o desasignar habilidad">
+                      <span class="toggle-symbol">+</span>
+                    </button>
+                  </div>
+                {% endif %}
+              {% endwith %}
             {% empty %}
             <div class="empty-skills-state">
               <p>No hay habilidades registradas en el reino actualmente.</p>
@@ -379,7 +419,7 @@
         </div>
 
         <!-- CUADRANTE 3: EQUIPAMIENTO / OBJETOS INICIALES (CHECKBOXES) -->
-        <div class="skills-quadrant quadrant-objects">
+        <div class="skills-quadrant quadrant-objects {% if form.objetos.errors %}has-error{% endif %}" {% if form.objetos.errors %}style="border-color: #ff4444;"{% endif %}>
           <div class="quadrant-header">
             <div class="quadrant-title-group">
               <svg class="rpg-icon" viewBox="0 0 24 24"><path fill="currentColor" d="M20 7h-4V4c0-1.1-.9-2-2-2h-4c-1.1 0-2 .9-2 2v3H4c-1.1 0-2 .9-2 2v11c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V9c0-1.1-.9-2-2-2zm-10-3h4v3h-4V4zm10 16H4V9h16v11zm-9-8h2v2h-2v-2zm-3 0h2v2H8v-2zm6 0h2v2h-2v-2z"/></svg>
@@ -388,14 +428,23 @@
             <span class="available-count-tag" id="objectsSelectedCount">0 seleccionados</span>
           </div>
 
-          <div class="quadrant-help-text">
-            Selecciona los objetos y pertrechos que llevará tu personaje:
+          <div class="quadrant-help-text" {% if form.objetos.errors %}style="color: #ff4444;"{% endif %}>
+            Selecciona <b>exactamente 2</b> objetos iniciales que llevará tu personaje:
+            {% if form.objetos.errors %}
+              <div style="font-weight: bold; margin-top: 5px;">{{ form.objetos.errors.0 }}</div>
+            {% endif %}
           </div>
 
           <div class="objects-checkbox-grid" id="objectsCheckboxGrid">
             {% for objeto in objetos %}
             <label class="rpg-checkbox-card" for="obj_{{ objeto.pk }}">
-              <input type="checkbox" name="objetos" value="{{ objeto.pk }}" id="obj_{{ objeto.pk }}"/>
+              <input type="checkbox" name="objetos" value="{{ objeto.pk }}" id="obj_{{ objeto.pk }}" 
+                {% if form.objetos.value %}
+                  {% for val in form.objetos.value %}
+                    {% if val|slugify == objeto.pk|slugify %}checked{% endif %}
+                  {% endfor %}
+                {% endif %}
+              />
               <span class="rpg-checkbox-box">
                 <svg class="check-icon" viewBox="0 0 24 24"><path fill="currentColor" d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
               </span>

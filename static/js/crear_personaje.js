@@ -218,8 +218,16 @@ function initRaceStage() {
     if (e.key === 'ArrowRight') updateStage(currentRaceIndex + 1);
   });
 
-  // Iniciar en la primera raza
-  updateStage(0);
+  // Iniciar en la raza persistida o en la primera
+  let startIndex = 0;
+  if (selectedRazaInput && selectedRazaInput.value) {
+    const val = selectedRazaInput.value.toString();
+    const foundIndex = raceData.findIndex(r => r.id && r.id.toString() === val);
+    if (foundIndex !== -1) {
+      startIndex = foundIndex;
+    }
+  }
+  updateStage(startIndex);
 }
 
 /* ===================================================
@@ -535,7 +543,10 @@ function initFormValidation() {
 
     if (!nameVal || nameVal.length < 3) {
       e.preventDefault();
-      alert('⚠️ Por favor ingresa un nombre para el héroe de al menos 3 caracteres.');
+      Swal.fire({
+        toast: true, position: 'top-end', showConfirmButton: false, timer: 3000,
+        icon: 'warning', title: 'Ingresa un nombre de al menos 3 caracteres.', background: '#1a1a1a', color: '#f1c40f'
+      });
       if (inputName) inputName.focus();
       return;
     }
