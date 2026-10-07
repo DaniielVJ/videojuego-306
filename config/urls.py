@@ -1,0 +1,19 @@
+from django.contrib import admin
+from django.urls import path, include
+from django.conf import settings
+from django.conf.urls.static import static
+
+from src.usuarios.views import InicioJuegoView
+
+urlpatterns = [
+    path('', InicioJuegoView.as_view(), name='index'),
+    path('admin/', admin.site.urls),
+    path('rpg/', include('src.gestion.urls')),
+    path('gameplay/', include('src.gameplay.urls')),
+    path('users/', include('src.usuarios.urls'))
+]
+
+
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

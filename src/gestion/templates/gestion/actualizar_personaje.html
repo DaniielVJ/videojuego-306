@@ -1,0 +1,676 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}
+Modificar {{ personaje.nombre }}
+{% endblock title %}
+
+{% block styles %}
+<meta name="description" content="Modificación táctica y forja de personaje para {{ personaje.nombre }} en El Reino." />
+<!-- Estilos Épicos de la Ficha de Edición (World of Warcraft / Dark RPG) -->
+<link rel="stylesheet" href="{% static 'css/actualizar_personaje.css' %}" />
+{% endblock styles %}
+
+{% block main %}
+<div class="scene">
+  <!-- Lienzo de Brasas y Cenizas de Fondo (60 FPS) -->
+  <canvas id="bgCanvas" class="bg-canvas"></canvas>
+
+  <!-- Barra de Navegación del Reino -->
+  {% include "includes/navbar2.html" %}
+
+  <!-- Formulario Principal de Actualización del Héroe -->
+  <form method="POST" action="" class="hero-update-form" id="formActualizarPersonaje">
+    {% csrf_token %}
+
+    <!-- Contenedor Principal Desplazable -->
+    <main class="content-wrapper" id="mainContent">
+
+      <!-- 1. BARRA SUPERIOR DE ACCIONES Y NAVEGACIÓN -->
+      <header class="hero-action-bar" aria-label="Navegación y controles de edición">
+        <div class="action-bar-left">
+          <a href="{% url 'gm:detalle-personaje' pk=personaje.pk %}" class="btn-hero-nav btn-back" title="Cancelar cambios y volver a la ficha de {{ personaje.nombre }}">
+            <svg class="rpg-icon" viewBox="0 0 24 24"><path fill="currentColor" d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>
+            <span>CANCELAR EDICIÓN</span>
+          </a>
+        </div>
+
+        <div class="hero-chronicle-tag">
+          <span>FORJA DE MODIFICACIÓN</span>
+          <span class="tag-highlight">// REGISTRO #{{ personaje.pk }}</span>
+        </div>
+
+        <div class="action-bar-right">
+          <!-- BOTÓN GUARDAR CAMBIOS -->
+          <button type="submit" class="btn-hero-nav btn-save-hero" id="btnGuardarHeroe" title="Guardar todos los atributos y datos de {{ personaje.nombre }}">
+            <svg class="rpg-icon" viewBox="0 0 24 24"><path fill="currentColor" d="M17 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V7l-4-4zm2 16H5V5h11.17L19 7.83V19zm-7-7c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3zM6 6h9v4H6z"/></svg>
+            <span>GUARDAR CAMBIOS</span>
+          </button>
+        </div>
+      </header>
+
+      {% if error_message %}
+      <div class="update-error-banner" role="alert">
+        <svg class="rpg-icon" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm1 15h-2v-2h2zm0-4h-2V7h2z"/></svg>
+        <span>{{ error_message }}</span>
+      </div>
+      {% endif %}
+
+      <!-- 2. TARJETA DE IDENTIDAD PRINCIPAL (HERO DOSSIER BANNER) -->
+      <section class="hero-dossier-card" aria-label="Información General del Héroe">
+        
+        <!-- 2.1 RETRATO Y ARTE DE COMBATE -->
+        <div class="hero-portrait-column">
+          <div class="hero-portrait-frame" title="Representación de {{ personaje.nombre }}">
+            <!-- Sombra de Suelo / Pedestal de Combate -->
+            <div class="hero-ground-shadow"></div>
+
+            {% if personaje.raza.img_body %}
+              <img src="{{ personaje.raza.img_body.url }}" alt="Retrato completo de {{ personaje.nombre }}" class="hero-body-img" />
+            {% elif personaje.raza.img_head %}
+              <img src="{{ personaje.raza.img_head.url }}" alt="Rostro de {{ personaje.nombre }}" class="hero-body-img hero-head-only" />
+            {% else %}
+              <div class="hero-portrait-fallback">
+                <svg viewBox="0 0 24 24"><path d="M12 2a9 9 0 0 0-9 9c0 4.1 2.8 7.6 6.6 8.7V22h4.8v-2.3c3.8-1.1 6.6-4.6 6.6-8.7a9 9 0 0 0-9-9zm-6 9c0-1.8.6-3.4 1.7-4.8l2.6 2.6a1 1 0 0 0 1.4 0l2.3-2.3 2.3 2.3a1 1 0 0 0 1.4 0l2.6-2.6A7 7 0 0 1 20 11H4zm3 3h10v2H7v-2z"/></svg>
+                <span>SIN IMAGEN</span>
+              </div>
+            {% endif %}
+
+            <!-- Medallón Circular de Rostro Racial -->
+            {% if personaje.raza.img_head and personaje.raza.img_body %}
+            <div class="hero-race-medallion" title="Linaje: {{ personaje.raza.nombre }}">
+              <img src="{{ personaje.raza.img_head.url }}" alt="{{ personaje.raza.nombre }}" />
+            </div>
+            {% endif %}
+          </div>
+
+          <!-- SELECTOR DE ESTADO VITAL EDITABLE (VIVO / MUERTO / CONGELADO) -->
+          <div class="edit-status-container">
+            <span class="edit-section-mini-label">ESTADO VITAL:</span>
+            <div class="status-options-group">
+              <label class="status-option-label status-opt-vivo {% if personaje.estado == 'vivo' %}is-selected{% endif %}" title="Guerrero en plenitud de combate">
+                <input type="radio" name="estado" value="vivo" {% if personaje.estado == 'vivo' %}checked{% endif %} />
+                <span class="status-dot"></span>
+                <span>VIVO</span>
+              </label>
+
+              <label class="status-option-label status-opt-muerto {% if personaje.estado == 'muerto' %}is-selected{% endif %}" title="Héroe caído en batalla">
+                <input type="radio" name="estado" value="muerto" {% if personaje.estado == 'muerto' %}checked{% endif %} />
+                <span class="status-dot"></span>
+                <span>MUERTO</span>
+              </label>
+
+              <label class="status-option-label status-opt-congelado {% if personaje.estado == 'congelado' %}is-selected{% endif %}" title="Prisionero en hielo arcano">
+                <input type="radio" name="estado" value="congelado" {% if personaje.estado == 'congelado' %}checked{% endif %} />
+                <span class="status-dot"></span>
+                <span>CONGELADO</span>
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <!-- 2.2 DETALLES DE IDENTIDAD Y PROGRESIÓN EDITABLES -->
+        <div class="hero-details-column">
+          
+          <div class="hero-identity-header">
+            <!-- NOMBRE EDITABLE -->
+            <div class="hero-title-row">
+              <div class="hero-name-edit-wrap">
+                <label class="edit-field-label" for="inputHeroName">
+                  <svg viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a.996.996 0 0 0 0-1.41l-2.34-2.34a.996.996 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
+                  <span>Nombre del Guerrero</span>
+                </label>
+                <input type="text" name="nombre" id="inputHeroName" value="{{ personaje.nombre }}" class="hero-name-input" required maxlength="50" autocomplete="off" placeholder="Ingresa el nombre del héroe..." />
+              </div>
+            </div>
+
+            <div class="hero-badges-strip">
+              <!-- SELECTOR DE LINAJE / RAZA -->
+              <div class="badge-edit-pill" title="Modificar linaje o raza del personaje">
+                <svg viewBox="0 0 24 24"><path d="M12 2L4 5v6.1c0 5.6 3.4 10.8 8 12.9 4.6-2.1 8-7.3 8-12.9V5l-8-3z"/></svg>
+                <label for="selectRaza">Linaje:</label>
+                <select name="raza" id="selectRaza" class="edit-select-pill">
+                  {% if razas %}
+                    {% for r in razas %}
+                    <option value="{{ r.pk }}" {% if r.pk == personaje.raza.pk %}selected{% endif %}>{{ r.nombre }}</option>
+                    {% endfor %}
+                  {% else %}
+                    <option value="{{ personaje.raza.pk }}" selected>{{ personaje.raza.nombre }}</option>
+                  {% endif %}
+                </select>
+              </div>
+
+              <!-- SELECTOR DE USUARIO / GUARDIÁN -->
+              <div class="badge-edit-pill" title="Asignar usuario aventurero custodio">
+                <svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+                <label for="selectUsuario">Guardián:</label>
+                <select name="usuario" id="selectUsuario" class="edit-select-pill">
+                  {% if usuarios %}
+                    {% for u in usuarios %}
+                    <option value="{{ u.pk }}" {% if u.pk == personaje.usuario.pk %}selected{% endif %}>{{ u.username }}</option>
+                    {% endfor %}
+                  {% else %}
+                    <option value="{{ personaje.usuario.pk }}" selected>{{ personaje.usuario.username }}</option>
+                  {% endif %}
+                </select>
+              </div>
+
+              <!-- CHECKBOX DE ESTADO ACTIVO EN EL ROSTER -->
+              <label class="badge-edit-pill checkbox-pill" title="Habilitar en el roster del reino">
+                <input type="checkbox" name="activo" value="true" {% if personaje.activo %}checked{% endif %} />
+                <span>Activo en las Crónicas</span>
+              </label>
+            </div>
+          </div>
+
+          <!-- 2.3 MEDIDOR DE NIVEL Y BARRA DE EXPERIENCIA (EDITABLES) -->
+          <div class="hero-level-progression">
+            <div class="level-row">
+              <!-- Stepper de Nivel -->
+              <div class="level-edit-wrapper">
+                <div class="level-crest-badge" title="Rango y jerarquía militar">
+                  <svg viewBox="0 0 24 24"><path d="M5 16L3 5l5.5 5L12 4l3.5 6L21 5l-2 11H5zm14 3c0 .6-.4 1-1 1H6c-.6 0-1-.4-1-1v-1h14v1z"/></svg>
+                  <span class="level-number">NIVEL</span>
+                </div>
+
+                <div class="number-stepper">
+                  <button type="button" class="btn-step-action" data-action="decrease" data-target="inputNivel">-</button>
+                  <input type="number" name="nivel" id="inputNivel" value="{{ form.nivel.value|default:personaje.nivel }}" min="1" class="stepper-input" />
+                  <button type="button" class="btn-step-action" data-action="increase" data-target="inputNivel">+</button>
+                </div>
+              </div>
+
+              <!-- Inputs de Experiencia Actual y Siguiente Nivel -->
+              <div class="exp-edit-inputs-row">
+                <div class="exp-box">
+                  <label for="inputExp">EXP:</label>
+                  <input type="number" name="experiencia" id="inputExp" value="{{ form.experiencia.value|default_if_none:personaje.experiencia }}" min="0" class="exp-number-input" />
+                </div>
+                <span style="color: var(--warcraft-gold-dim, #c4ab7c); font-weight: bold;">/</span>
+                <div class="exp-box">
+                  <label for="inputExpMax">SIG:</label>
+                  <input type="number" id="inputExpMax" value="{{ personaje.exp_siguiente_nivel }}" readonly aria-label="Experiencia necesaria para subir de nivel" class="exp-number-input" />
+                </div>
+              </div>
+            </div>
+
+            <!-- Barra Visual Reactiva de XP -->
+            <p>Para subir se necesitan 100 × nivel de XP. El excedente se conserva al guardar.</p>
+            <div class="exp-bar-track" id="heroExpTrack" title="Progreso hacia el siguiente nivel">
+              <div class="exp-bar-fill" id="heroExpFill"></div>
+            </div>
+          </div>
+
+          <!-- 2.4 MÉTRICAS TÁCTICAS DINÁMICAS DERIVADAS -->
+          <div class="hero-tactical-metrics">
+            <!-- Salud Estimada -->
+            <div class="metric-card metric-health" title="Vitalidad recalculada automáticamente en base a Vigor y Nivel">
+              <div class="metric-icon-wrap">
+                <svg viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+              </div>
+              <div class="metric-content">
+                <span class="metric-label">Salud Máxima</span>
+                <span class="metric-value" id="metricHealthVal">100 PV</span>
+              </div>
+            </div>
+
+            <!-- Poder Marcial -->
+            <div class="metric-card metric-combat" title="Fuerza de ataque recalculada en vivo">
+              <div class="metric-icon-wrap">
+                <svg viewBox="0 0 24 24"><path d="M19.7 3.3a1 1 0 0 0-1.4 0l-4.6 4.6 1.4 1.4 4.6-4.6a1 1 0 0 0 0-1.4zM4.3 3.3a1 1 0 0 0 0 1.4l4.6 4.6 1.4-1.4-4.6-4.6a1 1 0 0 0-1.4 0zm7.7 7.7l-7.7 7.7-1.3-1.3-.7.7 2.7 2.7.7-.7-1.3-1.3 7.7-7.7 7.7 7.7-1.3 1.3.7.7 2.7-2.7-.7-.7-1.3 1.3-7.7-7.7z"/></svg>
+              </div>
+              <div class="metric-content">
+                <span class="metric-label">Poder Físico</span>
+                <span class="metric-value" id="metricCombatVal">0 PTS</span>
+              </div>
+            </div>
+
+            <!-- Afinidades Arcanas -->
+            <div class="metric-card metric-magic" title="Potencial de conjuros recalculado en base a Inteligencia">
+              <div class="metric-icon-wrap">
+                <svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm1 15h-2v-6h2zm0-8h-2V7h2z"/></svg>
+              </div>
+              <div class="metric-content">
+                <span class="metric-label">Poder Arcano / Maná</span>
+                <span class="metric-value" id="metricMagicVal">0 PM</span>
+              </div>
+            </div>
+
+            <!-- Carga Transportada -->
+            <div class="metric-card metric-carry" title="Carga total sumada dinámicamente según los objetos seleccionados">
+              <div class="metric-icon-wrap">
+                <svg viewBox="0 0 24 24"><path d="M20 7h-4V4c0-1.1-.9-2-2-2h-4c-1.1 0-2 .9-2 2v3H4c-1.1 0-2 .9-2 2v11c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V9c0-1.1-.9-2-2-2zm-10-3h4v3h-4V4zm10 16H4V9h16v11z"/></svg>
+              </div>
+              <div class="metric-content">
+                <span class="metric-label">Carga Total</span>
+                <span class="metric-value" id="metricCarryVal">0.0 kg</span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- 3. CUADRÍCULA TÁCTICA: ATRIBUTOS, LINAJE, HABILIDADES Y ARSENAL -->
+      <div class="hero-dossier-grid">
+        
+        <!-- ══════════════════════════════════════════════════
+             COLUMNA IZQUIERDA: ATRIBUTOS Y LINAJE RACIAL
+             ══════════════════════════════════════════════════ -->
+        <div class="dossier-col-left" style="display: flex; flex-direction: column; gap: 1.75rem;">
+          
+          <!-- 3.1 ATRIBUTOS PRIMARIOS EDITABLES (7 PILARES CON STEPPERS) -->
+          <section class="dossier-section-card" aria-label="Atributos primarios editables">
+            <header class="section-card-header">
+              <div class="section-title-wrap">
+                <svg viewBox="0 0 24 24"><path d="M12 2l4 4-8 8-4-4 8-8zm7 7l3 3-8 8-3-3 8-8zm-15 9l2 2-2 2-2-2 2-2z"/></svg>
+                <h2 class="section-title">ATRIBUTOS PRIMARIOS</h2>
+              </div>
+              <span class="section-badge-counter" style="color: var(--warcraft-gold, #ffcc00); border-color: var(--warcraft-gold, #ffcc00);">Modificando Valores</span>
+            </header>
+
+            <div class="attributes-list-container">
+              <!-- FUERZA -->
+              <div class="attr-edit-card attr-str" title="Ajustar Fuerza bruta">
+                <div class="attr-info-left">
+                  <svg class="attr-icon-mini" viewBox="0 0 24 24"><path d="M19.7 3.3a1 1 0 0 0-1.4 0l-4.6 4.6 1.4 1.4 4.6-4.6a1 1 0 0 0 0-1.4zM4.3 3.3a1 1 0 0 0 0 1.4l4.6 4.6 1.4-1.4-4.6-4.6a1 1 0 0 0-1.4 0zm7.7 7.7l-7.7 7.7-1.3-1.3-.7.7 2.7 2.7.7-.7-1.3-1.3 7.7-7.7 7.7 7.7-1.3 1.3.7.7 2.7-2.7-.7-.7-1.3 1.3-7.7-7.7z"/></svg>
+                  <div class="attr-name-block">
+                    <span class="attr-name">Fuerza</span>
+                    <span class="attr-abbr">FUE / STR
+                      {% if bonos.fuerza > 0 %} <span style="color: #4CAF50; font-weight: bold; font-size: 1.1em; text-shadow: 1px 1px 2px black;">(+{{ bonos.fuerza }})</span>
+                      {% elif bonos.fuerza < 0 %} <span style="color: #F44336; font-weight: bold; font-size: 1.1em; text-shadow: 1px 1px 2px black;">({{ bonos.fuerza }})</span>
+                      {% endif %}
+                    </span>
+                  </div>
+                </div>
+                <div class="attr-meter-track">
+                  <div class="attr-meter-fill"></div>
+                </div>
+                <div class="attr-stepper-wrap">
+                  <div class="attr-stepper">
+                    <button type="button" class="attr-step-btn" data-action="decrease" data-target="input_fuerza">-</button>
+                    <input type="number" name="fuerza" id="input_fuerza" value="{{ personaje.atributos.fuerza|default:0 }}" min="0" class="attr-input-field" />
+                    <button type="button" class="attr-step-btn" data-action="increase" data-target="input_fuerza">+</button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- DESTREZA -->
+              <div class="attr-edit-card attr-dex" title="Ajustar Destreza y reflejos">
+                <div class="attr-info-left">
+                  <svg class="attr-icon-mini" viewBox="0 0 24 24"><path d="M12 2L4.5 20.29l.71.71L12 18l6.79 3 .71-.71z"/></svg>
+                  <div class="attr-name-block">
+                    <span class="attr-name">Destreza</span>
+                    <span class="attr-abbr">DES / DEX
+                      {% if bonos.destreza > 0 %} <span style="color: #4CAF50; font-weight: bold; font-size: 1.1em; text-shadow: 1px 1px 2px black;">(+{{ bonos.destreza }})</span>
+                      {% elif bonos.destreza < 0 %} <span style="color: #F44336; font-weight: bold; font-size: 1.1em; text-shadow: 1px 1px 2px black;">({{ bonos.destreza }})</span>
+                      {% endif %}
+                    </span>
+                  </div>
+                </div>
+                <div class="attr-meter-track">
+                  <div class="attr-meter-fill"></div>
+                </div>
+                <div class="attr-stepper-wrap">
+                  <div class="attr-stepper">
+                    <button type="button" class="attr-step-btn" data-action="decrease" data-target="input_destreza">-</button>
+                    <input type="number" name="destreza" id="input_destreza" value="{{ personaje.atributos.destreza|default:0 }}" min="0" class="attr-input-field" />
+                    <button type="button" class="attr-step-btn" data-action="increase" data-target="input_destreza">+</button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- VIGOR -->
+              <div class="attr-edit-card attr-vig" title="Ajustar Vigor y salud">
+                <div class="attr-info-left">
+                  <svg class="attr-icon-mini" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+                  <div class="attr-name-block">
+                    <span class="attr-name">Vigor</span>
+                    <span class="attr-abbr">VIG / CON
+                      {% if bonos.vigor > 0 %} <span style="color: #4CAF50; font-weight: bold; font-size: 1.1em; text-shadow: 1px 1px 2px black;">(+{{ bonos.vigor }})</span>
+                      {% elif bonos.vigor < 0 %} <span style="color: #F44336; font-weight: bold; font-size: 1.1em; text-shadow: 1px 1px 2px black;">({{ bonos.vigor }})</span>
+                      {% endif %}
+                    </span>
+                  </div>
+                </div>
+                <div class="attr-meter-track">
+                  <div class="attr-meter-fill"></div>
+                </div>
+                <div class="attr-stepper-wrap">
+                  <div class="attr-stepper">
+                    <button type="button" class="attr-step-btn" data-action="decrease" data-target="input_vigor">-</button>
+                    <input type="number" name="vigor" id="input_vigor" value="{{ personaje.atributos.vigor|default:0 }}" min="0" class="attr-input-field" />
+                    <button type="button" class="attr-step-btn" data-action="increase" data-target="input_vigor">+</button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- INTELIGENCIA -->
+              <div class="attr-edit-card attr-int" title="Ajustar Inteligencia arcana">
+                <div class="attr-info-left">
+                  <svg class="attr-icon-mini" viewBox="0 0 24 24"><path d="M18 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM6 4h5v8l-2.5-1.5L6 12V4z"/></svg>
+                  <div class="attr-name-block">
+                    <span class="attr-name">Inteligencia</span>
+                    <span class="attr-abbr">INT / MAG
+                      {% if bonos.inteligencia > 0 %} <span style="color: #4CAF50; font-weight: bold; font-size: 1.1em; text-shadow: 1px 1px 2px black;">(+{{ bonos.inteligencia }})</span>
+                      {% elif bonos.inteligencia < 0 %} <span style="color: #F44336; font-weight: bold; font-size: 1.1em; text-shadow: 1px 1px 2px black;">({{ bonos.inteligencia }})</span>
+                      {% endif %}
+                    </span>
+                  </div>
+                </div>
+                <div class="attr-meter-track">
+                  <div class="attr-meter-fill"></div>
+                </div>
+                <div class="attr-stepper-wrap">
+                  <div class="attr-stepper">
+                    <button type="button" class="attr-step-btn" data-action="decrease" data-target="input_inteligencia">-</button>
+                    <input type="number" name="inteligencia" id="input_inteligencia" value="{{ personaje.atributos.inteligencia|default:0 }}" min="0" class="attr-input-field" />
+                    <button type="button" class="attr-step-btn" data-action="increase" data-target="input_inteligencia">+</button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- PERCEPCIÓN -->
+              <div class="attr-edit-card attr-per" title="Ajustar Percepción y alerta">
+                <div class="attr-info-left">
+                  <svg class="attr-icon-mini" viewBox="0 0 24 24"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zm0 12.5c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>
+                  <div class="attr-name-block">
+                    <span class="attr-name">Percepción</span>
+                    <span class="attr-abbr">PER / WIS
+                      {% if bonos.percepcion > 0 %} <span style="color: #4CAF50; font-weight: bold; font-size: 1.1em; text-shadow: 1px 1px 2px black;">(+{{ bonos.percepcion }})</span>
+                      {% elif bonos.percepcion < 0 %} <span style="color: #F44336; font-weight: bold; font-size: 1.1em; text-shadow: 1px 1px 2px black;">({{ bonos.percepcion }})</span>
+                      {% endif %}
+                    </span>
+                  </div>
+                </div>
+                <div class="attr-meter-track">
+                  <div class="attr-meter-fill"></div>
+                </div>
+                <div class="attr-stepper-wrap">
+                  <div class="attr-stepper">
+                    <button type="button" class="attr-step-btn" data-action="decrease" data-target="input_percepcion">-</button>
+                    <input type="number" name="percepcion" id="input_percepcion" value="{{ personaje.atributos.percepcion|default:0 }}" min="0" class="attr-input-field" />
+                    <button type="button" class="attr-step-btn" data-action="increase" data-target="input_percepcion">+</button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- CARISMA -->
+              <div class="attr-edit-card attr-cha" title="Ajustar Carisma y liderazgo">
+                <div class="attr-info-left">
+                  <svg class="attr-icon-mini" viewBox="0 0 24 24"><path d="M5 16L3 5l5.5 5L12 4l3.5 6L21 5l-2 11H5zm14 3c0 .6-.4 1-1 1H6c-.6 0-1-.4-1-1v-1h14v1z"/></svg>
+                  <div class="attr-name-block">
+                    <span class="attr-name">Carisma</span>
+                    <span class="attr-abbr">CAR / CHA
+                      {% if bonos.carisma > 0 %} <span style="color: #4CAF50; font-weight: bold; font-size: 1.1em; text-shadow: 1px 1px 2px black;">(+{{ bonos.carisma }})</span>
+                      {% elif bonos.carisma < 0 %} <span style="color: #F44336; font-weight: bold; font-size: 1.1em; text-shadow: 1px 1px 2px black;">({{ bonos.carisma }})</span>
+                      {% endif %}
+                    </span>
+                  </div>
+                </div>
+                <div class="attr-meter-track">
+                  <div class="attr-meter-fill"></div>
+                </div>
+                <div class="attr-stepper-wrap">
+                  <div class="attr-stepper">
+                    <button type="button" class="attr-step-btn" data-action="decrease" data-target="input_carisma">-</button>
+                    <input type="number" name="carisma" id="input_carisma" value="{{ personaje.atributos.carisma|default:0 }}" min="0" class="attr-input-field" />
+                    <button type="button" class="attr-step-btn" data-action="increase" data-target="input_carisma">+</button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- SUERTE -->
+              <div class="attr-edit-card attr-luk" title="Ajustar Suerte y fortuna">
+                <div class="attr-info-left">
+                  <svg class="attr-icon-mini" viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 3c.83 0 1.5.67 1.5 1.5S12.83 9 12 9s-1.5-.67-1.5-1.5S11.17 6 12 6zm-4 6c.83 0 1.5.67 1.5 1.5S8.83 15 8 15s-1.5-.67-1.5-1.5S7.17 12 8 12zm8 0c.83 0 1.5.67 1.5 1.5S16.83 15 16 15s-1.5-.67-1.5-1.5.67-1.5 1.5-1.5zm-4 6c.83 0 1.5.67 1.5 1.5S12.83 21 12 21s-1.5-.67-1.5-1.5.67-1.5 1.5-1.5z"/></svg>
+                  <div class="attr-name-block">
+                    <span class="attr-name">Suerte</span>
+                    <span class="attr-abbr">SUE / LUK
+                      {% if bonos.suerte > 0 %} <span style="color: #4CAF50; font-weight: bold; font-size: 1.1em; text-shadow: 1px 1px 2px black;">(+{{ bonos.suerte }})</span>
+                      {% elif bonos.suerte < 0 %} <span style="color: #F44336; font-weight: bold; font-size: 1.1em; text-shadow: 1px 1px 2px black;">({{ bonos.suerte }})</span>
+                      {% endif %}
+                    </span>
+                  </div>
+                </div>
+                <div class="attr-meter-track">
+                  <div class="attr-meter-fill"></div>
+                </div>
+                <div class="attr-stepper-wrap">
+                  <div class="attr-stepper">
+                    <button type="button" class="attr-step-btn" data-action="decrease" data-target="input_suerte">-</button>
+                    <input type="number" name="suerte" id="input_suerte" value="{{ personaje.atributos.suerte|default:0 }}" min="0" class="attr-input-field" />
+                    <button type="button" class="attr-step-btn" data-action="increase" data-target="input_suerte">+</button>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </section>
+
+          <!-- 3.2 CÓDICE DE LINAJE (RAZA Y TRASFONDOS) -->
+          <section class="dossier-section-card" aria-label="Códice de linaje y raza">
+            <header class="section-card-header">
+              <div class="section-title-wrap">
+                <svg viewBox="0 0 24 24"><path d="M12 2L4 5v6.1c0 5.6 3.4 10.8 8 12.9 4.6-2.1 8-7.3 8-12.9V5l-8-3zm0 2.2l6 2.3v4.6c0 4.5-2.6 8.7-6 10.6-3.4-1.9-6-6.1-6-10.6V6.5l6-2.3z"/></svg>
+                <h2 class="section-title">LINAJE: {{ personaje.raza.nombre|upper }}</h2>
+              </div>
+              <span class="section-badge-counter">Trascendencia</span>
+            </header>
+
+            <div class="race-lore-box">
+              <p class="race-lore-text">{{ personaje.raza.descripcion|linebreaksbr }}</p>
+
+              <div class="race-modifiers-row">
+                <!-- Bonificadores Raciales -->
+                {% if personaje.raza.r_bonificadores %}
+                <div class="modifiers-subgroup subgroup-bonuses">
+                  <span class="subgroup-label">Afinidades (+):</span>
+                  {% for key, val in personaje.raza.r_bonificadores.items %}
+                  <span class="mod-chip mod-chip-bonus" title="Bonificador inherente de {{ key|capfirst }}">
+                    +{{ val }} {{ key|capfirst }}
+                  </span>
+                  {% endfor %}
+                </div>
+                {% endif %}
+
+                <!-- Desventajas o Hándicap -->
+                {% if personaje.raza.r_handicap %}
+                <div class="modifiers-subgroup subgroup-penalties">
+                  <span class="subgroup-label">Desventajas (-):</span>
+                  {% for key, val in personaje.raza.r_handicap.items %}
+                  <span class="mod-chip mod-chip-penalty" title="Penalización inherente de {{ key|capfirst }}">
+                    {{ val }} {{ key|capfirst }}
+                  </span>
+                  {% endfor %}
+                </div>
+                {% endif %}
+              </div>
+            </div>
+          </section>
+
+        </div>
+
+        <!-- ══════════════════════════════════════════════════
+             COLUMNA DERECHA: GRIMORIO DE HABILIDADES Y ARSENAL
+             ══════════════════════════════════════════════════ -->
+        <div class="dossier-col-right" style="display: flex; flex-direction: column; gap: 1.75rem;">
+          
+          <!-- 3.3 GRIMORIO DE HABILIDADES (SELECCIÓN INTERACTIVA) -->
+          <section class="dossier-section-card" aria-label="Habilidades marciales y mágicas editables">
+            <header class="section-card-header">
+              <div class="section-title-wrap">
+                <svg viewBox="0 0 24 24"><path d="M11 2L9 8H3l5 4.5-2 6.5 6-4 6 4-2-6.5L21 8h-6l-2-6zm1 4.3l1.1 3.4h3.6l-2.9 2.1 1.1 3.5L12 13.2l-2.9 2.1 1.1-3.5-2.9-2.1h3.6L12 6.3z"/></svg>
+                <h2 class="section-title">GRIMORIO DE HABILIDADES</h2>
+              </div>
+              <span class="section-badge-counter" id="skillCounterBadge">{{ personaje.habilidades.count }} Asignadas</span>
+            </header>
+            
+            <div style="padding: 0 1.5rem 1rem 1.5rem;">
+                <input type="text" id="searchHabilidades" placeholder="Buscar habilidad por nombre..." style="width: 100%; padding: 10px; background: rgba(0,0,0,0.6); border: 1px solid #8c7335; color: #ffeed1; font-family: 'MedievalSharp', cursive; border-radius: 4px;" />
+            </div>
+
+            <div class="skills-deck-grid" style="max-height: 400px; overflow-y: auto; padding-right: 10px;">
+              {% for habilidad in habilidades|default:personaje.habilidades.all %}
+              <article class="skill-codex-card skill-checkbox-card {% if habilidad in personaje.habilidades.all %}is-selected{% endif %}" title="Haz clic para asignar o retirar esta habilidad">
+                <!-- Checkbox de asignación -->
+                <input type="checkbox" name="habilidades" value="{{ habilidad.pk }}" id="hab_{{ habilidad.pk }}" {% if habilidad in personaje.habilidades.all %}checked{% endif %} />
+
+                <div class="skill-card-top">
+                  <div class="skill-title-block">
+                    <svg class="skill-icon-rune" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                    <label for="hab_{{ habilidad.pk }}" class="skill-name" style="cursor: pointer;">{{ habilidad.nombre }}</label>
+                  </div>
+
+                  <span class="skill-status-tag skill-status-active">
+                    {% if habilidad.activo %}Activa{% else %}Pasiva{% endif %}
+                  </span>
+                </div>
+
+                <p class="skill-desc">{{ habilidad.descripcion }}</p>
+
+                <!-- Metadatos de la Habilidad (Costos y Efectos) -->
+                <div class="skill-meta-tags">
+                  {% if habilidad.costo %}
+                    {% if habilidad.costo.items %}
+                      {% for k, v in habilidad.costo.items %}
+                      <span class="skill-cost-badge">
+                        <span>Costo ({{ k|capfirst }}): {{ v }}</span>
+                      </span>
+                      {% endfor %}
+                    {% else %}
+                      <span class="skill-cost-badge">Costo: {{ habilidad.costo }}</span>
+                    {% endif %}
+                  {% endif %}
+
+                  {% if habilidad.efectos %}
+                    {% if habilidad.efectos.items %}
+                      {% for k, v in habilidad.efectos.items %}
+                      <span class="skill-effect-badge">
+                        <span>Efecto ({{ k|capfirst }}): {{ v }}</span>
+                      </span>
+                      {% endfor %}
+                    {% else %}
+                      <span class="skill-effect-badge">Efecto: {{ habilidad.efectos }}</span>
+                    {% endif %}
+                  {% endif %}
+                </div>
+              </article>
+              {% empty %}
+              <div class="empty-codex-state">
+                <svg viewBox="0 0 24 24"><path d="M11 2L9 8H3l5 4.5-2 6.5 6-4 6 4-2-6.5L21 8h-6l-2-6zm1 4.3l1.1 3.4h3.6l-2.9 2.1 1.1 3.5L12 13.2l-2.9 2.1 1.1-3.5-2.9-2.1h3.6L12 6.3z"/></svg>
+                <span class="empty-state-title">Sin Habilidades Disponibles</span>
+                <p class="empty-state-text">No se encontraron habilidades registradas en el códice para asignar.</p>
+              </div>
+              {% endfor %}
+            </div>
+          </section>
+
+          <!-- 3.4 ARSENAL Y PERTRECHOS (SELECCIÓN INTERACTIVA DE OBJETOS) -->
+          <section class="dossier-section-card" aria-label="Objetos y equipamiento editables">
+            <header class="section-card-header">
+              <div class="section-title-wrap">
+                <svg viewBox="0 0 24 24"><path d="M20 7h-4V4c0-1.1-.9-2-2-2h-4c-1.1 0-2 .9-2 2v3H4c-1.1 0-2 .9-2 2v11c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V9c0-1.1-.9-2-2-2zm-10-3h4v3h-4V4zm10 16H4V9h16v11z"/></svg>
+                <h2 class="section-title">ARSENAL Y PERTRECHOS</h2>
+              </div>
+              <span class="section-badge-counter" id="totalInventoryWeight">0.0 kg Total</span>
+            </header>
+            
+            <div style="padding: 0 1.5rem 1rem 1.5rem;">
+                <input type="text" id="searchObjetos" placeholder="Buscar objeto por nombre..." style="width: 100%; padding: 10px; background: rgba(0,0,0,0.6); border: 1px solid #8c7335; color: #ffeed1; font-family: 'MedievalSharp', cursive; border-radius: 4px;" />
+            </div>
+
+            <div class="inventory-deck-grid" style="max-height: 400px; overflow-y: auto; padding-right: 10px;">
+              {% for objeto in objetos|default:personaje.objetos.all %}
+              <article class="item-codex-card item-checkbox-card {% if objeto in personaje.objetos.all %}is-selected{% endif %}" data-peso="{{ objeto.peso }}" title="Haz clic para agregar o retirar este objeto">
+                <!-- Checkbox del objeto -->
+                <input type="checkbox" name="objetos" value="{{ objeto.pk }}" id="obj_{{ objeto.pk }}" {% if objeto in personaje.objetos.all %}checked{% endif %} />
+
+                <div class="item-card-header">
+                  <div class="item-thumb-box">
+                    {% if objeto.img %}
+                    <img src="{{ objeto.img.url }}" alt="{{ objeto.nombre }}" class="item-thumb-img" />
+                    {% else %}
+                    <div class="item-thumb-fallback">
+                      <svg viewBox="0 0 24 24"><path d="M20 7h-4V4c0-1.1-.9-2-2-2h-4c-1.1 0-2 .9-2 2v3H4c-1.1 0-2 .9-2 2v11c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V9c0-1.1-.9-2-2-2zm-10-3h4v3h-4V4zm10 16H4V9h16v11z"/></svg>
+                    </div>
+                    {% endif %}
+                  </div>
+
+                  <div class="item-header-meta">
+                    <label for="obj_{{ objeto.pk }}" class="item-name" style="cursor: pointer;">{{ objeto.nombre }}</label>
+                    <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+                      <span class="item-weight-tag">
+                        <svg viewBox="0 0 24 24"><path d="M12 3a9 9 0 0 0-9 9c0 4.97 4.03 9 9 9s9-4.03 9-9a9 9 0 0 0-9-9zm0 16c-3.86 0-7-3.14-7-7s3.14-7 7-7 7 3.14 7 7-3.14 7-7 7z"/></svg>
+                        <span>Peso: {{ objeto.peso }} kg</span>
+                      </span>
+                      {% if not objeto.es_equipable %}
+                      <div class="item-qty-selector" style="display: flex; align-items: center; gap: 5px; margin-right: 10px;" title="Cantidad a asignar">
+                        <label for="qty_{{ objeto.pk }}" style="font-size: 0.7rem; color: #a9a9a9;">Cant:</label>
+                        <input type="number" name="cantidad_{{ objeto.pk }}" id="qty_{{ objeto.pk }}" min="1" max="999" value="1" style="width: 45px; padding: 2px; text-align: center; background: rgba(0,0,0,0.5); border: 1px solid #4a4a4a; color: white; border-radius: 3px;" onclick="document.getElementById('obj_{{ objeto.pk }}').checked = true;" />
+                      </div>
+                      {% endif %}
+                    </div>
+                  </div>
+                </div>
+
+                <p class="item-desc">{{ objeto.descripcion }}</p>
+
+                <!-- Etiquetas de Equipabilidad y Efectos -->
+                <div class="item-tags-row">
+                  {% if objeto.es_equipable %}
+                  <span class="item-pill pill-equipable">Equipable</span>
+                  {% endif %}
+
+                  {% if objeto.kit_inicial %}
+                  <span class="item-pill pill-kit">Kit Inicial</span>
+                  {% endif %}
+
+                  {% if objeto.efectos %}
+                    {% if objeto.efectos.items %}
+                      {% for k, v in objeto.efectos.items %}
+                      <span class="item-pill pill-effect" title="Modificador: {{ k }}">{{ k|capfirst }}: +{{ v }}</span>
+                      {% endfor %}
+                    {% else %}
+                      <span class="item-pill pill-effect">{{ objeto.efectos }}</span>
+                    {% endif %}
+                  {% endif %}
+                </div>
+              </article>
+              {% empty %}
+              <div class="empty-codex-state" style="grid-column: 1 / -1;">
+                <svg viewBox="0 0 24 24"><path d="M20 7h-4V4c0-1.1-.9-2-2-2h-4c-1.1 0-2 .9-2 2v3H4c-1.1 0-2 .9-2 2v11c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V9c0-1.1-.9-2-2-2zm-10-3h4v3h-4V4zm10 16H4V9h16v11z"/></svg>
+                <span class="empty-state-title">Bolsa de Pertrechos Vacía</span>
+                <p class="empty-state-text">No hay objetos disponibles en el armero del reino para asignar.</p>
+              </div>
+              {% endfor %}
+            </div>
+          </section>
+
+        </div>
+
+      </div>
+
+    </main>
+  </form>
+</div>
+{% endblock main %}
+
+{% block scripts %}
+<script>
+  // Si hay cantidades preexistentes (modo edición), cargarlas en los inputs
+  {% if cantidades_inventario %}
+  document.addEventListener("DOMContentLoaded", function() {
+      const invQuantities = {{ cantidades_inventario|safe }};
+      for (const [objId, qty] of Object.entries(invQuantities)) {
+          const qtyInput = document.getElementById('qty_' + objId);
+          if (qtyInput) {
+              qtyInput.value = qty;
+          }
+      }
+  });
+  {% endif %}
+</script>
+<!-- Motor Interactivo de Edición de Personaje (Steppers, Barras y Canvas) -->
+<script src="{% static 'js/actualizar_personaje.js' %}?v=3"></script>
+{% endblock scripts %}

@@ -1,0 +1,158 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Mercado de la Ciudad - {{ personaje.nombre }}{% endblock title %}
+
+{% block styles %}
+<link rel="stylesheet" href="{% static 'css/tienda.css' %}?v=niveles-1">
+{% endblock styles %}
+
+{% block main %}
+<div class="scene">
+  <!-- Fondo animado o estático de tienda -->
+  <div class="shop-background"></div>
+  
+  <div style="position: relative; z-index: 9999;">
+    {% include "includes/navbar2.html" %}
+  </div>
+
+  <main class="shop-container">
+    
+    <!-- Panel del Mercader y ORO -->
+    <header class="shop-header">
+      <div class="merchant-info">
+        <a href="{% url 'player:detalle_personaje' pk=personaje.pk %}" class="btn-back-codice" style="margin-bottom: 15px; display: inline-flex; align-items: center; gap: 5px;">
+          <svg class="rpg-icon" viewBox="0 0 24 24"><path fill="currentColor" d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>
+          Volver al Códice
+        </a>
+        <h1 class="warcraft-title" style="color: #f1c40f;">EL MERCADER AMBULANTE</h1>
+        <p class="warcraft-text" style="font-size: 1.1rem; color: #ddd;">
+          "Bienvenido, forastero. Mis mercancías son las mejores del reino, si tienes con qué pagar."
+        </p>
+      </div>
+      
+      <div class="player-wallet">
+        <div class="wallet-label">Bolsa de {{ personaje.nombre }}</div>
+        <div class="wallet-amount">
+          <img src="{% static 'img/ui/gold_coin.jpg' %}" alt="Oro" class="gold-icon" style="width: 30px; height: 30px; border-radius: 50%; box-shadow: 0 0 10px #f1c40f;" onerror="this.onerror=null; this.style.display='none'; this.nextElementSibling.className='gold-icon-fallback';">
+          <span id="playerGold">{{ personaje.oro }}</span> <span style="font-size: 0.9rem; color: #aaa;">Oro</span>
+        </div>
+      </div>
+    </header>
+
+
+
+    <!-- Pestañas o Secciones -->
+    <h2 class="warcraft-title section-title" style="color: #e0d0b0; border-bottom: 1px solid #5a4022; padding-bottom: 5px; margin-bottom: 20px;">MERCANCÍAS A LA VENTA</h2>
+    
+    <!-- Catálogo de Objetos -->
+    <div class="shop-catalog">
+      {% for objeto in objetos_venta %}
+      <div class="shop-item-card">
+        <div class="item-img-container">
+          {% if objeto.img %}
+            <img src="{{ objeto.img.url }}" alt="{{ objeto.nombre }}" class="item-img">
+          {% else %}
+            <div class="no-img">Sin imagen</div>
+          {% endif %}
+        </div>
+        
+        <div class="item-details">
+          <h3 class="item-name">{{ objeto.nombre }}</h3>
+          <p class="item-desc">Nivel mínimo: {{ objeto.nivel }}{% if personaje.nivel < objeto.nivel %} · Puedes comprarlo, pero aún no usarlo.{% endif %}</p>
+          <p class="item-desc">{{ objeto.descripcion|truncatechars:60 }}</p>
+          
+          <div class="item-stats">
+            {% if objeto.es_equipable %}
+              <span class="stat-badge equipable">Equipable ({{ objeto.tipo_equipamiento|title }})</span>
+            {% else %}
+              <span class="stat-badge consumable">Consumible</span>
+            {% endif %}
+          </div>
+        </div>
+        
+        <div class="item-actions">
+          <div class="price-tag buy-price" style="justify-content: center; font-size: 1.1rem;">
+            Comprar: {{ objeto.precio_compra }} <span class="gold-symbol">💰</span>
+          </div>
+          
+          <form method="POST" class="trade-form">
+            {% csrf_token %}
+            <input type="hidden" name="objeto_id" value="{{ objeto.pk }}">
+            <div class="trade-buttons">
+              <button type="submit" name="accion" value="comprar" class="btn-buy" {% if personaje.oro < objeto.precio_compra %}disabled{% endif %}>
+                COMPRAR
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+      {% empty %}
+        <div class="empty-shop">
+          <p>El mercader ha sido saqueado. No hay objetos a la venta.</p>
+        </div>
+      {% endfor %}
+    </div>
+
+    <br><br>
+
+    <h2 class="warcraft-title section-title" style="color: #2ecc71; border-bottom: 1px solid #1b5e20; padding-bottom: 5px; margin-bottom: 20px;">TU INVENTARIO (PARA VENDER)</h2>
+    
+    <!-- Inventario del Jugador -->
+    <div class="shop-catalog">
+      {% for item in inventario_items %}
+      <div class="shop-item-card" style="border-color: #2ecc71;">
+        <div class="item-img-container">
+          {% if item.objeto.img %}
+            <img src="{{ item.objeto.img.url }}" alt="{{ item.objeto.nombre }}" class="item-img">
+          {% else %}
+            <div class="no-img">Sin imagen</div>
+          {% endif %}
+          <!-- Badge for quantity -->
+          <div style="position: absolute; top: 10px; right: 10px; background: rgba(0,0,0,0.8); color: white; padding: 2px 8px; border-radius: 10px; font-weight: bold; border: 1px solid #2ecc71;">
+            x{{ item.cantidad }}
+          </div>
+        </div>
+        
+        <div class="item-details">
+          <h3 class="item-name">{{ item.objeto.nombre }}</h3>
+          
+          <div class="item-stats">
+            {% if item.objeto.es_equipable %}
+              <span class="stat-badge equipable">Equipable</span>
+            {% else %}
+              <span class="stat-badge consumable">Consumible</span>
+            {% endif %}
+          </div>
+        </div>
+        
+        <div class="item-actions">
+          <div class="price-tag sell-price" style="justify-content: center; font-size: 1.1rem;">
+            Vender por: {{ item.objeto.precio_venta }} <span class="gold-symbol">💰</span>
+          </div>
+          
+          <form method="POST" class="trade-form">
+            {% csrf_token %}
+            <input type="hidden" name="objeto_id" value="{{ item.objeto.pk }}">
+            <div class="trade-buttons">
+              <button type="submit" name="accion" value="vender" class="btn-sell">
+                VENDER
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+      {% empty %}
+        <div class="empty-shop" style="color: #aaa; text-align: center; width: 100%;">
+          <p>Tu mochila está vacía. No tienes nada para vender.</p>
+        </div>
+      {% endfor %}
+    </div>
+
+  </main>
+</div>
+{% endblock main %}
+
+{% block scripts %}
+<script src="{% static 'js/tienda.js' %}"></script>
+{% endblock scripts %}

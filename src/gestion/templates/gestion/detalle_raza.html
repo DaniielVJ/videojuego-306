@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Detalle Raza: {{ raza.nombre }}{% endblock %}
+{% block styles %}
+<link rel="stylesheet" href="{% static 'css/detalle_raza.css' %}">
+{% endblock %}
+{% block main %}
+<div class="scene">
+  <canvas id="bgCanvas" class="bg-canvas"></canvas>
+  {% include "includes/navbar2.html" %}
+  <div class="content-wrapper">
+    <div class="hero-action-bar">
+      <a href="{% url 'gm:listar-razas' %}" class="btn-hero-nav btn-back">VOLVER AL CÓDICE</a>
+      <div class="action-bar-right">
+        <a href="{% url 'gm:actualizar-raza' pk=raza.pk %}" class="btn-hero-nav btn-edit-hero">MODIFICAR RAZA</a>
+        {% if raza.activo %}
+        <a href="{% url 'gm:eliminar-raza' pk=raza.pk %}" class="btn-hero-nav" style="color:#ff4444; border-color:#8a0303;">DESHABILITAR</a>
+        {% else %}
+        <a href="{% url 'gm:eliminar-raza' pk=raza.pk %}" class="btn-hero-nav" style="color:#10b981; border-color:#059669;">HABILITAR</a>
+        {% endif %}
+      </div>
+    </div>
+    
+    <div class="hero-dossier-card" style="grid-template-columns: 1fr;">
+      <div class="hero-details-column">
+        <div class="hero-title-row">
+            <h1 class="hero-name">{{ raza.nombre }}</h1>
+        </div>
+        <div class="race-lore-box">
+            <p class="race-lore-text" style="font-size: 1.2rem;">{{ raza.descripcion }}</p>
+        </div>
+        
+        <div style="display: flex; gap: 2rem; margin-top: 1rem; align-items: flex-end; justify-content: center; background: rgba(0,0,0,0.5); padding: 1rem; border-radius: 4px; border: 1px solid #5a4520;">
+            {% if raza.img_body %}
+                <div style="text-align: center;">
+                    <h3 style="color: #c4ab7c; font-family: 'Bangers'; font-size: 1.5rem; margin-bottom: 0.5rem;">Cuerpo Completo</h3>
+                    <img src="{{ raza.img_body.url }}" alt="Cuerpo" style="max-height: 400px; border: 2px solid #8c7335; border-radius: 4px; box-shadow: 0 0 15px rgba(0,0,0,0.8);">
+                </div>
+            {% endif %}
+            {% if raza.img_head %}
+                <div style="text-align: center;">
+                    <h3 style="color: #c4ab7c; font-family: 'Bangers'; font-size: 1.5rem; margin-bottom: 0.5rem;">Rostro (Avatar)</h3>
+                    <img src="{{ raza.img_head.url }}" alt="Rostro" style="max-height: 200px; border: 2px solid #8c7335; border-radius: 4px; box-shadow: 0 0 15px rgba(0,0,0,0.8);">
+                </div>
+            {% endif %}
+        </div>
+
+        <div style="margin-top: 2rem; background: rgba(0,0,0,0.5); padding: 1.5rem; border-radius: 4px; border: 1px solid #5a4520;">
+            <h3 style="color: #c4ab7c; font-family: 'Bangers'; font-size: 1.8rem; margin-bottom: 1rem; border-bottom: 1px solid #5a4520; padding-bottom: 0.5rem;">Bonificadores Raciales</h3>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 1rem;">
+                {% for stat, val in raza.r_bonificadores.items %}
+                    <div style="background: rgba(20,20,20,0.8); padding: 10px; border: 1px solid #8c7335; text-align: center; border-radius: 4px;">
+                        <div style="color: #9d8c6b; font-size: 0.8rem; text-transform: uppercase;">{{ stat }}</div>
+                        <div style="color: {% if val > 0 %}#10b981{% elif val < 0 %}#ff4444{% else %}#ffeed1{% endif %}; font-family: 'Bangers'; font-size: 1.5rem;">
+                            {% if val > 0 %}+{% endif %}{{ val }}
+                        </div>
+                    </div>
+                {% empty %}
+                    <div style="color: #9d8c6b;">Ningún bonificador racial configurado.</div>
+                {% endfor %}
+            </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+{% block scripts %}
+<script src="{% static 'js/detalle_raza.js' %}"></script>
+{% endblock %}

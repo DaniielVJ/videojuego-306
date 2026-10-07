@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+Login
+{% endblock title %}
+
+{% block styles %}
+<meta name="description" content="Página de inicio de sesión con estética warcraft." />
+<link rel="stylesheet" href="{% static 'css/login.css' %}" />
+<link rel="stylesheet" href="{% static 'css/inicio.css' %}">
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Bangers&family=MedievalSharp&display=swap" rel="stylesheet" />
+{% endblock styles %}
+
+
+{% block main %}
+
+{% include "includes/navbar1.html" %}
+
+<div class="scene">
+  <!-- Pixel art canvas background -->
+  <canvas id="bgCanvas" class="bg-canvas"></canvas>
+
+  <!-- Contenido principal -->
+  <div class="content">
+
+    <div class="login-panel">
+      <h2 class="login-heading">ENTRAR AL REINO</h2>
+
+      <form id="loginForm" class="login-form" novalidate action="" method="POST">
+        {% csrf_token %}
+
+
+
+        {{form.as_div}}
+
+        <button type="submit" id="submitBtn" class="btn-form-login">INICIAR SESIÓN</button>
+        <a href="{% url 'usuarios:registro' %}" id="registerLink" class="register-link">CREAR UNA CUENTA</a>
+      </form>
+    </div>
+
+  </div>
+</div>
+{% endblock main %}
+
+
+{% block scripts %}
+<script src="{%static 'js/login.js'%}"></script>
+{% endblock scripts %}

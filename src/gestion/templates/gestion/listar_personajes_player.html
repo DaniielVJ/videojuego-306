@@ -1,0 +1,191 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}
+Mis Personajes
+{% endblock title %}
+
+{% block styles %}
+<meta name="description" content="Listado de personajes y aventureros para el Game Master." />
+<link rel="stylesheet" href="{% static 'css/listar_personajes.css' %}" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Bangers&family=MedievalSharp&display=swap" rel="stylesheet" />
+{% endblock styles %}
+
+{% block main %}
+<div class="scene">
+  <!-- Fondo animado con brasas y cenizas -->
+  <canvas id="bgCanvas" class="bg-canvas"></canvas>
+
+  <!-- Barra de Navegación para GM / Usuario Autenticado -->
+  {% include "includes/navbar2.html" %}
+
+  <!-- Contenido Principal Desplazable -->
+  <div class="content-wrapper">
+
+    <!-- Cabecera de la Página -->
+    <header class="gm-header">
+      <h1 class="main-title">MIS HÉROES</h1>
+      <p class="gm-subtitle">Lista de todos tus valientes aventureros.</p>
+    </header>
+
+
+
+
+
+    <!-- TABLA DE PERSONAJES -->
+    <main class="table-card">
+      <div class="table-header-info">
+        <div class="table-header-left">
+          <h2 class="table-title">LISTA DE GUERREROS</h2>
+          <span class="badge-counter">
+            Total: {{ personajes|length }} / 5 héroes
+          </span>
+        </div>
+        <div class="table-header-actions">
+          {% if puede_crear %}
+          <a href="{% url 'player:crear_personaje' %}" class="btn-create-hero" id="btnCreateHero" title="Crear y forjar un nuevo héroe en el reino">
+            <svg class="rpg-icon" viewBox="0 0 24 24"><path d="M19 11h-3V8a1 1 0 0 0-2 0v3h-3a1 1 0 0 0 0 2h3v3a1 1 0 0 0 2 0v-3h3a1 1 0 0 0 0-2zM6.5 3L5 4.5l4 4L7.5 10l-4-4L2 7.5l5 5 1.5-1.5 1-1 4.5 4.5L12 16.5 13.5 18l1.5-1.5-1.5-1.5-1.5-1.5L7.5 9 9 7.5l-2.5-2.5z"/></svg>
+            <span>Crear Personaje</span>
+          </a>
+          {% else %}
+          <div class="btn-create-hero" style="filter: grayscale(100%); opacity: 0.5; cursor: not-allowed;" title="Has alcanzado el límite de 5 personajes">
+            <svg class="rpg-icon" viewBox="0 0 24 24"><path d="M19 11h-3V8a1 1 0 0 0-2 0v3h-3a1 1 0 0 0 0 2h3v3a1 1 0 0 0 2 0v-3h3a1 1 0 0 0 0-2zM6.5 3L5 4.5l4 4L7.5 10l-4-4L2 7.5l5 5 1.5-1.5 1-1 4.5 4.5L12 16.5 13.5 18l1.5-1.5-1.5-1.5-1.5-1.5L7.5 9 9 7.5l-2.5-2.5z"/></svg>
+            <span>Límite (5/5)</span>
+          </div>
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="table-responsive">
+        <table class="warcraft-table">
+          <thead>
+            <tr>
+              <th data-sort="nombre" title="Ordenar por Nombre de Personaje">
+                <div class="th-content">
+                  <span>Héroe / Personaje</span>
+                  <span class="sort-indicator">
+                    <svg class="sort-icon-neutral" viewBox="0 0 24 24"><path d="M12 5.83L15.17 9l1.41-1.41L12 3 7.41 7.59 8.83 9 12 5.83zm0 12.34L8.83 15l-1.41 1.41L12 21l4.59-4.59L15.17 15 12 18.17z"/></svg>
+                    <svg class="sort-icon-asc" viewBox="0 0 24 24"><path d="M12 4l-6 8h12l-6-8z"/></svg>
+                    <svg class="sort-icon-desc" viewBox="0 0 24 24"><path d="M12 20l6-8H6l6 8z"/></svg>
+                  </span>
+                </div>
+              </th>
+
+              <th data-sort="raza__nombre" title="Ordenar por Raza">
+                <div class="th-content">
+                  <span>Raza</span>
+                  <span class="sort-indicator">
+                    <svg class="sort-icon-neutral" viewBox="0 0 24 24"><path d="M12 5.83L15.17 9l1.41-1.41L12 3 7.41 7.59 8.83 9 12 5.83zm0 12.34L8.83 15l-1.41 1.41L12 21l4.59-4.59L15.17 15 12 18.17z"/></svg>
+                    <svg class="sort-icon-asc" viewBox="0 0 24 24"><path d="M12 4l-6 8h12l-6-8z"/></svg>
+                    <svg class="sort-icon-desc" viewBox="0 0 24 24"><path d="M12 20l6-8H6l6 8z"/></svg>
+                  </span>
+                </div>
+              </th>
+              <th data-sort="nivel" title="Ordenar por Nivel">
+                <div class="th-content">
+                  <span>Nivel</span>
+                  <span class="sort-indicator">
+                    <svg class="sort-icon-neutral" viewBox="0 0 24 24"><path d="M12 5.83L15.17 9l1.41-1.41L12 3 7.41 7.59 8.83 9 12 5.83zm0 12.34L8.83 15l-1.41 1.41L12 21l4.59-4.59L15.17 15 12 18.17z"/></svg>
+                    <svg class="sort-icon-asc" viewBox="0 0 24 24"><path d="M12 4l-6 8h12l-6-8z"/></svg>
+                    <svg class="sort-icon-desc" viewBox="0 0 24 24"><path d="M12 20l6-8H6l6 8z"/></svg>
+                  </span>
+                </div>
+              </th>
+              <th data-sort="estado" title="Ordenar por Estado">
+                <div class="th-content">
+                  <span>Estado</span>
+                  <span class="sort-indicator">
+                    <svg class="sort-icon-neutral" viewBox="0 0 24 24"><path d="M12 5.83L15.17 9l1.41-1.41L12 3 7.41 7.59 8.83 9 12 5.83zm0 12.34L8.83 15l-1.41 1.41L12 21l4.59-4.59L15.17 15 12 18.17z"/></svg>
+                    <svg class="sort-icon-asc" viewBox="0 0 24 24"><path d="M12 4l-6 8h12l-6-8z"/></svg>
+                    <svg class="sort-icon-desc" viewBox="0 0 24 24"><path d="M12 20l6-8H6l6 8z"/></svg>
+                  </span>
+                </div>
+              </th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for personaje in personajes %}
+            <tr>
+              <!-- Personaje (Nombre del Héroe) -->
+              <td>
+                <div class="hero-name-cell">
+                  <span class="hero-name">
+                    {{ personaje.nombre }}
+                    {% if not personaje.activo %}
+                    <span style="font-size: 0.65rem; color: #ff4444; border: 1px solid #ff4444; padding: 2px 4px; border-radius: 3px; margin-left: 5px; vertical-align: middle;">INACTIVO</span>
+                    {% endif %}
+                  </span>
+                </div>
+              </td>
+
+
+
+              <!-- Raza (Medallón de Rostro y Nombre) -->
+              <td>
+                <div class="race-cell" title="{{ personaje.raza.nombre }}">
+                  <div class="race-medallion">
+                    {% if personaje.raza.img_head %}
+                    <img src="{{ personaje.raza.img_head.url }}" alt="{{ personaje.raza.nombre }}" class="race-face-img">
+                    {% elif personaje.raza.img_body %}
+                    <img src="{{ personaje.raza.img_body.url }}" alt="{{ personaje.raza.nombre }}" class="race-face-img">
+                    {% else %}
+                    <svg class="rpg-icon" viewBox="0 0 24 24"><path d="M12 2L4 5v6.1c0 5.6 3.4 10.8 8 12.9 4.6-2.1 8-7.3 8-12.9V5l-8-3zm0 2.2l6 2.3v4.6c0 4.5-2.6 8.7-6 10.6-3.4-1.9-6-6.1-6-10.6V6.5l6-2.3z"/></svg>
+                    {% endif %}
+                  </div>
+                  <span class="race-name-label">{{ personaje.raza.nombre }}</span>
+                </div>
+              </td>
+
+              <!-- Nivel -->
+              <td>
+                <span class="level-badge" title="Nivel del Héroe">
+                  {{ personaje.nivel }}
+                </span>
+              </td>
+
+              <!-- Estado -->
+              <td>
+                <span class="status-badge status-{{ personaje.estado|lower }}">
+                  <span class="status-indicator"></span>
+                  {{ personaje.get_estado_display|default:personaje.estado|capfirst }}
+                </span>
+              </td>
+
+              <!-- Acción: Ver Ficha de Personaje -->
+              <td>
+                <a href="{% url 'player:detalle_personaje' pk=personaje.pk %}" class="btn-action-view" title="Ver ficha y detalles de {{ personaje.nombre }}">
+                  <svg class="rpg-icon" viewBox="0 0 24 24"><path d="M19 3H7a4 4 0 0 0-4 4v10a4 4 0 0 0 4 4h12a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2zm-12 2h12v12H7a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2zm12 14H7a4 4 0 0 0-2 .6V17a4 4 0 0 0 2 1h12v1zM9 8h8v1.5H9V8zm0 3h8v1.5H9V11zm0 3h5v1.5H9V14z"/></svg>
+                  <span>Ver Ficha</span>
+                </a>
+              </td>
+            </tr>
+            {% empty %}
+              <td colspan="5">
+                <div class="empty-state">
+                  <div class="empty-state-icon">
+                    <svg class="rpg-icon-empty" viewBox="0 0 24 24"><path d="M12 2L4 5v6.1c0 5.6 3.4 10.8 8 12.9 4.6-2.1 8-7.3 8-12.9V5l-8-3zm0 2.2l6 2.3v4.6c0 4.5-2.6 8.7-6 10.6-3.4-1.9-6-6.1-6-10.6V6.5l6-2.3z"/></svg>
+                  </div>
+                  <h3 class="empty-state-title">NO SE ENCONTRARON GUERREROS</h3>
+                  <p class="empty-state-desc">
+                    No hay personajes registrados en las crónicas que coincidan con tu búsqueda.
+                  </p>
+                </div>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+
+    </main>
+
+  </div>
+</div>
+{% endblock main %}
+
+{% block scripts %}
+<script src="{% static 'js/listar_personajes.js' %}"></script>
+{% endblock scripts %}

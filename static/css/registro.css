@@ -1,0 +1,271 @@
+/* =============================================
+   RESET & BASE (WARCRAFT THEME)
+   ============================================= */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  width: 100%; height: 100%; overflow: hidden;
+  font-family: 'MedievalSharp', cursive;
+  background: url('../img/war_bg.jpg') no-repeat center center fixed; 
+  background-size: cover;
+}
+
+/* =============================================
+   ESCENA Y CANVAS (Mantenemos el fondo interactivo)
+   ============================================= */
+.scene {
+  position: relative;
+  width: 100vw; height: 100vh;
+  overflow: auto; 
+  display: flex; align-items: center; justify-content: center;
+  background: rgba(0, 0, 0, 0.4); /* Oscurecer un poco la imagen para que el form resalte */
+}
+
+.bg-canvas {
+  position: fixed; 
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  z-index: 0;
+  pointer-events: none;
+}
+
+/* =============================================
+   CONTENIDO CENTRAL
+   ============================================= */
+.content {
+  position: relative; z-index: 10;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  width: 100%; 
+  padding: 2rem 1rem;
+}
+
+/* =============================================
+   TÍTULO
+   ============================================= */
+.main-title {
+  font-family: 'Bangers', cursive;
+  font-size: clamp(2.5rem, 5vw, 5rem);
+  letter-spacing: 0.08em;
+  color: #ffcc00; /* Oro WoW */
+  text-align: center;
+  margin-bottom: 0.2em;
+  text-shadow: 3px 3px 0 #000, 0 0 15px rgba(255, 204, 0, 0.5); /* Sombra pesada */
+  -webkit-text-stroke: 1px #804000; /* Borde oscuro */
+}
+
+/* =============================================
+   PANEL REGISTRO (Estilo Pergamino / Piedra)
+   ============================================= */
+.register-panel {
+  display: flex; flex-direction: column; align-items: center;
+  width: 100%;
+  max-width: 480px;
+  background: rgba(18, 18, 18, 0.85); /* Fondo oscuro semitransparente */
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 2px solid #8c7335; /* Borde bronce/oro oscuro */
+  border-radius: 4px;
+  padding: 2rem;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.9), inset 0 0 20px rgba(0,0,0,0.8);
+  position: relative;
+}
+
+/* Esquinas decorativas del panel (ilusión de UI de WoW) */
+.register-panel::before, .register-panel::after {
+  content: '';
+  position: absolute;
+  width: 12px; height: 12px;
+  background: #ffcc00;
+  border: 1px solid #333;
+}
+.register-panel::before { top: -2px; left: -2px; }
+.register-panel::after { bottom: -2px; right: -2px; }
+
+.register-heading {
+  font-size: clamp(1.5rem, 3vw, 2rem);
+  color: #f8e4a1; /* Pergamino claro */
+  letter-spacing: 0.1em;
+  text-align: center;
+  margin-bottom: 1.5rem;
+  text-shadow: 2px 2px 4px #000;
+  border-bottom: 1px solid rgba(140, 115, 53, 0.5);
+  padding-bottom: 0.5rem;
+  width: 100%;
+}
+
+/* =============================================
+   FORMULARIO Y CAMPOS
+   ============================================= */
+.register-form {
+  display: flex; flex-direction: column;
+  gap: 1.5rem; /* Más espacio entre campos */
+  width: 100%;
+}
+
+/* El div generado por Django */
+.register-form > div {
+  display: flex;
+  flex-direction: column; /* Columna: label arriba, input abajo */
+  width: 100%;
+  position: relative;
+}
+
+/* Label generado por Django */
+.register-form > div > label {
+  font-family: 'MedievalSharp', cursive;
+  font-size: 0.95rem;
+  color: #ffcc00; /* Dorado WoW */
+  letter-spacing: 0.05em;
+  margin-bottom: 0.3rem;
+  text-transform: uppercase;
+  text-shadow: 1px 1px 2px #000;
+}
+
+/* Inputs de Django */
+.register-form > div input {
+  height: 2.8rem;
+  border: 1px solid #5a4b2a; /* Borde oscuro */
+  background: rgba(0, 0, 0, 0.6); /* Fondo negro translúcido */
+  font-family: 'MedievalSharp', cursive;
+  font-size: 1.1rem;
+  letter-spacing: 0.04em;
+  color: #e6d3a8; /* Texto amarillento */
+  outline: none;
+  padding: 0 1rem;
+  border-radius: 3px;
+  box-shadow: inset 0 2px 5px rgba(0,0,0,0.8);
+  transition: all 0.3s ease;
+}
+
+/* Efecto focus en Inputs (Resplandor mágico) */
+.register-form > div:focus-within input {
+  border-color: #ffcc00;
+  box-shadow: inset 0 2px 5px rgba(0,0,0,0.8), 0 0 8px rgba(255, 204, 0, 0.4);
+  background: rgba(20, 20, 20, 0.8);
+}
+
+/* Estados de error/éxito (Controlados por JS) */
+.register-form > div.error-border input {
+  border-color: #ff3333;
+  box-shadow: inset 0 2px 5px rgba(0,0,0,0.8), 0 0 8px rgba(255, 51, 51, 0.5);
+}
+
+.register-form > div.success-border input {
+  border-color: #33cc33;
+  box-shadow: inset 0 2px 5px rgba(0,0,0,0.8), 0 0 8px rgba(51, 204, 51, 0.4);
+}
+
+/* =============================================
+   TEXTOS DE AYUDA (¡MUCHO MENOS INVASIVOS!)
+   ============================================= */
+.register-form .helptext {
+  font-size: 0.75rem;
+  color: #9d8c6b; /* Color apagado */
+  margin-top: 0.3rem;
+  font-style: italic;
+  line-height: 1.2;
+}
+
+/* Lista de errores */
+.register-form ul.errorlist {
+  font-size: 0.8rem;
+  color: #ff4d4d; /* Rojo vivo pero oscuro */
+  margin-top: 0.3rem;
+  list-style: none;
+  padding: 0;
+  text-shadow: 1px 1px 1px #000;
+}
+
+.register-form ul.errorlist li {
+  margin-bottom: 0.2rem;
+}
+
+/* =============================================
+   BOTÓN FORJAR DESTINO (Estilo Botón WoW)
+   ============================================= */
+.btn-register {
+  margin-top: 1rem;
+  width: 100%;
+  height: 3.5rem;
+  border-radius: 4px;
+  border: 1px solid #ffcc00;
+  background: linear-gradient(to bottom, #8c1a1a 0%, #4a0505 100%); /* Rojo Horda */
+  font-family: 'MedievalSharp', cursive;
+  font-size: 1.2rem;
+  letter-spacing: 0.1em;
+  color: #ffcc00;
+  cursor: pointer;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.6), inset 0 1px 1px rgba(255,255,255,0.2);
+  transition: all 0.1s ease;
+  text-shadow: 1px 1px 2px #000;
+  text-transform: uppercase;
+}
+
+.btn-register:hover {
+  background: linear-gradient(to bottom, #a32222 0%, #5c0a0a 100%);
+  border-color: #ffe680;
+  color: #ffe680;
+  box-shadow: 0 0 15px rgba(255, 30, 30, 0.4);
+}
+
+.btn-register:active {
+  transform: translateY(2px);
+  box-shadow: 0 1px 2px rgba(0,0,0,0.8), inset 0 2px 4px rgba(0,0,0,0.6);
+}
+
+/* =============================================
+   LINK VOLVER
+   ============================================= */
+.login-link {
+  font-family: 'MedievalSharp', cursive;
+  font-size: 0.9rem;
+  letter-spacing: 0.05em;
+  color: #9d8c6b;
+  text-decoration: none;
+  transition: color 0.2s;
+  text-shadow: 1px 1px 0 #000;
+  margin-top: 0.5rem;
+  align-self: center;
+}
+.login-link:hover {
+  color: #ffcc00;
+  text-decoration: underline;
+}
+
+/* =============================================
+   RESPONSIVE
+   ============================================= */
+@media (max-width: 480px) {
+  .register-panel {
+    padding: 1.5rem;
+    border-radius: 0;
+    border-left: none;
+    border-right: none;
+  }
+}
+
+/* =============================================
+   TOGGLE PASSWORD VISIBILITY ICON
+   ============================================= */
+.toggle-password-btn {
+  position: absolute;
+  right: 10px;
+  top: 50%; 
+  transform: translateY(-50%);
+  background: transparent;
+  border: none;
+  color: #9d8c6b;
+  font-size: 1.2rem;
+  cursor: pointer;
+  outline: none;
+  transition: transform 0.2s, color 0.2s;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.toggle-password-btn:hover {
+  transform: translateY(-50%) scale(1.1);
+  color: #ffcc00;
+}

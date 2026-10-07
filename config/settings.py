@@ -1,0 +1,125 @@
+from pathlib import Path
+import os
+
+from dotenv import load_dotenv
+
+BASE_DIR = Path(__file__).resolve().parent.parent
+
+# Cargamos las variables del archivo .env como variables de entorno
+if os.getenv('DJANGO_SETTINGS_MODULE') not in {'config.test_settings', 'config.review_settings'}:
+    load_dotenv(BASE_DIR / '.env')
+
+SECRET_KEY = os.getenv('SECRET_KEY')
+
+DEBUG = os.getenv('DEBUG') == 'True'
+
+ALLOWED_HOSTS = [host.strip() for host in os.getenv('ALLOWED_HOSTS', '').split(',')]
+
+INSTALLED_APPS = [
+    'django.contrib.admin',
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'django.contrib.sessions',
+    'django.contrib.messages',
+    'django.contrib.staticfiles',
+    'django_extensions',
+    'src.gestion',
+    'src.usuarios',
+    'src.gameplay',
+]
+
+MIDDLEWARE = [
+    'django.middleware.security.SecurityMiddleware',
+    'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.common.CommonMiddleware',
+    'django.middleware.csrf.CsrfViewMiddleware',
+    'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'django.contrib.messages.middleware.MessageMiddleware',
+    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'src.usuarios.middlewares.VerificarLoginMiddleware',
+]
+
+ROOT_URLCONF = 'config.urls'
+
+TEMPLATES = [
+    {
+        'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        'DIRS': [BASE_DIR / 'templates', BASE_DIR / 'errors'],
+        'APP_DIRS': True,
+        'OPTIONS': {
+            'context_processors': [
+                'django.template.context_processors.request',
+                'django.contrib.auth.context_processors.auth',
+                'django.contrib.messages.context_processors.messages',
+            ],
+        },
+    },
+]
+
+WSGI_APPLICATION = 'config.wsgi.application'
+
+
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
+    }
+}
+
+
+
+
+AUTH_PASSWORD_VALIDATORS = [
+    {
+        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
+    },
+    {
+        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+    },
+    {
+        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
+    },
+    {
+        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
+    },
+]
+
+
+
+LANGUAGE_CODE = 'es-cl'
+
+TIME_ZONE = 'America/Santiago'
+
+USE_I18N = True
+
+USE_TZ = True
+
+
+
+
+STATIC_URL = 'static/'
+STATICFILES_DIRS = [BASE_DIR / "static"]
+
+
+# Configuración de login y autenticación
+AUTH_USER_MODEL = os.getenv('AUTH_USER_MODEL', 'usuarios.Usuario')
+LOGIN_REDIRECT_URL = 'usuarios:inicio_usuario'
+LOGOUT_REDIRECT_URL = 'index'
+LOGIN_URL = 'usuarios:login'
+
+PUBLIC_URLS_NAMES = [
+    'usuarios:login',
+    'usuarios:registro'
+]
+
+
+# Archivos Multimedia
+MEDIA_ROOT = BASE_DIR / 'media'
+MEDIA_URL = '/media/'
+
+MAILERS = {
+    'default': {
+        'BACKEND': 'django.core.mail.backends.console.EmailBackend',
+    },
+}

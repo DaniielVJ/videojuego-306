@@ -1,0 +1,935 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}
+{{ personaje.nombre }}
+{% endblock title %}
+
+{% block styles %}
+<meta name="description" content="Ficha táctica y códice de aventurero para {{ personaje.nombre }} en El Reino." />
+<!-- Estilos Épicos de la Ficha de Detalle (World of Warcraft / Dark RPG) -->
+<link rel="stylesheet" href="{% static 'css/detalle_personaje.css' %}" />
+{% endblock styles %}
+
+{% block main %}
+<div class="scene">
+  <!-- Lienzo de Brasas y Cenizas de Fondo (60 FPS) -->
+  <canvas id="bgCanvas" class="bg-canvas"></canvas>
+
+  <!-- Barra de Navegación del Reino -->
+  {% include "includes/navbar2.html" %}
+
+  <!-- Contenedor Principal Desplazable -->
+  <main class="content-wrapper" id="mainContent">
+
+    <!-- 1. BARRA SUPERIOR DE ACCIONES Y NAVEGACIÓN -->
+    <header class="hero-action-bar" aria-label="Navegación y controles de ficha">
+      <div class="action-bar-left">
+        <a href="{% if request.user.is_gm %}{% url 'gm:listar-personajes' %}{% else %}{% url 'player:listar_personajes' %}{% endif %}" class="btn-hero-nav btn-back" title="Regresar a las crónicas y lista de aventureros">
+          <svg class="rpg-icon" viewBox="0 0 24 24"><path fill="currentColor" d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>
+          <span>VOLVER A LAS CRÓNICAS</span>
+        </a>
+      </div>
+
+      <div class="hero-chronicle-tag">
+        <span>CÓDICE DEL HÉROE</span>
+        <span class="tag-highlight">// REGISTRO #{{ personaje.pk }}</span>
+      </div>
+
+      <div class="action-bar-right" style="display: flex; gap: 1rem;">
+        <!-- BOTÓN DE TRABAJAR / CIUDAD -->
+        {% if not request.user.is_gm %}
+        <a href="{% url 'gameplay:trabajar' personaje_id=personaje.pk %}" class="btn-hero-nav" style="color: #2980b9; border-color: #3498db;" title="Ir a la Ciudad">
+          <svg class="rpg-icon" viewBox="0 0 24 24"><path fill="currentColor" d="M12 3L2 12h3v8h6v-6h2v6h6v-8h3L12 3zm5 15h-2v-6H9v6H7v-7.81l5-4.5 5 4.5V18z"/></svg>
+          <span>TRABAJAR (CIUDAD)</span>
+        </a>
+        {% endif %}
+
+        <!-- BOTÓN DE TIENDA: NAVEGA AL MERCADO -->
+        {% if not request.user.is_gm %}
+        <a href="{% url 'gameplay:tienda' personaje_id=personaje.pk %}" class="btn-hero-nav btn-shop" style="color: #f1c40f; border-color: #f39c12;" title="Visitar al Mercader">
+          <svg class="rpg-icon" viewBox="0 0 24 24"><path fill="currentColor" d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12.9-1.63h7.45c.75 0 1.41-.41 1.75-1.03l3.58-6.49A1.003 1.003 0 0 0 20 4H5.21l-.94-2H1zm16 16c-1.1 0-1.99.9-1.99 2s.89 2 1.99 2 2-.9 2-2-.9-2-2-2z"/></svg>
+          <span>MERCADER ({{ personaje.oro }} 💰)</span>
+        </a>
+        {% endif %}
+
+        <!-- BOTÓN DE EDICIÓN: NAVEGA A LA FORJA DE MODIFICACIÓN -->
+        {% if not edit_mode %}
+        <a href="{% if request.user.is_gm %}{% url 'gm:actualizar-personaje' pk=personaje.pk %}{% else %}{% url 'player:actualizar_personaje' pk=personaje.pk %}{% endif %}" class="btn-hero-nav btn-edit-hero" id="btnEditarHeroe" data-id="{{ personaje.pk }}" data-name="{{ personaje.nombre }}" title="{% if request.user.is_gm %}Modificar Atributos y Pertrechos de {{ personaje.nombre }}{% else %}Renombrar a {{ personaje.nombre }}{% endif %}">
+          <svg class="rpg-icon" viewBox="0 0 24 24"><path fill="currentColor" d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a.996.996 0 0 0 0-1.41l-2.34-2.34a.996.996 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
+          <span>{% if request.user.is_gm %}MODIFICAR HÉROE{% else %}RENOMBRAR HÉROE{% endif %}</span>
+        </a>
+        {% endif %}
+
+        <!-- BOTÓN DE ELIMINACIÓN: NAVEGA AL DESTIERRO (GET) -->
+        {% if personaje.activo %}
+        <a href="{% if request.user.is_gm %}{% url 'gm:eliminar-personaje' pk=personaje.pk %}{% else %}{% url 'player:eliminar_personaje' pk=personaje.pk %}{% endif %}" class="btn-hero-nav btn-delete-hero" style="color: #ff4444; border-color: #8a0303;" title="{% if request.user.is_gm %}Deshabilitar a {{ personaje.nombre }}{% else %}Eliminar a {{ personaje.nombre }}{% endif %}">
+          <svg class="rpg-icon" viewBox="0 0 24 24"><path fill="currentColor" d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>
+          <span>{% if request.user.is_gm %}DESHABILITAR HÉROE{% else %}ELIMINAR PERSONAJE{% endif %}</span>
+        </a>
+        {% else %}
+        {% if request.user.is_gm %}
+        <a href="{% url 'gm:eliminar-personaje' pk=personaje.pk %}" class="btn-hero-nav btn-delete-hero" style="color: #10b981; border-color: #059669;" title="Habilitar a {{ personaje.nombre }}">
+          <svg class="rpg-icon" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+          <span>HABILITAR HÉROE</span>
+        </a>
+        {% endif %}
+        {% endif %}
+      </div>
+    </header>
+
+    <!-- 2. TARJETA DE IDENTIDAD PRINCIPAL (HERO DOSSIER BANNER) -->
+    <section class="hero-dossier-card" aria-label="Información General del Héroe">
+      
+      <!-- 2.1 RETRATO Y ARTE DE COMBATE -->
+      <div class="hero-portrait-column">
+        <div class="hero-portrait-frame" title="Representación de {{ personaje.nombre }}">
+          <!-- Sombra de Suelo / Pedestal de Combate -->
+          <div class="hero-ground-shadow"></div>
+
+          {% if personaje.raza.img_body %}
+            <img src="{{ personaje.raza.img_body.url }}" alt="Retrato completo de {{ personaje.nombre }}" class="hero-body-img" />
+          {% elif personaje.raza.img_head %}
+            <img src="{{ personaje.raza.img_head.url }}" alt="Rostro de {{ personaje.nombre }}" class="hero-body-img hero-head-only" />
+          {% else %}
+            <div class="hero-portrait-fallback">
+              <svg viewBox="0 0 24 24"><path d="M12 2a9 9 0 0 0-9 9c0 4.1 2.8 7.6 6.6 8.7V22h4.8v-2.3c3.8-1.1 6.6-4.6 6.6-8.7a9 9 0 0 0-9-9zm-6 9c0-1.8.6-3.4 1.7-4.8l2.6 2.6a1 1 0 0 0 1.4 0l2.3-2.3 2.3 2.3a1 1 0 0 0 1.4 0l2.6-2.6A7 7 0 0 1 20 11H4zm3 3h10v2H7v-2z"/></svg>
+              <span>SIN IMAGEN</span>
+            </div>
+          {% endif %}
+
+          <!-- Medallón Circular de Rostro Racial -->
+          {% if personaje.raza.img_head and personaje.raza.img_body %}
+          <div class="hero-race-medallion" title="Linaje: {{ personaje.raza.nombre }}">
+            <img src="{{ personaje.raza.img_head.url }}" alt="{{ personaje.raza.nombre }}" />
+          </div>
+          {% endif %}
+        </div>
+
+        <!-- Estado del Héroe (Vivo, Muerto, Congelado) -->
+        <div class="hero-status-badge status-{{ personaje.estado|lower }}" title="Estado vital actual en el Reino">
+          <span class="status-dot"></span>
+          <span>ESTADO: {{ personaje.get_estado_display|default:personaje.estado|upper }}</span>
+        </div>
+      </div>
+
+      <!-- 2.2 DETALLES DE IDENTIDAD Y PROGRESIÓN -->
+      <div class="hero-details-column">
+        
+        <div class="hero-identity-header">
+          <div class="hero-title-row" style="flex-direction: column; align-items: flex-start; gap: 5px;">
+            {% if edit_mode %}
+            <form method="POST" action="{% url 'player:actualizar_personaje' pk=personaje.pk %}" style="display:flex; gap:10px; align-items:center;">
+              {% csrf_token %}
+              <input type="text" name="nombre" value="{{ form.nombre.value|default:personaje.nombre }}" 
+                     style="background: rgba(0,0,0,0.6); border: 1px solid #eab308; color: #fff; padding: 0.2rem 0.5rem; font-size: 2.5rem; font-family: 'Cinzel', serif; font-weight: 700; text-transform: uppercase; border-radius: 4px; outline: none; box-shadow: 0 0 10px rgba(234, 179, 8, 0.3); width: 400px; margin: 0;" 
+                     required maxlength="50" autocomplete="off">
+              <button type="submit" 
+                      style="background: linear-gradient(to bottom, #735d29, #3d3115); border: 1px solid #a3853b; color: #fff; padding: 0.5rem 1rem; font-family: 'Cinzel', serif; font-size: 1rem; cursor: pointer; border-radius: 4px; text-transform: uppercase; display:flex; align-items:center; gap:5px; height: 100%;">
+                <svg viewBox="0 0 24 24" width="18" height="18"><path fill="currentColor" d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"/></svg>
+                Guardar
+              </button>
+              <a href="{% url 'player:detalle_personaje' pk=personaje.pk %}" 
+                 style="background: transparent; border: 1px solid #555; color: #a3a3a3; text-decoration: none; padding: 0.5rem 1rem; font-family: 'Cinzel', serif; font-size: 1rem; border-radius: 4px; text-transform: uppercase; display:flex; align-items:center; gap:5px; height: 100%;">
+                <svg viewBox="0 0 24 24" width="18" height="18"><path fill="currentColor" d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/></svg>
+                Cancelar
+              </a>
+            </form>
+            {% if form.errors %}
+            <div style="color: #ef4444; font-size: 0.9rem; font-family: monospace; background: rgba(239, 68, 68, 0.1); padding: 4px 8px; border-left: 2px solid #ef4444;">
+              {% for field in form %}{% for error in field.errors %}{{ error }} {% endfor %}{% endfor %}
+            </div>
+            {% endif %}
+            {% else %}
+            <h1 class="hero-name">{{ personaje.nombre }}</h1>
+            {% endif %}
+          </div>
+
+          <div class="hero-badges-strip">
+            <!-- Linaje / Raza -->
+            <span class="badge-pill" title="Raza del aventurero">
+              <svg viewBox="0 0 24 24"><path d="M12 2L4 5v6.1c0 5.6 3.4 10.8 8 12.9 4.6-2.1 8-7.3 8-12.9V5l-8-3z"/></svg>
+              <span>Linaje: <strong>{{ personaje.raza.nombre }}</strong></span>
+            </span>
+
+            <!-- Jugador Propietario -->
+            <span class="badge-pill" title="Aventurero que comanda este personaje">
+              <svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+              <span>Aventurero: <strong>{{ personaje.usuario.username }}</strong></span>
+            </span>
+
+            <!-- Rango / Roster Activo -->
+            <span class="badge-pill" title="Disponibilidad en las listas activas">
+              <svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+              <span>Servicio: <strong>{% if personaje.activo %}Activo{% else %}Inactivo{% endif %}</strong></span>
+            </span>
+          </div>
+        </div>
+
+        <!-- 2.3 MEDIDOR DE NIVEL Y BARRA DE EXPERIENCIA -->
+        <div class="hero-level-progression">
+          <div class="level-row">
+            <div class="level-crest-badge" title="Rango y jerarquía militar">
+              <svg viewBox="0 0 24 24"><path d="M5 16L3 5l5.5 5L12 4l3.5 6L21 5l-2 11H5zm14 3c0 .6-.4 1-1 1H6c-.6 0-1-.4-1-1v-1h14v1z"/></svg>
+              <span class="level-number">NIVEL {{ personaje.nivel }}</span>
+            </div>
+
+            <div class="exp-numeric-display">
+              <span>Experiencia:</span>
+              <span class="exp-current">{{ personaje.experiencia }}</span>
+              <span class="exp-target">/ {{ personaje.exp_siguiente_nivel }} XP</span>
+            </div>
+          </div>
+
+          <!-- Barra Visual de XP -->
+          <div class="exp-bar-track" id="heroExpTrack" data-current="{{ personaje.experiencia }}" data-max="{{ personaje.exp_siguiente_nivel }}" title="Progreso hacia el siguiente nivel">
+            <div class="exp-bar-fill" id="heroExpFill"></div>
+          </div>
+        </div>
+
+        <!-- 2.4 MÉTRICAS TÁCTICAS DERIVADAS -->
+        <div class="hero-tactical-metrics">
+          <!-- Salud Estimada -->
+          <div class="metric-card metric-health" title="Vitalidad y resistencia física de combate">
+            <div class="metric-icon-wrap">
+              <svg viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+            </div>
+            <div class="metric-content">
+              <span class="metric-label">Salud (Actual/Max)</span>
+              <span class="metric-value">
+                {{ personaje.hp_actual }} / {{ personaje.hp_total }} PV
+              </span>
+            </div>
+          </div>
+
+          <!-- Poder Marcial -->
+          <div class="metric-card metric-combat" title="Fuerza bruta y capacidad marcial">
+            <div class="metric-icon-wrap">
+              <svg viewBox="0 0 24 24"><path d="M19.7 3.3a1 1 0 0 0-1.4 0l-4.6 4.6 1.4 1.4 4.6-4.6a1 1 0 0 0 0-1.4zM4.3 3.3a1 1 0 0 0 0 1.4l4.6 4.6 1.4-1.4-4.6-4.6a1 1 0 0 0-1.4 0zm7.7 7.7l-7.7 7.7-1.3-1.3-.7.7 2.7 2.7.7-.7-1.3-1.3 7.7-7.7 7.7 7.7-1.3 1.3.7.7 2.7-2.7-.7-.7-1.3 1.3-7.7-7.7z"/></svg>
+            </div>
+            <div class="metric-content">
+              <span class="metric-label">Poder Físico</span>
+              <span class="metric-value">
+                {% if personaje.atributos %}
+                  {{ personaje.stats_totales.fuerza|default:0 }} PTS
+                {% else %}
+                  -- PTS
+                {% endif %}
+              </span>
+            </div>
+          </div>
+
+          <!-- Afinidades Arcanas -->
+          <div class="metric-card metric-magic" title="Potencial de hechizos e intelecto">
+            <div class="metric-icon-wrap">
+              <svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm1 15h-2v-6h2zm0-8h-2V7h2z"/></svg>
+            </div>
+            <div class="metric-content">
+              <span class="metric-label">Poder Arcano (Actual/Max)</span>
+              <span class="metric-value">
+                {{ personaje.mana_actual }} / {{ personaje.mana_total }} PM
+              </span>
+            </div>
+          </div>
+
+          <!-- Carga Transportada -->
+          <div class="metric-card metric-carry" title="Carga total de objetos y pertrechos">
+            <div class="metric-icon-wrap">
+              <svg viewBox="0 0 24 24"><path d="M20 7h-4V4c0-1.1-.9-2-2-2h-4c-1.1 0-2 .9-2 2v3H4c-1.1 0-2 .9-2 2v11c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V9c0-1.1-.9-2-2-2zm-10-3h4v3h-4V4zm10 16H4V9h16v11z"/></svg>
+            </div>
+            <div class="metric-content">
+              <span class="metric-label">Carga Total</span>
+              <span class="metric-value" id="metricCarryVal">0.0 kg</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- 3. CUADRÍCULA TÁCTICA: ATRIBUTOS, LINAJE, HABILIDADES Y ARSENAL -->
+    <div class="hero-dossier-grid">
+      
+      <!-- ══════════════════════════════════════════════════
+           COLUMNA IZQUIERDA: ATRIBUTOS Y LINAJE RACIAL
+           ══════════════════════════════════════════════════ -->
+      <div class="dossier-col-left" style="display: flex; flex-direction: column; gap: 1.75rem;">
+        
+        <!-- 3.1 ATRIBUTOS PRIMARIOS (7 PILARES) -->
+        <section class="dossier-section-card" aria-label="Atributos primarios">
+          <header class="section-card-header">
+            <div class="section-title-wrap">
+              <svg viewBox="0 0 24 24"><path d="M12 2l4 4-8 8-4-4 8-8zm7 7l3 3-8 8-3-3 8-8zm-15 9l2 2-2 2-2-2 2-2z"/></svg>
+              <h2 class="section-title">ATRIBUTOS PRIMARIOS</h2>
+            </div>
+            <span class="section-badge-counter">7 Rasgos Base</span>
+          </header>
+
+          <div class="attributes-list-container">
+            {% if personaje.atributos %}
+            {% with bonos=personaje.obtener_bonificadores_equipo %}
+              <!-- FUERZA -->
+              <div class="attribute-row-card attr-str" data-val="{{ personaje.stats_totales.fuerza }}" title="Potencia física, ataque cuerpo a cuerpo y levantamiento">
+                <div class="attr-info-left">
+                  <svg class="attr-icon-mini" viewBox="0 0 24 24"><path d="M19.7 3.3a1 1 0 0 0-1.4 0l-4.6 4.6 1.4 1.4 4.6-4.6a1 1 0 0 0 0-1.4zM4.3 3.3a1 1 0 0 0 0 1.4l4.6 4.6 1.4-1.4-4.6-4.6a1 1 0 0 0-1.4 0zm7.7 7.7l-7.7 7.7-1.3-1.3-.7.7 2.7 2.7.7-.7-1.3-1.3 7.7-7.7 7.7 7.7-1.3 1.3.7.7 2.7-2.7-.7-.7-1.3 1.3-7.7-7.7z"/></svg>
+                  <div class="attr-name-block">
+                    <span class="attr-name">Fuerza</span>
+                    <span class="attr-abbr">FUE / STR</span>
+                  </div>
+                </div>
+                <div class="attr-meter-track">
+                  <div class="attr-meter-fill"></div>
+                </div>
+                <div class="attr-value-badge">
+                  {{ personaje.stats_totales.fuerza }}
+                  {% if bonos.fuerza > 0 %}<span style="color: #4ade80; font-size: 0.75rem; text-shadow: 0 0 2px #000;">(+{{ bonos.fuerza }})</span>
+                  {% elif bonos.fuerza < 0 %}<span style="color: #ef4444; font-size: 0.75rem; text-shadow: 0 0 2px #000;">({{ bonos.fuerza }})</span>{% endif %}
+                </div>
+              </div>
+
+              <!-- DESTREZA -->
+              <div class="attribute-row-card attr-dex" data-val="{{ personaje.stats_totales.destreza }}" title="Velocidad, agilidad motriz, reflejos y puntería con proyectiles">
+                <div class="attr-info-left">
+                  <svg class="attr-icon-mini" viewBox="0 0 24 24"><path d="M12 2L4.5 20.29l.71.71L12 18l6.79 3 .71-.71z"/></svg>
+                  <div class="attr-name-block">
+                    <span class="attr-name">Destreza</span>
+                    <span class="attr-abbr">DES / DEX</span>
+                  </div>
+                </div>
+                <div class="attr-meter-track">
+                  <div class="attr-meter-fill"></div>
+                </div>
+                <div class="attr-value-badge">
+                  {{ personaje.stats_totales.destreza }}
+                  {% if bonos.destreza > 0 %}<span style="color: #4ade80; font-size: 0.75rem; text-shadow: 0 0 2px #000;">(+{{ bonos.destreza }})</span>
+                  {% elif bonos.destreza < 0 %}<span style="color: #ef4444; font-size: 0.75rem; text-shadow: 0 0 2px #000;">({{ bonos.destreza }})</span>{% endif %}
+                </div>
+              </div>
+
+              <!-- VIGOR -->
+              <div class="attribute-row-card attr-vig" data-val="{{ personaje.stats_totales.vigor }}" title="Resistencia física, vitalidad, reservas de salud y fatiga">
+                <div class="attr-info-left">
+                  <svg class="attr-icon-mini" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+                  <div class="attr-name-block">
+                    <span class="attr-name">Vigor</span>
+                    <span class="attr-abbr">VIG / CON</span>
+                  </div>
+                </div>
+                <div class="attr-meter-track">
+                  <div class="attr-meter-fill"></div>
+                </div>
+                <div class="attr-value-badge">
+                  {{ personaje.stats_totales.vigor }}
+                  {% if bonos.vigor > 0 %}<span style="color: #4ade80; font-size: 0.75rem; text-shadow: 0 0 2px #000;">(+{{ bonos.vigor }})</span>
+                  {% elif bonos.vigor < 0 %}<span style="color: #ef4444; font-size: 0.75rem; text-shadow: 0 0 2px #000;">({{ bonos.vigor }})</span>{% endif %}
+                </div>
+              </div>
+
+              <!-- INTELIGENCIA -->
+              <div class="attribute-row-card attr-int" data-val="{{ personaje.stats_totales.inteligencia }}" title="Poder arcano, conocimiento de conjuros, lógica y sabiduría">
+                <div class="attr-info-left">
+                  <svg class="attr-icon-mini" viewBox="0 0 24 24"><path d="M18 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM6 4h5v8l-2.5-1.5L6 12V4z"/></svg>
+                  <div class="attr-name-block">
+                    <span class="attr-name">Inteligencia</span>
+                    <span class="attr-abbr">INT / MAG</span>
+                  </div>
+                </div>
+                <div class="attr-meter-track">
+                  <div class="attr-meter-fill"></div>
+                </div>
+                <div class="attr-value-badge">
+                  {{ personaje.stats_totales.inteligencia }}
+                  {% if bonos.inteligencia > 0 %}<span style="color: #4ade80; font-size: 0.75rem; text-shadow: 0 0 2px #000;">(+{{ bonos.inteligencia }})</span>
+                  {% elif bonos.inteligencia < 0 %}<span style="color: #ef4444; font-size: 0.75rem; text-shadow: 0 0 2px #000;">({{ bonos.inteligencia }})</span>{% endif %}
+                </div>
+              </div>
+
+              <!-- PERCEPCIÓN -->
+              <div class="attribute-row-card attr-per" data-val="{{ personaje.stats_totales.percepcion }}" title="Sentidos alertas, detección de peligros ocultos e iniciativa en combate">
+                <div class="attr-info-left">
+                  <svg class="attr-icon-mini" viewBox="0 0 24 24"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zm0 12.5c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>
+                  <div class="attr-name-block">
+                    <span class="attr-name">Percepción</span>
+                    <span class="attr-abbr">PER / WIS</span>
+                  </div>
+                </div>
+                <div class="attr-meter-track">
+                  <div class="attr-meter-fill"></div>
+                </div>
+                <div class="attr-value-badge">
+                  {{ personaje.stats_totales.percepcion }}
+                  {% if bonos.percepcion > 0 %}<span style="color: #4ade80; font-size: 0.75rem; text-shadow: 0 0 2px #000;">(+{{ bonos.percepcion }})</span>
+                  {% elif bonos.percepcion < 0 %}<span style="color: #ef4444; font-size: 0.75rem; text-shadow: 0 0 2px #000;">({{ bonos.percepcion }})</span>{% endif %}
+                </div>
+              </div>
+
+              <!-- CARISMA -->
+              <div class="attribute-row-card attr-cha" data-val="{{ personaje.stats_totales.carisma }}" title="Dotes de liderazgo, persuasión diplomática y presencia imponente">
+                <div class="attr-info-left">
+                  <svg class="attr-icon-mini" viewBox="0 0 24 24"><path d="M5 16L3 5l5.5 5L12 4l3.5 6L21 5l-2 11H5zm14 3c0 .6-.4 1-1 1H6c-.6 0-1-.4-1-1v-1h14v1z"/></svg>
+                  <div class="attr-name-block">
+                    <span class="attr-name">Carisma</span>
+                    <span class="attr-abbr">CAR / CHA</span>
+                  </div>
+                </div>
+                <div class="attr-meter-track">
+                  <div class="attr-meter-fill"></div>
+                </div>
+                <div class="attr-value-badge">
+                  {{ personaje.stats_totales.carisma }}
+                  {% if bonos.carisma > 0 %}<span style="color: #4ade80; font-size: 0.75rem; text-shadow: 0 0 2px #000;">(+{{ bonos.carisma }})</span>
+                  {% elif bonos.carisma < 0 %}<span style="color: #ef4444; font-size: 0.75rem; text-shadow: 0 0 2px #000;">({{ bonos.carisma }})</span>{% endif %}
+                </div>
+              </div>
+
+              <!-- SUERTE -->
+              <div class="attribute-row-card attr-luk" data-val="{{ personaje.stats_totales.suerte }}" title="Fortuna en tiradas críticas, esquives milagrosos y botín de guerra">
+                <div class="attr-info-left">
+                  <svg class="attr-icon-mini" viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 3c.83 0 1.5.67 1.5 1.5S12.83 9 12 9s-1.5-.67-1.5-1.5S11.17 6 12 6zm-4 6c.83 0 1.5.67 1.5 1.5S8.83 15 8 15s-1.5-.67-1.5-1.5S7.17 12 8 12zm8 0c.83 0 1.5.67 1.5 1.5S16.83 15 16 15s-1.5-.67-1.5-1.5.67-1.5 1.5-1.5zm-4 6c.83 0 1.5.67 1.5 1.5S12.83 21 12 21s-1.5-.67-1.5-1.5.67-1.5 1.5-1.5z"/></svg>
+                  <div class="attr-name-block">
+                    <span class="attr-name">Suerte</span>
+                    <span class="attr-abbr">SUE / LUK</span>
+                  </div>
+                </div>
+                <div class="attr-meter-track">
+                  <div class="attr-meter-fill"></div>
+                </div>
+                <div class="attr-value-badge">
+                  {{ personaje.stats_totales.suerte }}
+                  {% if bonos.suerte > 0 %}<span style="color: #4ade80; font-size: 0.75rem; text-shadow: 0 0 2px #000;">(+{{ bonos.suerte }})</span>
+                  {% elif bonos.suerte < 0 %}<span style="color: #ef4444; font-size: 0.75rem; text-shadow: 0 0 2px #000;">({{ bonos.suerte }})</span>{% endif %}
+                </div>
+              </div>
+            {% endwith %}
+
+            {% else %}
+              <!-- Estado sin atributos registrados aún -->
+              <div class="empty-codex-state">
+                <svg viewBox="0 0 24 24"><path d="M11 15h2v2h-2zm0-8h2v6h-2zm1-5C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/></svg>
+                <span class="empty-state-title">Sin Atributos Asignados</span>
+                <p class="empty-state-text">Este personaje no posee un registro de atributos en la forja. Utiliza la opción de edición para forjarlos.</p>
+              </div>
+            {% endif %}
+          </div>
+        </section>
+
+        <!-- 3.2 CÓDICE DE LINAJE (RAZA) -->
+        <section class="dossier-section-card" aria-label="Códice de linaje y raza">
+          <header class="section-card-header">
+            <div class="section-title-wrap">
+              <svg viewBox="0 0 24 24"><path d="M12 2L4 5v6.1c0 5.6 3.4 10.8 8 12.9 4.6-2.1 8-7.3 8-12.9V5l-8-3zm0 2.2l6 2.3v4.6c0 4.5-2.6 8.7-6 10.6-3.4-1.9-6-6.1-6-10.6V6.5l6-2.3z"/></svg>
+              <h2 class="section-title">LINAJE: {{ personaje.raza.nombre|upper }}</h2>
+            </div>
+            <span class="section-badge-counter">Trascendencia</span>
+          </header>
+
+          <div class="race-lore-box">
+            <p class="race-lore-text">{{ personaje.raza.descripcion|linebreaksbr }}</p>
+
+            <div class="race-modifiers-row">
+              <!-- Bonificadores Raciales -->
+              {% if personaje.raza.r_bonificadores %}
+              <div class="modifiers-subgroup subgroup-bonuses">
+                <span class="subgroup-label">Afinidades (+):</span>
+                {% for key, val in personaje.raza.r_bonificadores.items %}
+                <span class="mod-chip mod-chip-bonus" title="Bonificador inherente de {{ key|capfirst }}">
+                  +{{ val }} {{ key|capfirst }}
+                </span>
+                {% endfor %}
+              </div>
+              {% endif %}
+
+              <!-- Desventajas o Hándicap -->
+              {% if personaje.raza.r_handicap %}
+              <div class="modifiers-subgroup subgroup-penalties">
+                <span class="subgroup-label">Desventajas (-):</span>
+                {% for key, val in personaje.raza.r_handicap.items %}
+                <span class="mod-chip mod-chip-penalty" title="Penalización inherente de {{ key|capfirst }}">
+                  {{ val }} {{ key|capfirst }}
+                </span>
+                {% endfor %}
+              </div>
+              {% endif %}
+            </div>
+          </div>
+        </section>
+
+      </div>
+
+      <!-- ══════════════════════════════════════════════════
+           COLUMNA DERECHA: GRIMORIO DE HABILIDADES Y ARSENAL
+           ══════════════════════════════════════════════════ -->
+      <div class="dossier-col-right" style="display: flex; flex-direction: column; gap: 1.75rem;">
+        
+        <!-- 3.3 GRIMORIO DE HABILIDADES (HABILIDADES MÁGICAS Y MARCIALES) -->
+        <section class="dossier-section-card" aria-label="Habilidades marciales y mágicas">
+          <header class="section-card-header">
+            <div class="section-title-wrap">
+              <svg viewBox="0 0 24 24"><path d="M11 2L9 8H3l5 4.5-2 6.5 6-4 6 4-2-6.5L21 8h-6l-2-6zm1 4.3l1.1 3.4h3.6l-2.9 2.1 1.1 3.5L12 13.2l-2.9 2.1 1.1-3.5-2.9-2.1h3.6L12 6.3z"/></svg>
+              <h2 class="section-title">GRIMORIO DE HABILIDADES</h2>
+            </div>
+            <span class="section-badge-counter">{{ personaje.habilidades.count }} Asignadas</span>
+          </header>
+
+          <div class="skills-deck-grid">
+            {% for habilidad in personaje.habilidades.all %}
+            <article class="skill-codex-card" title="Habilidad: {{ habilidad.nombre }}">
+              <div class="skill-card-top">
+                <div class="skill-title-block">
+                  <svg class="skill-icon-rune" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                  <h3 class="skill-name">{{ habilidad.nombre }}</h3>
+                </div>
+
+                <span class="skill-status-tag skill-status-active">
+                  {% if habilidad.activo %}Activa{% else %}Pasiva{% endif %}
+                </span>
+              </div>
+
+              <p class="skill-desc">{{ habilidad.descripcion }}</p>
+
+              <!-- Metadatos de la Habilidad (Costos y Efectos) -->
+              <div class="skill-meta-tags">
+                {% if habilidad.costo %}
+                  {% if habilidad.costo.items %}
+                    {% for k, v in habilidad.costo.items %}
+                    <span class="skill-cost-badge">
+                      <svg class="rpg-icon" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm1 15h-2v-6h2zm0-8h-2V7h2z"/></svg>
+                      <span>Costo ({{ k|capfirst }}): {{ v }}</span>
+                    </span>
+                    {% endfor %}
+                  {% else %}
+                    <span class="skill-cost-badge">Costo: {{ habilidad.costo }}</span>
+                  {% endif %}
+                {% endif %}
+
+                {% if habilidad.efectos %}
+                  {% if habilidad.efectos.items %}
+                    {% for k, v in habilidad.efectos.items %}
+                    <span class="skill-effect-badge">
+                      <svg class="rpg-icon" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2L1 21h22L12 2zm0 3.99L19.53 19H4.47L12 5.99z"/></svg>
+                      <span>Efecto ({{ k|capfirst }}): {{ v }}</span>
+                    </span>
+                    {% endfor %}
+                  {% else %}
+                    <span class="skill-effect-badge">Efecto: {{ habilidad.efectos }}</span>
+                  {% endif %}
+                {% endif %}
+              </div>
+            </article>
+            {% empty %}
+            <div class="empty-codex-state">
+              <svg viewBox="0 0 24 24"><path d="M11 2L9 8H3l5 4.5-2 6.5 6-4 6 4-2-6.5L21 8h-6l-2-6zm1 4.3l1.1 3.4h3.6l-2.9 2.1 1.1 3.5L12 13.2l-2.9 2.1 1.1-3.5-2.9-2.1h3.6L12 6.3z"/></svg>
+              <span class="empty-state-title">Grimorio Silencioso</span>
+              <p class="empty-state-text">Este héroe aún no ha despertado sus habilidades ni poderes en las crónicas del reino.</p>
+            </div>
+            {% endfor %}
+          </div>
+        </section>
+
+        <!-- 3.4 ARSENAL Y PERTRECHOS (OBJETOS Y EQUIPAMIENTO) -->
+        <section class="dossier-section-card" aria-label="Objetos y equipamiento">
+          <header class="section-card-header">
+            <div class="section-title-wrap">
+              <svg viewBox="0 0 24 24"><path d="M20 7h-4V4c0-1.1-.9-2-2-2h-4c-1.1 0-2 .9-2 2v3H4c-1.1 0-2 .9-2 2v11c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V9c0-1.1-.9-2-2-2zm-10-3h4v3h-4V4zm10 16H4V9h16v11z"/></svg>
+              <h2 class="section-title">EQUIPO Y PERTRECHOS</h2>
+            </div>
+            <span class="section-badge-counter" id="totalInventoryWeight">Sistema Avanzado</span>
+          </header>
+
+          <style>
+            /* UI Metin2 Style */
+            .equipment-module {
+              display: flex;
+              gap: 2rem;
+              background: rgba(10, 10, 10, 0.8);
+              border: 1px solid #2a2a2a;
+              padding: 1.5rem;
+              margin-top: 1rem;
+              flex-wrap: wrap;
+            }
+            .equipment-silhouette-box {
+              position: relative;
+              width: 350px;
+              height: 350px;
+              background: url("{% static 'img/metin2_bg.jpg' %}") center/cover no-repeat;
+              border: 2px solid #5a4a22;
+              box-shadow: 0 0 20px #000;
+              flex-shrink: 0;
+              margin: 0 auto;
+            }
+            .equip-slot {
+              position: absolute;
+              width: 16%; 
+              height: 16%;
+              background: rgba(0,0,0,0.8);
+              border: 1px solid #735d29;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              cursor: pointer;
+              transition: all 0.2s;
+              border-radius: 6px;
+            }
+            .equip-slot:hover { border-color: #ffcc00; box-shadow: inset 0 0 15px rgba(255, 204, 0, 0.4), 0 0 10px rgba(255, 204, 0, 0.6); }
+            .equip-slot img { width: 90%; height: 90%; object-fit: contain; pointer-events: none; filter: drop-shadow(0 0 5px rgba(255,255,255,0.2)); }
+            .equip-slot.empty::after {
+              content: attr(data-slot-name);
+              font-size: 0.65rem;
+              color: #ffffff;
+              font-family: 'MedievalSharp', cursive;
+              text-align: center;
+              text-shadow: 1px 1px 3px #000;
+            }
+            
+            /* Posiciones Clásicas de MMO (7 slots exactos) */
+            .slot-casco { top: 10%; left: 42%; }
+            .slot-arma { top: 40%; left: 10%; }
+            .slot-armadura { top: 40%; left: 42%; }
+            
+            .slot-collar { top: 15%; right: 18%; }
+            .slot-escudo { top: 40%; right: 10%; }
+            .slot-brazalete { top: 65%; right: 18%; }
+            
+            .slot-zapatos { bottom: 10%; left: 42%; }
+            
+            .inventory-deck-grid { flex-grow: 1; min-width: 300px; }
+            .btn-equip {
+              background: linear-gradient(to bottom, #4a3c1c, #2a2110);
+              border: 1px solid #8c7335; color: #ffcc00; padding: 0.3rem; width: 100%;
+              font-family: 'Bangers', cursive; letter-spacing: 1px; cursor: pointer; margin-top: 5px;
+            }
+            .btn-equip:hover { background: #5a4a22; color: #fff; }
+          </style>
+
+          <div class="equipment-module">
+            <!-- SILUETA DE EQUIPAMIENTO -->
+            <div class="equipment-silhouette-box" id="equipmentSilhouette">
+              
+              <div class="equip-slot slot-casco {% if not personaje.casco_equipado %}empty{% endif %}" id="slot-casco" data-slot-name="CASCO" {% if personaje.casco_equipado %}data-item-id="{{ personaje.casco_equipado.id }}" onclick="desequiparObjeto(this, 'casco')" title="Desequipar"{% endif %}>
+                {% if personaje.casco_equipado and personaje.casco_equipado.img %}
+                  <img src="{{ personaje.casco_equipado.img.url }}" alt="Casco">
+                {% endif %}
+              </div>
+              
+              <div class="equip-slot slot-collar {% if not personaje.collar_equipado %}empty{% endif %}" id="slot-collar" data-slot-name="COLLAR" {% if personaje.collar_equipado %}data-item-id="{{ personaje.collar_equipado.id }}" onclick="desequiparObjeto(this, 'collar')" title="Desequipar"{% endif %}>
+                {% if personaje.collar_equipado and personaje.collar_equipado.img %}
+                  <img src="{{ personaje.collar_equipado.img.url }}" alt="Collar">
+                {% endif %}
+              </div>
+              
+              <div class="equip-slot slot-arma {% if not personaje.arma_equipada %}empty{% endif %}" id="slot-arma" data-slot-name="ARMA" {% if personaje.arma_equipada %}data-item-id="{{ personaje.arma_equipada.id }}" onclick="desequiparObjeto(this, 'arma')" title="Desequipar"{% endif %}>
+                {% if personaje.arma_equipada and personaje.arma_equipada.img %}
+                  <img src="{{ personaje.arma_equipada.img.url }}" alt="Arma">
+                {% endif %}
+              </div>
+              
+              <div class="equip-slot slot-armadura {% if not personaje.armadura_equipada %}empty{% endif %}" id="slot-armadura" data-slot-name="ARMADURA" {% if personaje.armadura_equipada %}data-item-id="{{ personaje.armadura_equipada.id }}" onclick="desequiparObjeto(this, 'armadura')" title="Desequipar"{% endif %}>
+                {% if personaje.armadura_equipada and personaje.armadura_equipada.img %}
+                  <img src="{{ personaje.armadura_equipada.img.url }}" alt="Armadura">
+                {% endif %}
+              </div>
+              
+              <div class="equip-slot slot-escudo {% if not personaje.escudo_equipado %}empty{% endif %}" id="slot-escudo" data-slot-name="ESCUDO" {% if personaje.escudo_equipado %}data-item-id="{{ personaje.escudo_equipado.id }}" onclick="desequiparObjeto(this, 'escudo')" title="Desequipar"{% endif %}>
+                {% if personaje.escudo_equipado and personaje.escudo_equipado.img %}
+                  <img src="{{ personaje.escudo_equipado.img.url }}" alt="Escudo">
+                {% endif %}
+              </div>
+              
+              <div class="equip-slot slot-brazalete {% if not personaje.brazalete_equipado %}empty{% endif %}" id="slot-brazalete" data-slot-name="BRAZALETE" {% if personaje.brazalete_equipado %}data-item-id="{{ personaje.brazalete_equipado.id }}" onclick="desequiparObjeto(this, 'brazalete')" title="Desequipar"{% endif %}>
+                {% if personaje.brazalete_equipado and personaje.brazalete_equipado.img %}
+                  <img src="{{ personaje.brazalete_equipado.img.url }}" alt="Brazalete">
+                {% endif %}
+              </div>
+              
+              <div class="equip-slot slot-zapatos {% if not personaje.zapatos_equipados %}empty{% endif %}" id="slot-zapatos" data-slot-name="ZAPATOS" {% if personaje.zapatos_equipados %}data-item-id="{{ personaje.zapatos_equipados.id }}" onclick="desequiparObjeto(this, 'zapatos')" title="Desequipar"{% endif %}>
+                {% if personaje.zapatos_equipados and personaje.zapatos_equipados.img %}
+                  <img src="{{ personaje.zapatos_equipados.img.url }}" alt="Zapatos">
+                {% endif %}
+              </div>
+
+            </div>
+
+            <!-- INVENTARIO LISTA -->
+            <div class="inventory-deck-grid" id="inventoryContainer">
+              {% for inv_item in personaje.inventarioitem_set.all %}
+                {% with objeto=inv_item.objeto %}
+                <article class="item-codex-card" id="inv-item-{{ objeto.id }}" style="{% if objeto in personaje.equipo_actual %}display:none;{% endif %}" data-peso="{{ objeto.peso }}" title="{{ objeto.nombre }}">
+                  <div class="item-card-header">
+                    <div class="item-thumb-box">
+                      {% if objeto.img %}
+                      <img src="{{ objeto.img.url }}" alt="{{ objeto.nombre }}" class="item-thumb-img" />
+                      {% endif %}
+                      <span class="item-quantity-badge" id="inv-qty-{{ objeto.id }}" style="position: absolute; bottom: -5px; right: -5px; background: #e74c3c; color: white; border-radius: 50%; padding: 2px 6px; font-size: 0.75rem; font-weight: bold; border: 1px solid #c0392b; {% if inv_item.cantidad <= 1 %}display:none;{% endif %}">{{ inv_item.cantidad }}</span>
+                    </div>
+                    <div class="item-header-meta">
+                      <h3 class="item-name">{{ objeto.nombre }}</h3>
+                      <span class="item-weight-tag">Peso: {{ objeto.peso }} kg</span>
+                      <span class="item-weight-tag">Nivel mínimo: {{ objeto.nivel }}</span>
+                    </div>
+                  </div>
+                  
+                  {% if objeto.efectos %}
+                    <div class="item-tags-row" style="margin-top: 5px;">
+                      {% for k, v in objeto.efectos.items %}
+                        {% if v != 0 %}
+                        <span class="item-pill pill-effect" style="font-size:0.7rem;">{{ k|capfirst }}: +{{ v }}</span>
+                        {% endif %}
+                      {% endfor %}
+                    </div>
+                  {% endif %}
+
+                  {% if not objeto.activo %}
+                    <p>Objeto deshabilitado.</p>
+                  {% elif personaje.estado != 'vivo' %}
+                    <p>Solo los personajes vivos pueden usar objetos.</p>
+                  {% elif personaje.nivel < objeto.nivel %}
+                    <button type="button" class="btn-equip" disabled>REQUIERE NIVEL {{ objeto.nivel }}</button>
+                  {% elif objeto.es_equipable and objeto.tipo_equipamiento %}
+                    <button type="button" class="btn-equip" onclick="equiparObjeto({{ objeto.id }}, '{{ objeto.tipo_equipamiento }}', '{% if objeto.img %}{{ objeto.img.url }}{% endif %}')">
+                      EQUIPAR ({{ objeto.get_tipo_equipamiento_display|upper }})
+                    </button>
+                  {% else %}
+                    <button type="button" class="btn-equip" style="background-color: #27ae60; border-color: #2ecc71;" onclick="consumirObjeto({{ objeto.id }})">
+                      USAR / CONSUMIR
+                    </button>
+                  {% endif %}
+                </article>
+                {% endwith %}
+              {% endfor %}
+            </div>
+          </div>
+        </section>
+
+      </div>
+
+    </div>
+
+  </main>
+</div>
+
+<!-- ===================================================
+     MODAL DE NOTIFICACIÓN DE EDICIÓN (WARCRAFT MODAL)
+     =================================================== -->
+<div class="warcraft-modal-backdrop" id="modalEditWarning" role="dialog" aria-modal="true" aria-labelledby="modalEditTitle">
+  <div class="warcraft-modal-dialog">
+    <div class="modal-icon-wrap">
+      <svg viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a.996.996 0 0 0 0-1.41l-2.34-2.34a.996.996 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
+    </div>
+
+    <h2 class="modal-title" id="modalEditTitle">FORJA DE MODIFICACIÓN</h2>
+
+    <p class="modal-desc">
+      La modificación interactiva para <strong>{{ personaje.nombre }}</strong> está siendo forjada para la siguiente fase. Actualmente la ficha se encuentra en modo de <strong>consulta táctica completa</strong>.
+    </p>
+
+    <div class="modal-actions">
+      <button type="button" class="btn-modal-close" id="btnCerrarModalEdit">
+        ENTENDIDO, VOLVER AL CÓDICE
+      </button>
+    </div>
+  </div>
+</div>
+{% endblock main %}
+
+{% block scripts %}
+<!-- Motor Interactivo de Detalle de Personaje (Canvas de Brasas + Cálculos) -->
+<script src="{% static 'js/detalle_personaje.js' %}"></script>
+
+// API JS para Sistema de Equipamiento SPA
+<script>
+  function actualizarUIStats(result) {
+      if (!result.stats_totales) return;
+      
+      const stats = result.stats_totales;
+      const bonos = result.bonificadores_actuales || {};
+      
+      // Función ayudante para renderizar stat + bonus
+      const renderStat = (statName, val) => {
+          let html = val;
+          if (bonos[statName] > 0) {
+              html += ` <span style="color: #4ade80; font-size: 0.75rem; text-shadow: 0 0 2px #000;">(+${bonos[statName]})</span>`;
+          } else if (bonos[statName] < 0) {
+              html += ` <span style="color: #ef4444; font-size: 0.75rem; text-shadow: 0 0 2px #000;">(${bonos[statName]})</span>`;
+          }
+          return html;
+      };
+
+      // Actualizar atributos de la cuadricula
+      const selStr = document.querySelector('.attr-str .attr-value-badge');
+      if (selStr) selStr.innerHTML = renderStat('fuerza', stats.fuerza);
+      
+      const selDex = document.querySelector('.attr-dex .attr-value-badge');
+      if (selDex) selDex.innerHTML = renderStat('destreza', stats.destreza);
+      
+      const selVig = document.querySelector('.attr-vig .attr-value-badge');
+      if (selVig) selVig.innerHTML = renderStat('vigor', stats.vigor);
+      
+      const selInt = document.querySelector('.attr-int .attr-value-badge');
+      if (selInt) selInt.innerHTML = renderStat('inteligencia', stats.inteligencia);
+      
+      const selPer = document.querySelector('.attr-per .attr-value-badge');
+      if (selPer) selPer.innerHTML = renderStat('percepcion', stats.percepcion);
+      
+      const selCha = document.querySelector('.attr-cha .attr-value-badge');
+      if (selCha) selCha.innerHTML = renderStat('carisma', stats.carisma);
+      
+      const selLuk = document.querySelector('.attr-luk .attr-value-badge');
+      if (selLuk) selLuk.innerHTML = renderStat('suerte', stats.suerte);
+
+      // Actualizar top metrics
+      const topHealth = document.querySelector('.metric-health .metric-value');
+      if (topHealth && result.hp_total !== undefined) topHealth.textContent = `${result.hp_actual !== undefined ? result.hp_actual : '?'} / ${result.hp_total} PV`;
+
+      const topCombat = document.querySelector('.metric-combat .metric-value');
+      if (topCombat && stats.fuerza !== undefined) topCombat.textContent = `${stats.fuerza} PTS`;
+
+      const topMagic = document.querySelector('.metric-magic .metric-value');
+      if (topMagic && result.mana_total !== undefined) topMagic.textContent = `${result.mana_actual !== undefined ? result.mana_actual : '?'} / ${result.mana_total} PM`;
+  }
+
+  async function consumirObjeto(objetoId) {
+      const { isConfirmed } = await Swal.fire({
+        title: '¿Consumir objeto?',
+        text: "Sus efectos se aplicarán permanentemente y desaparecerá de la mochila.",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: 'Consumir',
+        cancelButtonText: 'Cancelar',
+        background: '#1a1a1a',
+        color: '#f1c40f'
+      });
+      if (!isConfirmed) return;
+      
+      try {
+          const response = await fetch("{% if request.user.is_gm %}{% url 'gm:api-consumir' pk=personaje.pk %}{% else %}{% url 'player:api_consumir' pk=personaje.pk %}{% endif %}", {
+              method: 'POST',
+              headers: {
+                  'Content-Type': 'application/json',
+                  'X-CSRFToken': '{{ csrf_token }}'
+              },
+              body: JSON.stringify({ objeto_id: objetoId })
+          });
+          
+          const result = await response.json();
+          if (response.ok) {
+              // 1. Manejar la UI del objeto (reducir cantidad o eliminar row)
+              if (result.cantidad_restante > 0) {
+                  const badge = document.getElementById('inv-qty-' + objetoId);
+                  if (badge) {
+                      badge.textContent = result.cantidad_restante;
+                      if (result.cantidad_restante > 1) {
+                          badge.style.display = 'block';
+                      } else {
+                          badge.style.display = 'none';
+                      }
+                  }
+              } else {
+                  const itemRow = document.getElementById('inv-item-' + objetoId);
+                  if (itemRow) itemRow.remove();
+              }
+              
+              // 2. Actualizar stats
+              actualizarUIStats(result);
+              
+              // Mostrar mensaje de éxito
+              Swal.fire({
+                toast: true, position: 'top-end', showConfirmButton: false, timer: 3000,
+                icon: 'success', title: result.mensaje, background: '#1a1a1a', color: '#f1c40f'
+              });
+          } else {
+              Swal.fire({
+                toast: true, position: 'top-end', showConfirmButton: false, timer: 3000,
+                icon: 'error', title: "Error: " + result.error, background: '#1a1a1a', color: '#e74c3c'
+              });
+          }
+      } catch (err) {
+          console.error(err);
+      }
+  }
+
+  async function equiparObjeto(objetoId, tipo, imgUrl) {
+      try {
+          const response = await fetch("{% if request.user.is_gm %}{% url 'gm:api-equipar' pk=personaje.pk %}{% else %}{% url 'player:api_equipar' pk=personaje.pk %}{% endif %}", {
+              method: 'POST',
+              headers: {
+                  'Content-Type': 'application/json',
+                  'X-CSRFToken': '{{ csrf_token }}'
+              },
+              body: JSON.stringify({ objeto_id: objetoId, accion: 'equipar' })
+          });
+          
+          const result = await response.json();
+          if (response.ok) {
+              // 1. Ocultar el objeto que acabamos de equipar de la mochila
+              document.getElementById('inv-item-' + objetoId).style.display = 'none';
+              
+              // 2. Comprobar si había algo en el slot antes
+              const slotElem = document.getElementById('slot-' + tipo);
+              const oldId = slotElem.getAttribute('data-item-id');
+              if (oldId) {
+                  // Devolver el viejo a la mochila
+                  document.getElementById('inv-item-' + oldId).style.display = 'block';
+              }
+              
+              // 3. Renderizar el nuevo objeto en el slot
+              slotElem.innerHTML = `<img src="${imgUrl}" alt="Item">`;
+              slotElem.classList.remove('empty');
+              slotElem.setAttribute('data-item-id', objetoId);
+              slotElem.setAttribute('onclick', `desequiparObjeto(this, '${tipo}')`);
+              slotElem.setAttribute('title', 'Desequipar');
+              
+              // 4. Actualizar stats dinámicamente sin recargar la página
+              actualizarUIStats(result);
+          } else {
+              Swal.fire({
+                toast: true, position: 'top-end', showConfirmButton: false, timer: 3000,
+                icon: 'error', title: "Error: " + result.error, background: '#1a1a1a', color: '#e74c3c'
+              });
+          }
+      } catch (err) {
+          console.error(err);
+      }
+  }
+
+  async function desequiparObjeto(element, tipo) {
+      const objetoId = element.getAttribute('data-item-id');
+      if (!objetoId) return;
+      
+      try {
+          const response = await fetch("{% if request.user.is_gm %}{% url 'gm:api-equipar' pk=personaje.pk %}{% else %}{% url 'player:api_equipar' pk=personaje.pk %}{% endif %}", {
+              method: 'POST',
+              headers: {
+                  'Content-Type': 'application/json',
+                  'X-CSRFToken': '{{ csrf_token }}'
+              },
+              body: JSON.stringify({ objeto_id: objetoId, accion: 'desequipar' })
+          });
+          
+          const result = await response.json();
+          if (response.ok) {
+              // 1. Vaciar el slot en la UI
+              element.innerHTML = '';
+              element.classList.add('empty');
+              element.removeAttribute('data-item-id');
+              element.removeAttribute('onclick');
+              element.removeAttribute('title');
+              
+              // 2. Mostrar el objeto devuelto en la mochila
+              document.getElementById('inv-item-' + objetoId).style.display = 'block';
+              
+              // 3. Actualizar stats dinámicamente sin recargar la página
+              actualizarUIStats(result);
+          } else {
+              Swal.fire({
+                toast: true, position: 'top-end', showConfirmButton: false, timer: 3000,
+                icon: 'error', title: "Error: " + result.error, background: '#1a1a1a', color: '#e74c3c'
+              });
+          }
+      } catch (err) {
+          console.error(err);
+      }
+  }
+</script>
+{% endblock scripts %}

@@ -1,0 +1,207 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Modificar Raza{% endblock %}
+{% block styles %}
+<link rel="stylesheet" href="{% static 'css/actualizar_raza.css' %}">
+<style>
+  .creation-form input[type="text"],
+  .creation-form input[type="number"],
+  .creation-form input[type="file"],
+  .creation-form select,
+  .creation-form textarea {
+    width: 100%;
+    box-sizing: border-box; /* Fix overlap */
+    padding: 12px 16px;
+    background: rgba(15, 15, 15, 0.75);
+    border: 1px solid #a88a44;
+    color: #ffeed1;
+    font-family: 'MedievalSharp', cursive;
+    font-size: 1.1rem;
+    border-radius: 8px;
+    box-shadow: inset 0 2px 5px rgba(0,0,0,0.6);
+    transition: all 0.3s ease;
+  }
+  .creation-form input[type="text"]:focus,
+  .creation-form input[type="number"]:focus,
+  .creation-form select:focus,
+  .creation-form textarea:focus {
+    outline: none;
+    border-color: #ffcc00;
+    background: rgba(20, 20, 20, 0.9);
+    box-shadow: 0 0 8px rgba(255, 204, 0, 0.4), inset 0 2px 5px rgba(0,0,0,0.6);
+  }
+  
+  /* WoW Style File Input */
+  .creation-form input[type="file"] {
+    padding: 8px;
+    background: transparent;
+    box-shadow: none;
+    border: 1px dashed #a88a44;
+    color: #ffcc00;
+  }
+  .creation-form input[type="file"]::file-selector-button {
+    background: linear-gradient(to bottom, #8c0000, #4a0000);
+    border: 1px solid #ffcc00;
+    color: #ffcc00;
+    padding: 8px 16px;
+    border-radius: 4px;
+    font-family: 'Bangers', cursive;
+    font-size: 1.1rem;
+    cursor: pointer;
+    margin-right: 15px;
+    text-shadow: 1px 1px 2px black;
+    transition: all 0.3s ease;
+  }
+  .creation-form input[type="file"]::file-selector-button:hover {
+    background: linear-gradient(to bottom, #a30000, #5c0000);
+    box-shadow: 0 0 8px rgba(255, 204, 0, 0.6);
+  }
+
+  /* WoW Style Checkbox */
+  .creation-form input[type="checkbox"] {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 28px;
+    height: 28px;
+    background: rgba(15, 15, 15, 0.8);
+    border: 2px solid #a88a44;
+    border-radius: 6px;
+    cursor: pointer;
+    position: relative;
+    vertical-align: middle;
+    transition: all 0.2s ease;
+    box-shadow: inset 0 2px 5px rgba(0,0,0,0.8);
+    margin-top: 5px;
+  }
+  .creation-form input[type="checkbox"]:checked {
+    background: rgba(140, 0, 0, 0.8);
+    border-color: #ffcc00;
+    box-shadow: 0 0 8px rgba(255, 204, 0, 0.4), inset 0 2px 5px rgba(0,0,0,0.8);
+  }
+  .creation-form input[type="checkbox"]:checked::after {
+    content: '✔';
+    position: absolute;
+    color: #ffcc00;
+    font-size: 22px;
+    top: -4px;
+    left: 3px;
+    text-shadow: 1px 1px 2px black;
+  }
+  
+  .creation-form a {
+    color: #10b981;
+    text-decoration: none;
+    font-weight: bold;
+  }
+  .creation-form a:hover {
+    text-decoration: underline;
+  }
+  .img-container {
+    background: rgba(0,0,0,0.4);
+    border: 1px dashed #8c7335;
+    padding: 15px;
+    border-radius: 8px;
+    text-align: center;
+  }
+
+  /* WoW Style Slider */
+  .stat-slider {
+    -webkit-appearance: none;
+    width: 100%;
+    height: 8px;
+    background: rgba(15, 15, 15, 0.8);
+    border: 1px solid #a88a44;
+    border-radius: 4px;
+    outline: none;
+    padding: 0 !important;
+  }
+  .stat-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 22px;
+    height: 24px;
+    border-radius: 4px;
+    background: linear-gradient(to bottom, #8c0000, #4a0000);
+    cursor: pointer;
+    border: 2px solid #ffcc00;
+    box-shadow: 0 0 5px rgba(255, 204, 0, 0.5), inset 0 1px 2px rgba(255, 255, 255, 0.3);
+  }
+  .stat-slider::-webkit-slider-thumb:hover {
+    background: linear-gradient(to bottom, #a30000, #5c0000);
+    box-shadow: 0 0 8px rgba(255, 204, 0, 0.8), inset 0 1px 3px rgba(255, 255, 255, 0.4);
+  }
+  .stat-slider::-webkit-slider-thumb:hover {
+    background: linear-gradient(to bottom, #a30000, #5c0000);
+    box-shadow: 0 0 8px rgba(255, 204, 0, 0.8), inset 0 1px 3px rgba(255, 255, 255, 0.4);
+  }
+
+</style>
+{% endblock %}
+{% block main %}
+<div class="scene">
+  <canvas id="bgCanvas" class="bg-canvas"></canvas>
+  {% include "includes/navbar2.html" %}
+  <main class="delete-container">
+    <div class="warcraft-panel" style="max-width: 800px; width: 100%;">
+      <h1 class="warcraft-title">Modificar Raza: {{ form.instance.nombre }}</h1>
+      <form method="POST" enctype="multipart/form-data" class="creation-form">
+        {% csrf_token %}
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+            
+            <div style="grid-column: 1 / -1;">
+                <label style="color: #ffcc00; font-family: 'Bangers'; font-size: 1.4rem; display: block; margin-bottom: 0.5rem; letter-spacing: 1px;">{{ form.nombre.label }}</label>
+                {{ form.nombre }}
+                {% if form.nombre.errors %}<div style="color: #ff4444; font-weight: bold;">{{ form.nombre.errors }}</div>{% endif %}
+            </div>
+
+            <div style="grid-column: 1 / -1;">
+                <label style="color: #ffcc00; font-family: 'Bangers'; font-size: 1.4rem; display: block; margin-bottom: 0.5rem; letter-spacing: 1px;">{{ form.descripcion.label }}</label>
+                {{ form.descripcion }}
+                {% if form.descripcion.errors %}<div style="color: #ff4444; font-weight: bold;">{{ form.descripcion.errors }}</div>{% endif %}
+            </div>
+
+            <div>
+                <label style="color: #ffcc00; font-family: 'Bangers'; font-size: 1.4rem; display: block; margin-bottom: 0.5rem;">{{ form.img_body.label }}</label>
+                <div class="img-container">
+                    {{ form.img_body }}
+                </div>
+                {% if form.img_body.errors %}<div style="color: #ff4444; font-weight: bold;">{{ form.img_body.errors }}</div>{% endif %}
+            </div>
+
+            <div>
+                <label style="color: #ffcc00; font-family: 'Bangers'; font-size: 1.4rem; display: block; margin-bottom: 0.5rem;">{{ form.img_head.label }}</label>
+                <div class="img-container">
+                    {{ form.img_head }}
+                </div>
+                {% if form.img_head.errors %}<div style="color: #ff4444; font-weight: bold;">{{ form.img_head.errors }}</div>{% endif %}
+            </div>
+
+            <h3 style="grid-column: 1 / -1; color: #ffcc00; font-family: 'Bangers'; margin-top: 1rem; border-bottom: 1px solid #8c7335; padding-bottom: 5px;">Bonificadores Raciales</h3>
+            <p style="grid-column: 1 / -1; color: #ffeed1; font-family: 'MedievalSharp'; margin-top: -10px;">Ajusta los bonificadores que esta raza otorgará a los atributos de sus personajes.</p>
+            
+            {% for field in form %}
+                {% if field.name != 'nombre' and field.name != 'descripcion' and field.name != 'img_body' and field.name != 'img_head' %}
+                    <div>
+                        <label style="color: #ffcc00; font-family: 'Bangers'; font-size: 1.1rem; display: block; margin-bottom: 0.3rem;">{{ field.label }}</label>
+                                                <div style="display: flex; align-items: center; gap: 1rem;">
+                            {{ field }}
+                            <span style="color: #4ade80; font-family: 'Bangers'; font-size: 1.2rem; min-width: 40px; text-shadow: 1px 1px 2px black;">{{ field.value|default:"0" }}</span>
+                        </div>
+                        {% if field.errors %}<div style="color: #ff4444; font-weight: bold;">{{ field.errors }}</div>{% endif %}
+                    </div>
+                {% endif %}
+            {% endfor %}
+            
+        </div>
+        <div class="action-buttons" style="margin-top: 2rem;">
+          <a href="{% url 'gm:detalle-raza' pk=form.instance.pk %}" class="btn-alliance">CANCELAR</a>
+          <button type="submit" class="btn-horde">ACTUALIZAR RAZA</button>
+        </div>
+      </form>
+    </div>
+  </main>
+</div>
+{% endblock %}
+{% block scripts %}
+<script src="{% static 'js/actualizar_raza.js' %}"></script>
+{% endblock %}

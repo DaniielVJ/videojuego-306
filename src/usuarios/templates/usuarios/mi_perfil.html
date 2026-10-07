@@ -1,0 +1,193 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Mi Perfil | El Reino{% endblock %}
+
+{% block styles %}
+<link rel="stylesheet" href="{% static 'css/cambiar_password.css' %}" />
+<style>
+.profile-card {
+    background: linear-gradient(180deg, rgba(30,25,20,0.95) 0%, rgba(15,10,5,0.98) 100%);
+    border: 2px solid #5a4022;
+    border-radius: 8px;
+    padding: 40px;
+    width: 100%;
+    max-width: 900px;
+    margin: 0 auto;
+    color: #e0d0b0;
+    text-align: center;
+    box-shadow: 0 0 30px rgba(0,0,0,0.8), inset 0 0 20px rgba(0,0,0,0.5);
+}
+
+.profile-avatar {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    border: 3px solid #ffcc00;
+    object-fit: cover;
+    margin: 0 auto 20px;
+    box-shadow: 0 0 15px rgba(255, 204, 0, 0.3);
+}
+
+.profile-username {
+    font-family: 'Cinzel', serif;
+    font-size: 2.5rem;
+    color: #ffcc00;
+    margin-bottom: 5px;
+    text-shadow: 2px 2px 4px #000;
+}
+
+.profile-role {
+    font-size: 1.1rem;
+    color: #8c7335;
+    margin-bottom: 20px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+.profile-details {
+    text-align: left;
+    margin-top: 30px;
+    background: rgba(0,0,0,0.4);
+    padding: 20px;
+    border-radius: 5px;
+    border: 1px solid #332211;
+}
+
+.profile-item {
+    margin-bottom: 15px;
+}
+
+.profile-label {
+    color: #c4ab7c;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    display: block;
+    margin-bottom: 5px;
+}
+
+.profile-value {
+    font-size: 1.1rem;
+    color: #fff;
+    line-height: 1.4;
+}
+
+.btn-edit-profile {
+    display: inline-block;
+    margin-top: 25px;
+    padding: 10px 25px;
+    background: linear-gradient(to bottom, #d32f2f, #b71c1c);
+    color: #fff;
+    border: 1px solid #f44336;
+    border-radius: 4px;
+    text-decoration: none;
+    font-family: 'Cinzel', serif;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+.btn-edit-profile:hover {
+    background: #f44336;
+    box-shadow: 0 0 15px rgba(244, 67, 54, 0.6);
+}
+</style>
+{% endblock %}
+
+{% block main %}
+
+<div class="game-dashboard">
+  
+  <!-- BARRA LATERAL (Menú del Juego / Cuenta) -->
+  <aside class="dashboard-sidebar">
+    <div class="sidebar-header">
+      <h3>TU CUENTA</h3>
+    </div>
+    <ul class="sidebar-menu">
+      <li>
+        <a href="{% url 'usuarios:inicio_usuario' %}">
+          <svg class="rpg-icon" viewBox="0 0 24 24"><path d="M19.7 3.3a1 1 0 0 0-1.4 0l-4.6 4.6 1.4 1.4 4.6-4.6a1 1 0 0 0 0-1.4zM4.3 3.3a1 1 0 0 0 0 1.4l4.6 4.6 1.4-1.4-4.6-4.6a1 1 0 0 0-1.4 0zm7.7 7.7l-7.7 7.7-1.3-1.3-.7.7 2.7 2.7.7-.7-1.3-1.3 7.7-7.7 7.7 7.7-1.3 1.3.7.7 2.7-2.7-.7-.7-1.3 1.3-7.7-7.7z"/></svg>
+          <span>Inicio</span>
+        </a>
+      </li>
+      <li>
+        <a href="{% url 'usuarios:mi_perfil' %}" class="active">
+          <svg class="rpg-icon" viewBox="0 0 24 24"><path d="M12 2L4 5v6.1c0 5.6 3.4 10.8 8 12.9 4.6-2.1 8-7.3 8-12.9V5l-8-3zm0 2.2l6 2.3v4.6c0 4.5-2.6 8.7-6 10.6-3.4-1.9-6-6.1-6-10.6V6.5l6-2.3z"/></svg>
+          <span>Ver Perfil</span>
+        </a>
+      </li>
+      <li>
+        <a href="{% url 'usuarios:modificar-password' %}">
+          <svg class="rpg-icon" viewBox="0 0 24 24"><path d="M7 14A5 5 0 0 1 3 9a5 5 0 0 1 8.5-3.5L21 15v4h-4v-2h-2v-2h-2.2l-1.3-1.3A5 5 0 0 1 7 14zm0-8a3 3 0 1 0 0 6 3 3 0 0 0 0-6zm1 2a1 1 0 1 1-2 0 1 1 0 0 1 2 0z"/></svg>
+          <span>Cambiar Clave</span>
+        </a>
+      </li>
+      <li>
+        <a href="{% if request.user.is_gm %}{% url 'gm:listar-personajes' %}{% else %}{% url 'player:listar_personajes' %}{% endif %}">
+          <svg class="rpg-icon" viewBox="0 0 24 24"><path d="M12 2a9 9 0 0 0-9 9c0 4.1 2.8 7.6 6.6 8.7V22h4.8v-2.3c3.8-1.1 6.6-4.6 6.6-8.7a9 9 0 0 0-9-9zm-6 9c0-1.8.6-3.4 1.7-4.8l2.6 2.6a1 1 0 0 0 1.4 0l2.3-2.3 2.3 2.3a1 1 0 0 0 1.4 0l2.6-2.6A7 7 0 0 1 20 11H4zm3 3h10v2H7v-2z"/></svg>
+          <span>Mis Personajes</span>
+        </a>
+      </li>
+      <li>
+        <form action="{% url 'usuarios:logout' %}" method="post" style="display:inline; width:100%;">
+          {% csrf_token %}
+          <button type="submit" style="background: none; border: none; padding: 0; margin: 0; width: 100%; text-align: left; cursor: pointer; color: inherit; font: inherit;">
+            <a style="display: flex; align-items: center; width: 100%;">
+              <svg class="rpg-icon" viewBox="0 0 24 24" style="margin-right: 15px;"><path d="M16 13v-2H7V8l-5 4 5 4v-3h9zm4-11H9c-1.1 0-2 .9-2 2v4h2V4h11v16H9v-4H7v4c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/></svg>
+              <span>Cerrar Sesión</span>
+            </a>
+          </button>
+        </form>
+      </li>
+    </ul>
+  </aside>
+
+  <!-- CONTENIDO PRINCIPAL -->
+  <main class="dashboard-content">
+    <div class="profile-card">
+        <div style="text-align: left; margin-bottom: 20px;">
+            <a href="{% url 'usuarios:inicio_usuario' %}" style="color: #7289da; text-decoration: none; border: 1px solid #7289da; padding: 5px 15px; border-radius: 3px; font-size: 0.9rem;">← Volver al Inicio</a>
+        </div>
+        
+        {% if perfil_user.avatar %}
+            <img src="{{ perfil_user.avatar.url }}" alt="Avatar" class="profile-avatar">
+        {% else %}
+            <img src="https://ui-avatars.com/api/?name={{ perfil_user.username }}&background=111&color=ffcc00&border=8c7335" alt="Avatar Default" class="profile-avatar">
+        {% endif %}
+
+        <h1 class="profile-username">{{ perfil_user.username }}</h1>
+        <div class="profile-role">
+            {% if perfil_user.is_gm %}Game Master{% else %}Jugador{% endif %}
+        </div>
+
+        <div class="profile-details">
+            <div class="profile-item">
+                <span class="profile-label">Nombre Completo</span>
+                <span class="profile-value">{% if perfil_user.first_name or perfil_user.last_name %}{{ perfil_user.first_name }} {{ perfil_user.last_name }}{% else %}<i style="color: #666;">No especificado</i>{% endif %}</span>
+            </div>
+            
+            <div class="profile-item">
+                <span class="profile-label">Correo Electrónico</span>
+                <span class="profile-value">{{ perfil_user.email }}</span>
+            </div>
+
+            <div class="profile-item">
+                <span class="profile-label">Fecha de Nacimiento</span>
+                <span class="profile-value">{% if perfil_user.fecha_nacimiento %}{{ perfil_user.fecha_nacimiento|date:"d \d\e F \d\e Y" }}{% else %}<i style="color: #666;">No especificada</i>{% endif %}</span>
+            </div>
+
+            <div class="profile-item">
+                <span class="profile-label">Biografía</span>
+                <span class="profile-value">{% if perfil_user.descripcion %}{{ perfil_user.descripcion }}{% else %}<i style="color: #666;">Un ser misterioso que aún no ha escrito su historia...</i>{% endif %}</span>
+            </div>
+            
+            <div class="profile-item">
+                <span class="profile-label">Miembro desde</span>
+                <span class="profile-value">{{ perfil_user.date_joined|date:"d/m/Y" }}</span>
+            </div>
+        </div>
+
+        <a href="{% url 'usuarios:editar_perfil' %}" class="btn-edit-profile">EDITAR PERFIL</a>
+    </div>
+  </main>
+</div>
+{% endblock %}
